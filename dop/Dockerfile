@@ -13,7 +13,7 @@ RUN touch /var/log/post_uwsgi.log
 RUN touch /var/log/post_access.log
 RUN touch /var/log/post_error.log
 
-RUN mkdir /usr/src/myzj_sale
-WORKDIR /usr/src/myzj_sale
+RUN mkdir /usr/src/dop
+WORKDIR /usr/src/dop
 
 CMD /usr/bin/start.sh

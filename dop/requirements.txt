@@ -1,0 +1,5 @@
+Django==1.8.4
+uwsgi
+redis
+djangorestframework
+requests

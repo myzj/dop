@@ -1,4 +1,176 @@
 # -*- coding:utf-8 -*-
 from django.db import models
+from django.contrib.auth.models import User
 
-# Create your models here.
+
+# Method type 请求类型
+mothod_types = (
+    (1, "GET"),
+    (2, "POST"),
+    (3, "PUT"),
+    (4, "DELETE"),
+)
+
+# content types 
+content_types = (
+    (1, "application/json"),
+    (2, "text/html"),
+    (3, "x-www-form-urlencode"),
+)
+
+# position types
+position_types = (
+    (1, "ReqHeader"),
+    (2, "ReqPath"),
+    (3, "ReqQueryString"),
+    (4, "ReqForm"),
+    (5, "ReqBody"),
+    (6, "ReqCookie"),
+    (7, "RespHeader"),
+    (8, "RespBody "),
+)
+
+
+# 团队
+class Team(models.Model):
+    team_name = models.CharField(verbose_name=u"团队名称", max_length=200, unique=True, null=True, blank=True)
+    description = models.TextField(verbose_name=u"团队描述", null=True, blank=True)
+    remark = models.TextField(verbose_name=u"备注", null=True, blank=True)
+    is_active = models.BooleanField(verbose_name=u"是否启用", default=True)
+    is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
+    author = models.ForeignKey(User, verbose_name=u"创建人", related_name=u"team_author", null=True)
+    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"team_modifier", null=True)
+    ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
+    utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
+
+    class Meta:
+        verbose_name = u"团队"
+        verbose_name_plural = verbose_name
+        db_table = "team"
+
+
+# 项目
+class Project(models.Model):
+    team = models.ForeignKey(Team, verbose_name=u"团队", related_name=u"project", null=True)
+    project_name = models.CharField(verbose_name=u"项目名称", max_length=200, null=True, blank=True)
+    description = models.TextField(verbose_name=u"项目描述", null=True, blank=True)
+    host = models.CharField(verbose_name=u"Host", max_length=200, null=True, blank=True)
+    remark = models.TextField(verbose_name=u"备注", null=True, blank=True)
+    is_active = models.BooleanField(verbose_name=u"是否启用", default=True)
+    is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
+    author = models.ForeignKey(User, verbose_name=u"创建人", related_name=u"project_author", null=True)
+    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"project_modifier", null=True)
+    ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
+    utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
+
+    class Meta:
+        verbose_name = u"项目"
+        verbose_name_plural = verbose_name
+        db_table = "project"
+
+
+# 项目人员
+class ProjectMember(models.Model):
+    project = models.ForeignKey(Project, verbose_name=u"项目", related_name=u"projectmember", null=True)
+    user = models.ForeignKey(User, verbose_name=u"成员", related_name=u"projectmember", null=True)
+    is_active = models.BooleanField(verbose_name=u"是否启用", default=True)
+    is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
+    ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
+    utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
+
+    class Meta:
+        verbose_name = u"项目人员"
+        verbose_name_plural = verbose_name
+        db_table = "projectmember"
+
+
+# API应用接口
+class Interface(models.Model):
+    project = models.ForeignKey(Project, verbose_name=u"项目", related_name=u"interface", null=True)
+    interface_name = models.CharField(verbose_name=u"API接口名称", max_length=200, null=True, blank=True)
+    description = models.TextField(verbose_name=u"API接口描述", null=True, blank=True)
+    url = models.CharField(verbose_name=u"请求地址", max_length=200, unique=True, null=True, blank=True)
+    method = models.SmallIntegerField(verbose_name=u"请求类型", choices=mothod_types, default=1)
+    content_type = models.SmallIntegerField(verbose_name=u"Content type", choices=content_types, default=1)
+    remark = models.TextField(verbose_name=u"备注", null=True, blank=True)
+    is_active = models.BooleanField(verbose_name=u"是否启用", default=True)
+    is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
+    author = models.ForeignKey(User, verbose_name=u"创建人", related_name=u"interface_author", null=True)
+    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"interface_modifier", null=True)
+    ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
+    utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
+
+    class Meta:
+        verbose_name = u"API应用接口"
+        verbose_name_plural = verbose_name
+        db_table = "interface"
+
+
+# 元数据
+class MetaData(models.Model):
+    interface = models.ForeignKey(Interface, verbose_name=u"API应用接口", related_name=u"metadata", null=True)
+    position = models.SmallIntegerField(verbose_name=u"Postion", choices=position_types, default=1)
+    metadata_name = models.CharField(verbose_name=u"元数据名称", max_length=200, null=True, blank=True)
+    data = models.TextField(verbose_name=u"数据值", null=True, blank=True)
+    remark = models.TextField(verbose_name=u"备注", null=True, blank=True)
+    is_active = models.BooleanField(verbose_name=u"是否启用", default=True)
+    is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
+    author = models.ForeignKey(User, verbose_name=u"创建人", related_name=u"metadata_author", null=True)
+    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"metadata_modifier", null=True)
+    ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
+    utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
+
+    class Meta:
+        verbose_name = u"元数据"
+        verbose_name_plural = verbose_name
+        db_table = "metadata"
+
+
+# 错误码
+class ErrorCode(models.Model):
+    interface = models.ForeignKey(Interface, verbose_name=u"API应用接口", related_name=u"errorcode", null=True)
+    error_name = models.CharField(verbose_name=u"错误码名称", max_length=50, null=True, blank=True)
+    display_message = models.CharField(verbose_name=u"提示信息", max_length=200, null=True, blank=True)
+    description = models.TextField(verbose_name=u"错误码描述", null=True, blank=True)
+    remark = models.TextField(verbose_name=u"备注", null=True, blank=True)
+    is_active = models.BooleanField(verbose_name=u"是否启用", default=True)
+    is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
+    author = models.ForeignKey(User, verbose_name=u"创建人", related_name=u"errorcode_author", null=True)
+    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"errorcode_modifier", null=True)
+    ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
+    utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
+
+    class Meta:
+        verbose_name = u"错误码"
+        verbose_name_plural = verbose_name
+        db_table = "errorcode"
+
+
+# 锁接口信息
+class LockInfo(models.Model):
+    interface = models.ForeignKey(Interface, verbose_name=u"API应用接口", related_name=u"lockinfo", null=True)
+    lock_user = models.ForeignKey(User, verbose_name=u"锁表人", related_name=u"lockinfo", null=True)
+    is_locked = models.BooleanField(verbose_name=u"是否被锁", default=False)
+    is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
+    ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
+    utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
+
+    class Meta:
+        verbose_name = u"锁接口信息"
+        verbose_name_plural = verbose_name
+        db_table = "lockinfo"
+
+
+# 修改记录
+class EditHistory(models.Model):
+    interface = models.ForeignKey(Interface, verbose_name=u"API应用接口", related_name=u"edithistory", null=True)
+    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"edithistory", null=True)
+    content = models.TextField(verbose_name=u"修改内容", null=True, blank=True)
+    is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
+    ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
+    utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
+
+    class Meta:
+        verbose_name = u"修改记录"
+        verbose_name_plural = verbose_name
+        db_table = "edithistory"

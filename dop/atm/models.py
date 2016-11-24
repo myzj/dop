@@ -91,6 +91,7 @@ class Interface(models.Model):
     description = models.TextField(verbose_name=u"API接口描述", null=True, blank=True)
     url = models.CharField(verbose_name=u"请求地址", max_length=200, unique=True, null=True, blank=True)
     method = models.SmallIntegerField(verbose_name=u"请求类型", choices=mothod_types, default=1)
+    mockdata = models.TextField(verbose_name=u"模拟数据", null=True, blank=True)
     content_type = models.SmallIntegerField(verbose_name=u"Content type", choices=content_types, default=1)
     remark = models.TextField(verbose_name=u"备注", null=True, blank=True)
     is_active = models.BooleanField(verbose_name=u"是否启用", default=True)

@@ -16,7 +16,7 @@ class ProjectMemberAdmin(admin.ModelAdmin):
 
 
 class InterfaceAdmin(admin.ModelAdmin):
-    list_display = ('id', 'project', 'interface_name', 'description', 'url', 'method', 'content_type', 'remark', 'is_active', 'is_deleted', 'author', 'modifier', 'ctime', 'utime',)
+    list_display = ('id', 'project', 'interface_name', 'description', 'url', 'method', 'content_type', 'mockdata', 'remark', 'is_active', 'is_deleted', 'author', 'modifier', 'ctime', 'utime',)
 
 
 class MetaDataAdmin(admin.ModelAdmin):

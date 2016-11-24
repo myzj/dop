@@ -3,6 +3,7 @@ import time
 import datetime
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.http import HttpResponseRedirect
 from common import JSONResponse
 from common import except_info
 from dop.errorcode import getMessage
@@ -57,4 +58,19 @@ def req_login(request):
     else:
         queryset['errorcode'] = 300014
         queryset['errormsg'] = getMessage('300014')
+        return JSONResponse(queryset)
+
+# 用户退出
+def req_logout(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': False, 'errorcode': 0, 'errormsg': ''}
+    try:
+        pass
+        request.session['user'] = None
+        return HttpResponseRedirect("/login")
+    except BaseException, ex:
+        except_info(ex)
+        queryset['errorcode'] = 200005
+        queryset['errormsg'] = str(ex) + ' ' + getMessage('200005')
         return JSONResponse(queryset)

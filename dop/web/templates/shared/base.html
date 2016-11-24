@@ -11,7 +11,9 @@
     <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}?v={{ config.v }}">
     {% block head %}
     {% endblock %}
+    {% include "shared/header.html" %}
 </head>
+
 <body {% block body_attributes %}{% endblock %}>
 {% block container %}{% endblock %}
 <!-- 其他页面需要加载的js在此扩展 -->

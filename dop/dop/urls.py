@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 """dop URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -16,15 +17,16 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from dop import views
+from atm import atm_api
 from settings import STATICFILES_DIRS
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
 
+    url(r'^api/req_login/?$', atm_api.req_login), # 登录接口
+
     url(r'^test/?$', views.test),
-
     url(r'^login/?$', views.login),
-
     url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': STATICFILES_DIRS[0], 'show_indexes': True}),
 
 ]

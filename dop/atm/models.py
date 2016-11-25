@@ -36,6 +36,7 @@ class Team(models.Model):
     team_name = models.CharField(verbose_name=u"团队名称", max_length=200, unique=True, null=True, blank=True)
     description = models.TextField(verbose_name=u"团队描述", null=True, blank=True)
     remark = models.TextField(verbose_name=u"备注", null=True, blank=True)
+    pic_url = models.CharField(verbose_name=u"图片路径", max_length=500, null=True, blank=True)
     is_active = models.BooleanField(verbose_name=u"是否启用", default=True)
     is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
     author = models.ForeignKey(User, verbose_name=u"创建人", related_name=u"team_author", null=True)
@@ -54,6 +55,7 @@ class Project(models.Model):
     team = models.ForeignKey(Team, verbose_name=u"团队", related_name=u"project", null=True)
     project_name = models.CharField(verbose_name=u"项目名称", max_length=200, null=True, blank=True)
     description = models.TextField(verbose_name=u"项目描述", null=True, blank=True)
+    pic_url = models.CharField(verbose_name=u"图片路径", max_length=500, null=True, blank=True)
     host = models.CharField(verbose_name=u"Host", max_length=200, null=True, blank=True)
     remark = models.TextField(verbose_name=u"备注", null=True, blank=True)
     is_active = models.BooleanField(verbose_name=u"是否启用", default=True)
@@ -89,7 +91,8 @@ class Interface(models.Model):
     project = models.ForeignKey(Project, verbose_name=u"项目", related_name=u"interface", null=True, blank=True)
     interface_name = models.CharField(verbose_name=u"API接口名称", max_length=200, null=True, blank=True)
     description = models.TextField(verbose_name=u"API接口描述", null=True, blank=True)
-    url = models.CharField(verbose_name=u"请求地址", max_length=200, unique=True, null=True, blank=True)
+    url = models.CharField(verbose_name=u"请求地址", max_length=200, null=True, blank=True)
+    tags = models.CharField(verbose_name=u"标签", max_length=500, null=True, blank=True)
     method = models.SmallIntegerField(verbose_name=u"请求类型", choices=mothod_types, default=1)
     mockdata = models.TextField(verbose_name=u"模拟数据", null=True, blank=True)
     content_type = models.SmallIntegerField(verbose_name=u"Content type", choices=content_types, default=1)
@@ -102,6 +105,7 @@ class Interface(models.Model):
     utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
 
     class Meta:
+        unique_together = ('project', 'method', 'url')
         verbose_name = u"API应用接口"
         verbose_name_plural = verbose_name
         db_table = "interface"

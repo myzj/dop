@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from common import JSONResponse
 from common import except_info
 from dop.errorcode import getMessage
-
+from django.views.decorators.csrf import csrf_exempt
 # 用户登录
 def req_login(request):
     queryset = {'timestamp': int(time.mktime(
@@ -74,3 +74,14 @@ def req_logout(request):
         queryset['errorcode'] = 200005
         queryset['errormsg'] = str(ex) + ' ' + getMessage('200005')
         return JSONResponse(queryset)
+
+
+# 检查登录
+@csrf_exempt
+def login_check(func):
+    def wrapper(request, *args, **kwargs):
+        user = request.session['user']
+        if user == None:
+            return HttpResponseRedirect("/login")
+        return func(request, *args, **kwargs)
+    return wrapper

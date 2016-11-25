@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
+from atm.atm_api import login_check
 
 
 def test(request):
@@ -13,6 +14,8 @@ def login(request):
     params['title'] = '登录'
     return render(request, 'login.html', params)
 
+
+@login_check
 def index(request):
     params = {}
     params['title'] = '首页'

@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 """
 Django settings for dop project.
 
@@ -75,6 +76,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'dop.wsgi.application'
 
+# session过期时间设置
+SESSION_COOKIE_AGE = 60*30
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
@@ -119,7 +122,7 @@ if DEBUG:
     STATIC_URL = '/static/'
 else:
     STATIC_URL = config.STATIC_URL
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "web/static"),
-)
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
+    STATICFILES_DIRS = (
+        os.path.join(BASE_DIR, "web/static"),
+    )

@@ -39,7 +39,7 @@ class Team(models.Model):
     is_active = models.BooleanField(verbose_name=u"是否启用", default=True)
     is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
     author = models.ForeignKey(User, verbose_name=u"创建人", related_name=u"team_author", null=True)
-    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"team_modifier", null=True)
+    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"team_modifier", null=True, blank=True)
     ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
     utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
 
@@ -59,7 +59,7 @@ class Project(models.Model):
     is_active = models.BooleanField(verbose_name=u"是否启用", default=True)
     is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
     author = models.ForeignKey(User, verbose_name=u"创建人", related_name=u"project_author", null=True)
-    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"project_modifier", null=True)
+    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"project_modifier", null=True, blank=True)
     ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
     utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
 
@@ -71,8 +71,8 @@ class Project(models.Model):
 
 # 项目人员
 class ProjectMember(models.Model):
-    project = models.ForeignKey(Project, verbose_name=u"项目", related_name=u"projectmember", null=True)
-    user = models.ForeignKey(User, verbose_name=u"成员", related_name=u"projectmember", null=True)
+    project = models.ForeignKey(Project, verbose_name=u"项目", related_name=u"projectmember", null=True, blank=True)
+    user = models.ForeignKey(User, verbose_name=u"成员", related_name=u"projectmember", null=True, blank=True)
     is_active = models.BooleanField(verbose_name=u"是否启用", default=True)
     is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
     ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
@@ -86,7 +86,7 @@ class ProjectMember(models.Model):
 
 # API应用接口
 class Interface(models.Model):
-    project = models.ForeignKey(Project, verbose_name=u"项目", related_name=u"interface", null=True)
+    project = models.ForeignKey(Project, verbose_name=u"项目", related_name=u"interface", null=True, blank=True)
     interface_name = models.CharField(verbose_name=u"API接口名称", max_length=200, null=True, blank=True)
     description = models.TextField(verbose_name=u"API接口描述", null=True, blank=True)
     url = models.CharField(verbose_name=u"请求地址", max_length=200, unique=True, null=True, blank=True)
@@ -97,7 +97,7 @@ class Interface(models.Model):
     is_active = models.BooleanField(verbose_name=u"是否启用", default=True)
     is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
     author = models.ForeignKey(User, verbose_name=u"创建人", related_name=u"interface_author", null=True)
-    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"interface_modifier", null=True)
+    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"interface_modifier", null=True, blank=True)
     ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
     utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
 
@@ -109,7 +109,7 @@ class Interface(models.Model):
 
 # 元数据
 class MetaData(models.Model):
-    interface = models.ForeignKey(Interface, verbose_name=u"API应用接口", related_name=u"metadata", null=True)
+    interface = models.ForeignKey(Interface, verbose_name=u"API应用接口", related_name=u"metadata", null=True, blank=True)
     position = models.SmallIntegerField(verbose_name=u"Postion", choices=position_types, default=1)
     metadata_name = models.CharField(verbose_name=u"元数据名称", max_length=200, null=True, blank=True)
     data = models.TextField(verbose_name=u"数据值", null=True, blank=True)
@@ -117,7 +117,7 @@ class MetaData(models.Model):
     is_active = models.BooleanField(verbose_name=u"是否启用", default=True)
     is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
     author = models.ForeignKey(User, verbose_name=u"创建人", related_name=u"metadata_author", null=True)
-    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"metadata_modifier", null=True)
+    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"metadata_modifier", null=True, blank=True)
     ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
     utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
 
@@ -129,7 +129,7 @@ class MetaData(models.Model):
 
 # 错误码
 class ErrorCode(models.Model):
-    interface = models.ForeignKey(Interface, verbose_name=u"API应用接口", related_name=u"errorcode", null=True)
+    interface = models.ForeignKey(Interface, verbose_name=u"API应用接口", related_name=u"errorcode", null=True, blank=True)
     error_name = models.CharField(verbose_name=u"错误码名称", max_length=50, null=True, blank=True)
     display_message = models.CharField(verbose_name=u"提示信息", max_length=200, null=True, blank=True)
     description = models.TextField(verbose_name=u"错误码描述", null=True, blank=True)
@@ -137,7 +137,7 @@ class ErrorCode(models.Model):
     is_active = models.BooleanField(verbose_name=u"是否启用", default=True)
     is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
     author = models.ForeignKey(User, verbose_name=u"创建人", related_name=u"errorcode_author", null=True)
-    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"errorcode_modifier", null=True)
+    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"errorcode_modifier", null=True, blank=True)
     ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
     utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
 
@@ -149,8 +149,8 @@ class ErrorCode(models.Model):
 
 # 锁接口信息
 class LockInfo(models.Model):
-    interface = models.ForeignKey(Interface, verbose_name=u"API应用接口", related_name=u"lockinfo", null=True)
-    lock_user = models.ForeignKey(User, verbose_name=u"锁表人", related_name=u"lockinfo", null=True)
+    interface = models.ForeignKey(Interface, verbose_name=u"API应用接口", related_name=u"lockinfo", null=True, blank=True)
+    lock_user = models.ForeignKey(User, verbose_name=u"锁表人", related_name=u"lockinfo", null=True, blank=True)
     is_locked = models.BooleanField(verbose_name=u"是否被锁", default=False)
     is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
     ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
@@ -164,8 +164,8 @@ class LockInfo(models.Model):
 
 # 修改记录
 class EditHistory(models.Model):
-    interface = models.ForeignKey(Interface, verbose_name=u"API应用接口", related_name=u"edithistory", null=True)
-    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"edithistory", null=True)
+    interface = models.ForeignKey(Interface, verbose_name=u"API应用接口", related_name=u"edithistory", null=True, blank=True)
+    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"edithistory", null=True, blank=True)
     content = models.TextField(verbose_name=u"修改内容", null=True, blank=True)
     is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
     ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)

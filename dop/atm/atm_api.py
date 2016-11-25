@@ -1,13 +1,14 @@
 # -*- coding:utf-8 -*-
 import time
 import datetime
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from common import JSONResponse
 from common import except_info
 from dop.errorcode import getMessage
 from django.views.decorators.csrf import csrf_exempt
+
 # 用户登录
 def req_login(request):
     queryset = {'timestamp': int(time.mktime(
@@ -16,7 +17,6 @@ def req_login(request):
     if request.method == "GET":
         try:
             params = request.GET.dict()
-            print "params=",params
             required_fields = ["username", "password"]
             errmsg = ''
             for field in required_fields:
@@ -28,8 +28,6 @@ def req_login(request):
                 return JSONResponse(queryset)
             username = params['username']
             password = params['password']
-            print "username=", username
-            print "password=", password
             user = authenticate(username=username, password=password)
             if user is not None:
                 if user.is_active:
@@ -80,8 +78,11 @@ def req_logout(request):
 @csrf_exempt
 def login_check(func):
     def wrapper(request, *args, **kwargs):
-        user = request.session['user']
-        if user == None:
-            return HttpResponseRedirect("/login")
+        try:
+            user = request.session['user']
+            if user == None:
+                return HttpResponseRedirect("/login")
+        except BaseException, ex:
+                return HttpResponseRedirect("/login")
         return func(request, *args, **kwargs)
     return wrapper

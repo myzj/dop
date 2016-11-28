@@ -4,11 +4,11 @@ from models import Team, Project, ProjectMember, Interface, MetaData, ErrorCode,
 
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ('id', 'team_name', 'description', 'remark', 'is_active', 'is_deleted', 'author', 'modifier', 'ctime', 'utime',)
+    list_display = ('id', 'team_name', 'description', 'pic_url', 'remark', 'is_active', 'is_deleted', 'author', 'modifier', 'ctime', 'utime',)
 
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('id', 'team', 'project_name', 'description', 'host', 'remark', 'is_active', 'is_deleted', 'author', 'modifier', 'ctime', 'utime',)
+    list_display = ('id', 'team', 'project_name', 'description', 'pic_url', 'host', 'remark', 'is_active', 'is_deleted', 'author', 'modifier', 'ctime', 'utime',)
 
 
 class ProjectMemberAdmin(admin.ModelAdmin):
@@ -16,7 +16,7 @@ class ProjectMemberAdmin(admin.ModelAdmin):
 
 
 class InterfaceAdmin(admin.ModelAdmin):
-    list_display = ('id', 'project', 'interface_name', 'description', 'url', 'method', 'content_type', 'mockdata', 'remark', 'is_active', 'is_deleted', 'author', 'modifier', 'ctime', 'utime',)
+    list_display = ('id', 'project', 'interface_name', 'description', 'url', 'method', 'content_type', 'tags', 'mockdata', 'remark', 'is_active', 'is_deleted', 'author', 'modifier', 'ctime', 'utime',)
 
 
 class MetaDataAdmin(admin.ModelAdmin):

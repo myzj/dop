@@ -13,7 +13,7 @@
 
 
 
-        
+
         //秒杀接口，页面初始化时加载
         var secskillMyList = buyApi + "json/reply/MjsList";
         //秒杀页面根据不同时间段，调用对应的接口；

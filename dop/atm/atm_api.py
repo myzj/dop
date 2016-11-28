@@ -2,12 +2,14 @@
 import time
 import datetime
 from django.contrib.auth import authenticate
+from django.core import paginator
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from common import JSONResponse
 from common import except_info
 from dop.errorcode import getMessage
 from django.views.decorators.csrf import csrf_exempt
+from atm.models import Team
 
 # 用户登录
 def req_login(request):
@@ -64,7 +66,6 @@ def req_logout(request):
         time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
         'success': False, 'errorcode': 0, 'errormsg': ''}
     try:
-        pass
         request.session['user'] = None
         return HttpResponseRedirect("/login")
     except BaseException, ex:
@@ -80,9 +81,55 @@ def login_check(func):
     def wrapper(request, *args, **kwargs):
         try:
             user = request.session['user']
-            if user == None:
+            if user is None:
                 return HttpResponseRedirect("/login")
         except BaseException, ex:
-                return HttpResponseRedirect("/login")
+            except_info(ex)
+            return HttpResponseRedirect("/login")
         return func(request, *args, **kwargs)
     return wrapper
+
+
+@csrf_exempt
+def req_team(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+    if request.method == 'GET':
+        try:
+            if 'keyword' in request.GET and request.GET['keyword'] != '':
+                keyword = request.GET['keyword']
+                team_match = Team.objects.filter(is_deleted=False, is_active=True, team_name__icontains=keyword).order_by('-utime')
+            else:
+                team_match = Team.objects.filter(is_deleted=False, is_active=True).order_by('-utime')
+            queryset['result']['pageIndex'] = 1
+            queryset['result']['pageSize'] = 10
+            queryset['result']['totalCount'] = team_match.count()
+            queryset['result']['teamList'] = []
+            if 'pageSize' in request.GET:
+                queryset['result']['pageSize'] = request.GET['pageSize']
+            if 'pageIndex' in request.GET:
+                queryset['result']['pageIndex'] = request.GET['pageIndex']
+
+            team_pages = paginator.Paginator(team_match, queryset['result']['pageSize'])
+            queryset['result']['pageCount'] = team_pages.num_pages
+            if team_match.count() > 0:
+                team_page = team_pages.page(queryset['result']['pageIndex'])
+                for team in team_page.object_list:
+                    result = {'team_name': team.team_name, 'team_id': team.id, 'ctime': team.ctime.strftime('%Y-%m-%d %H:%M:%S'),\
+                              'team_pic_url': team.pic_url,\
+                              }
+                    queryset['result']['teamList'].append(result)
+                return JSONResponse(queryset)
+            else:
+                return JSONResponse(queryset)
+
+        except BaseException, ex:
+            except_info(ex)
+            queryset['errorcode'] = 300015
+            queryset['errormsg'] = getMessage('300015')
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 300014
+        queryset['errormsg'] = getMessage('300014')
+        return JSONResponse(queryset)

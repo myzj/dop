@@ -21,10 +21,11 @@ from atm import atm_api
 from settings import STATICFILES_DIRS
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'(?i)^admin/', include(admin.site.urls)),
 
-    url(r'^api/req_login/?$', atm_api.req_login), # 登录接口
-    url(r'^api/req_logout/?$', atm_api.req_logout), # 退出登录
+    url(r'(?i)^api/req_login/?$', atm_api.req_login), # 登录接口
+    url(r'(?i)^api/req_logout/?$', atm_api.req_logout), # 退出登录
+    url(r'(?i)^api/req_team_list/?$', atm_api.req_team), # 获取团队列表
 
     url(r'^test/?$', views.test),
     url(r'^login/?$', views.login),

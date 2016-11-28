@@ -14,6 +14,11 @@ def login(request):
     params['title'] = '登录'
     return render(request, 'login.html', params)
 
+@login_check
+def apilist(request):
+    params = {}
+    params['title'] = 'API列表'
+    return render(request, 'apilist.html', params)
 
 @login_check
 def index(request):

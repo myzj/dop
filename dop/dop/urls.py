@@ -32,9 +32,10 @@ urlpatterns = [
     url(r'(?i)^api/team_name_check/?$', atm_api.team_name_check), # 检查团队名称是否可用
     url(r'(?i)^api/req_project_list/?$', atm_api.req_project), # 获取项目列表
 
-    url(r'(?i)^test/?$', views.test),
-    url(r'(?i)^login/?$', views.login),
-    url(r'(?i)^index/?$', views.index),
+    url(r'^test/?$', views.test),
+    url(r'^login/?$', views.login),
+    url(r'^index/?$', views.index),
+    url(r'^apilist/?$', views.apilist),
 
     url(r'^$', RedirectView.as_view(url='/index/', permanent=True)),
     url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': STATICFILES_DIRS[0], 'show_indexes': True}),

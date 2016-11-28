@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% block head %}
     <link rel="stylesheet" href="{% static "css/login.css" %}?v={{ config.v }}">
-    <link rel="stylesheet" href="{% static "css/form-elements.css" %}?v={{ config.v }}">
+    <link rel="stylesheet" href="{% static "css/global/form-elements.css" %}?v={{ config.v }}">
 {%endblock%}
 {% block container %}
 <div class="top-content">
@@ -23,11 +23,11 @@
 			                    <form role="form" action="" method="post" class="login-form">
 			                    	<div class="form-group">
 			                    		<label class="sr-only" for="form-username">Username</label>
-			                        	<input type="text" name="form-username" placeholder="Username..." class="form-username form-control" id="form-username">
+			                        	<input required="required" type="text" name="form-username" placeholder="Username..." class="form-username form-control" id="form-username">
 			                        </div>
 			                        <div class="form-group">
 			                        	<label class="sr-only" for="form-password">Password</label>
-			                        	<input type="password" name="form-password" placeholder="Password..." class="form-password form-control" id="form-password">
+			                        	<input required="required" type="password" name="form-password" placeholder="Password..." class="form-password form-control" id="form-password">
 			                        </div>
 			                        <a class="form-btn">Sign in!</a>
 			                    </form>
@@ -39,7 +39,12 @@
 
         </div>
 
-    <div class="backstretch" style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px;  height:100%; width: 1349px; z-index: -999999; position: fixed;">
+    <div class="backstretch" style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px;  height:100%; width: 100%; z-index: -999999; position: fixed;">
         <img src="{% static "images/1.jpg" %}" style="position: absolute; margin: 0px; padding: 0px; border: none;  max-height: none; max-width: none; z-index: -999999; left: 0px; top: -303.167px;">
     </div>
+<script type="text/javascript">
+    require(['{% static "js/config.js" %}?v={{config.v}}'], function () {
+        require(['controller/login']);
+    });
+</script>
 {%endblock%}

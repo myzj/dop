@@ -9,7 +9,7 @@ require(['lib/common','model/login/loginModel'],
             };
             loginModel.login(datainfo,function(data){
                 if(data.success){
-                    window.location.href = window.webRoot + 'apilist'
+                    window.location.href = window.webRoot + 'teamlist'
                 }
             });
         })

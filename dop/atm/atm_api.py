@@ -4,7 +4,6 @@ import json
 import datetime
 from django.contrib.auth import authenticate
 from django.core import paginator
-from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from common import JSONResponse
 from common import except_info
@@ -12,6 +11,7 @@ from dop.errorcode import getMessage
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from atm.models import Team
+
 
 # 用户登录
 def req_login(request):
@@ -62,11 +62,12 @@ def req_login(request):
         queryset['errormsg'] = getMessage('300014')
         return JSONResponse(queryset)
 
+
 # 用户退出
 def req_logout(request):
     queryset = {'timestamp': int(time.mktime(
-        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
-        'success': False, 'errorcode': 0, 'errormsg': ''}
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), 'success': False, \
+        'errorcode': 0, 'errormsg': ''}
     try:
         request.session['user'] = None
         return HttpResponseRedirect("/login")
@@ -91,12 +92,12 @@ def login_check(func):
         return func(request, *args, **kwargs)
     return wrapper
 
+
 # 接口调用时检查用户是否已登录
 def interface_check_login(func):
     def wrapper(request, *args, **kwargs):
-        queryset = {'timestamp': int(time.mktime(
-        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
-        'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+        queryset = {'timestamp': int(time.mktime(time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))),\
+                    'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
         try:
             user = request.session.get("user")
             if user is None:
@@ -110,6 +111,8 @@ def interface_check_login(func):
             return JSONResponse(queryset)
         return func(request, *args, **kwargs)
     return wrapper
+
+
 # 查询所有的team列表
 @csrf_exempt
 def req_team(request):

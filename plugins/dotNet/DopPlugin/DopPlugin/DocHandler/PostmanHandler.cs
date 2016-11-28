@@ -14,6 +14,12 @@ namespace DopPlugin.DocHandler
 {
     public class PostmanHandler
     {
+
+        ///// <summary>
+        ///// json 数据类型字典
+        ///// </summary>
+        //private Dictionary<string, string> jsonDataTypeDict = new Dictionary<string, string>();
+
         public Models.Postman ModelData;
         public string[] FilterNames { get; set; }
 
@@ -111,7 +117,9 @@ namespace DopPlugin.DocHandler
         {
             var result = new List<Postman.FieldModel>();
 
-            var reqProps = type.GetProperties();
+            var acutalType = GetActualType(type);
+
+           var reqProps = acutalType.GetProperties();
             foreach (var propInfo in reqProps)
             {
                 var fieldModel = new Models.Postman.FieldModel();
@@ -176,11 +184,6 @@ namespace DopPlugin.DocHandler
                 return type;
             }
         }
-
-        /// <summary>
-        /// json 数据类型字典
-        /// </summary>
-        private Dictionary<string, string> jsonDataTypeDict = new Dictionary<string, string>();
 
         private bool IsExistsChild(Type type)
         {

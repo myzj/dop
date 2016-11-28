@@ -10,7 +10,7 @@ from common import except_info
 from dop.errorcode import getMessage
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
-from atm.models import Team, Project
+from atm.models import Team, Project, Interface
 
 
 # 用户登录
@@ -90,14 +90,16 @@ def login_check(func):
             except_info(ex)
             return HttpResponseRedirect("/login")
         return func(request, *args, **kwargs)
+
     return wrapper
 
 
 # 接口调用时检查用户是否已登录
 def interface_check_login(func):
     def wrapper(request, *args, **kwargs):
-        queryset = {'timestamp': int(time.mktime(time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))),\
-                    'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+        queryset = {'timestamp': int(
+            time.mktime(time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+            'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
         try:
             user = request.session.get("user")
             if user is None:
@@ -110,6 +112,7 @@ def interface_check_login(func):
             queryset['errormsg'] = getMessage('100005')
             return JSONResponse(queryset)
         return func(request, *args, **kwargs)
+
     return wrapper
 
 
@@ -123,7 +126,8 @@ def req_team(request):
         try:
             if 'keyword' in request.GET and request.GET['keyword'] != '':
                 keyword = request.GET['keyword']
-                team_match = Team.objects.filter(is_deleted=False, is_active=True, team_name__icontains=keyword).order_by('-utime')
+                team_match = Team.objects.filter(is_deleted=False, is_active=True,
+                                                 team_name__icontains=keyword).order_by('-utime')
             else:
                 team_match = Team.objects.filter(is_deleted=False, is_active=True).order_by('-utime')
             queryset['result']['pageIndex'] = 1
@@ -140,7 +144,8 @@ def req_team(request):
             if team_match.count() > 0:
                 team_page = team_pages.page(queryset['result']['pageIndex'])
                 for team in team_page.object_list:
-                    result = {'team_name': team.team_name, 'team_id': team.id, 'ctime': team.ctime.strftime('%Y-%m-%d %H:%M:%S'),\
+                    result = {'team_name': team.team_name, 'team_id': team.id,
+                              'ctime': team.ctime.strftime('%Y-%m-%d %H:%M:%S'), \
                               'team_pic_url': team.pic_url}
                     queryset['result']['teamList'].append(result)
                 return JSONResponse(queryset)
@@ -286,7 +291,8 @@ def req_project(request):
                 return JSONResponse(queryset)
             team_filter = Team.objects.filter(is_deleted=False, is_active=True, id=params.get("team_id"))
             if team_filter:
-                project_match = Project.objects.filter(is_deleted=False, is_active=True, team=team_filter[0]).order_by('-utime')
+                project_match = Project.objects.filter(is_deleted=False, is_active=True, team=team_filter[0]).order_by(
+                    '-utime')
                 queryset['result']['pageIndex'] = 1
                 queryset['result']['pageSize'] = 10
                 queryset['result']['totalCount'] = project_match.count()
@@ -301,7 +307,8 @@ def req_project(request):
                 if project_match.count() > 0:
                     project_page = project_pages.page(queryset['result']['pageIndex'])
                     for project in project_page.object_list:
-                        result = {'project_name': project.project_name, 'project_id': project.id, 'ctime': project.ctime.strftime('%Y-%m-%d %H:%M:%S'),\
+                        result = {'project_name': project.project_name, 'project_id': project.id,
+                                  'ctime': project.ctime.strftime('%Y-%m-%d %H:%M:%S'), \
                                   'project_pic_url': project.pic_url}
                         queryset['result']['projectList'].append(result)
                     return JSONResponse(queryset)
@@ -371,7 +378,7 @@ def add_project(request):
         try:
             params = json.loads(request.read())
             errmsg = ''
-            for field in ['project_name', 'team_id']:
+            for field in ['project_name', 'host', 'description', 'team_id']:
                 if field not in params or not params[field]:
                     errmsg += field + ' '
             if errmsg:
@@ -379,17 +386,46 @@ def add_project(request):
                 queryset['errorcode'] = 300013
                 queryset['errormsg'] = errmsg + getMessage('300013')
                 return JSONResponse(queryset)
-            project_name = params.get('project_name')
-            team_id = params.get('team_id')
-            # 检查项目名称是否已存在
-            project_filter = Project.objects.filter(project_name=project_name)
-            if project_filter:
-                queryset['errorcode'] = 300022
-                queryset['errormsg'] = errmsg + getMessage('300022')
-                return JSONResponse(queryset)
+
+            # 检查当前用户是否已经登录
+            user_info = request.session.get("user", default=None)
+            user_id = int(user_info.get("id"))
+            user_filter = User.objects.filter(id=user_id)
+            user = None
+            if user_filter:
+                project_name = params.get('project_name')
+                team_id = params.get('team_id')
+                # 检查项目名称是否已存在
+                project_filter = Project.objects.filter(project_name=project_name)
+                if project_filter:
+                    queryset['errorcode'] = 300022
+                    queryset['errormsg'] = errmsg + getMessage('300022')
+                    return JSONResponse(queryset)
+                else:
+                    # 检查相关联的Team是否存在
+                    team_filter = Team.objects.filter(is_active=True, is_deleted=False, id=team_id)
+                    if team_filter:
+                        user = user_filter[0]
+                        new_project = Project()
+                        new_project.team = team_filter[0]
+                        new_project.project_name = project_name
+                        new_project.host = params.get('host')
+                        new_project.description = params.get('description')
+                        new_project.pic_url = params.get('pic_url')
+                        new_project.author = user
+                        new_project.save()
+                        queryset['success'] = True
+                        queryset['errormsg'] = "新增项目成功"
+                        return JSONResponse(queryset)
+                    else:
+                        queryset['errorcode'] = 300024
+                        queryset['errormsg'] = errmsg + getMessage('300024')
+                        return JSONResponse(queryset)
             else:
-                # 检查相关联的Team是否存在
-                pass
+                queryset['success'] = False
+                queryset['errorcode'] = 300015
+                queryset['errormsg'] = errmsg + getMessage('300015')
+                return JSONResponse(queryset)
         except Exception, ex:
             except_info(ex)
             queryset['success'] = False
@@ -403,8 +439,58 @@ def add_project(request):
         return JSONResponse(queryset)
 
 
-
-
-
-
-
+# 查询接口列表
+@csrf_exempt
+def req_api_list(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+    if request.method == 'GET':
+        try:
+            params = request.GET.dict()
+            required_fields = ["project_id"]
+            errmsg = ''
+            for field in required_fields:
+                if field not in params or not params[field]:
+                    errmsg += field + ', '
+            if errmsg:
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
+                return JSONResponse(queryset)
+            project_filter = Project.objects.filter(is_deleted=False, is_active=True, id=params.get("project_id"))
+            # 判断项目是否存在
+            if project_filter:
+                api_match = Interface.objects.filter(is_deleted=False, is_active=True, project=project_filter[0])
+                queryset['result']['pageIndex'] = 1
+                queryset['result']['pageSize'] = 10
+                queryset['result']['totalCount'] = api_match.count()
+                queryset['result']['apiList'] = []
+                if 'pageSize' in request.GET:
+                    queryset['result']['pageSize'] = request.GET['pageSize']
+                if 'pageIndex' in request.GET:
+                    queryset['result']['pageIndex'] = request.GET['pageIndex']
+                api_pages = paginator.Paginator(api_match, queryset['result']['pageSize'])
+                queryset['result']['pageCount'] = api_pages.num_pages
+                if api_match.count() > 0:
+                    api_page = api_pages.page(queryset['result']['pageIndex'])
+                    for api in api_page.object_list:
+                        result = {'id': api.id, 'interface_name': api.interface_name, 'description': api.description, 'url': api.url, 'method': api.method, \
+                                  'content_type': api.content_type, 'remark': api.remark, 'tags': api.tags, \
+                                  'update_time': api.utime.strftime('%Y-%m-%d %H:%M:%S')}
+                        queryset['result']['apiList'].append(result)
+                    return JSONResponse(queryset)
+                else:
+                    return JSONResponse(queryset)
+            else:
+                queryset['errorcode'] = 300025
+                queryset['errormsg'] = errmsg + ' ' + getMessage('300025')
+                return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset['errorcode'] = 300021
+            queryset['errormsg'] = getMessage('300021')
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 300014
+        queryset['errormsg'] = getMessage('300014')
+        return JSONResponse(queryset)

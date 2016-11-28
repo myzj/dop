@@ -1,5 +1,4 @@
 # -*- coding:utf-8 -*-
-
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
 from dop import errorcode
@@ -11,20 +10,23 @@ import time
 import datetime
 from django.views.decorators.csrf import csrf_exempt
 
+
 class JSONResponse(HttpResponse):
     """
     An HttpResponse that renders it's content into JSON.
     """
+
     def __init__(self, data, **kwargs):
         content = JSONRenderer().render(data)
         kwargs['content_type'] = 'application/json;charset=utf-8'
         super(JSONResponse, self).__init__(content, **kwargs)
+
     """
-        success 	bool 	请求是否成功
-        errorcode 	string 	错误码
-        errormsg 	string 	错误信息
-        timestamp 	int 	接口响应时间
-        result 	json 	接口返回数据
+        success     bool    请求是否成功
+        errorcode   string  错误码
+        errormsg    string  错误信息
+        timestamp   int     接口响应时间
+        result      json    接口返回数据
     """
 
 

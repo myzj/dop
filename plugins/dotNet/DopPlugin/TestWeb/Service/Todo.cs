@@ -14,10 +14,10 @@ namespace TestWeb.Service
     [Description("adfasdf")]
     public class Hello
     {
-        [ApiMember(Name = "name", Description = "测试的名称", IsRequired = true)]
+        [ApiMember(Name = "name", Description = "测试的名称")]
         public string Name { get; set; }
 
-        [ApiMember(Name = "user_id", Description = "用户id", IsRequired = true)]
+        [ApiMember(Name = "user_id", Description = "用户id")]
         public int UserId { get; set; }
 
         public bool IsDelete { get; set; }

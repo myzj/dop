@@ -25,12 +25,12 @@ from django.views.generic import RedirectView
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'(?i)^api/req_login/?$', atm_api.req_login), # 登录接口
-    url(r'(?i)^api/req_logout/?$', atm_api.req_logout), # 退出登录
-    url(r'(?i)^api/req_team_list/?$', atm_api.req_team), # 获取团队列表
-    url(r'(?i)^api/add_team_list/?$', atm_api.add_team), # 增加团队列表
-    url(r'(?i)^api/team_name_check/?$', atm_api.team_name_check), # 检查团队名称是否可用
-    url(r'(?i)^api/req_project_list/?$', atm_api.req_project), # 获取项目列表
+    url(r'(?i)^api/req_login/?$', atm_api.req_login),  # 登录接口
+    url(r'(?i)^api/req_logout/?$', atm_api.req_logout),  # 退出登录
+    url(r'(?i)^api/req_team_list/?$', atm_api.req_team),  # 获取团队列表
+    url(r'(?i)^api/add_team_list/?$', atm_api.add_team),  # 增加团队列表
+    url(r'(?i)^api/team_name_check/?$', atm_api.team_name_check),  # 检查团队名称是否可用
+    url(r'(?i)^api/req_project_list/?$', atm_api.req_project),  # 获取项目列表
 
     url(r'^test/?$', views.test),
     url(r'^login/?$', views.login),

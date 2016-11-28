@@ -52,7 +52,7 @@ class Team(models.Model):
 # 项目
 class Project(models.Model):
     team = models.ForeignKey(Team, verbose_name=u"团队", related_name=u"project", null=True)
-    project_name = models.CharField(verbose_name=u"项目名称", max_length=200, null=True, blank=True)
+    project_name = models.CharField(verbose_name=u"项目名称", unique=True, max_length=200, null=True, blank=True)
     description = models.TextField(verbose_name=u"项目描述", null=True, blank=True)
     pic_url = models.CharField(verbose_name=u"图片路径", max_length=500, null=True, blank=True)
     host = models.CharField(verbose_name=u"Host", max_length=200, null=True, blank=True)

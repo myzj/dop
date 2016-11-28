@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^test/?$', views.test),
     url(r'^login/?$', views.login),
     url(r'^index/?$', views.index),
+    url(r'^teamlist/?$', views.teamlist),
     url(r'^apilist/?$', views.apilist),
 
     url(r'^$', RedirectView.as_view(url='/index/', permanent=True)),

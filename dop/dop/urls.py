@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^test/?$', views.test),
     url(r'^login/?$', views.login),
     url(r'^index/?$', views.index),
+    url(r'^apilist/?$', views.apilist),
 
     url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': STATICFILES_DIRS[0], 'show_indexes': True}),
 

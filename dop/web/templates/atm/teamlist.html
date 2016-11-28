@@ -59,12 +59,11 @@
             </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
-
     </div>
 </header>
-<div class="content-box" ng-app="">
+<div class="content-box">
     <h3>Teams</h3>
-    <div class="edit-main team-list">
+    <div class="edit-main team-list" ng-controller="teamList">
         <ul>
             <input ng-model="msg">
             <p ng-bind="msg"></p>

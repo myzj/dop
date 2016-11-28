@@ -12,7 +12,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
 
 class ProjectMemberAdmin(admin.ModelAdmin):
-    list_display = ('id', 'project', 'user', 'is_active', 'is_deleted', 'ctime', 'utime',)
+    list_display = ('id', 'project', 'user', 'is_author', 'is_active', 'is_deleted', 'ctime', 'utime',)
 
 
 class InterfaceAdmin(admin.ModelAdmin):

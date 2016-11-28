@@ -23,11 +23,10 @@ position_types = (
     (1, "ReqHeader"),
     (2, "ReqPath"),
     (3, "ReqQueryString"),
-    (4, "ReqForm"),
-    (5, "ReqBody"),
-    (6, "ReqCookie"),
-    (7, "RespHeader"),
-    (8, "RespBody "),
+    (4, "ReqBody"),
+    (5, "ReqCookie"),
+    (6, "RespHeader"),
+    (7, "RespBody"),
 )
 
 
@@ -75,6 +74,7 @@ class Project(models.Model):
 class ProjectMember(models.Model):
     project = models.ForeignKey(Project, verbose_name=u"项目", related_name=u"projectmember", null=True, blank=True)
     user = models.ForeignKey(User, verbose_name=u"成员", related_name=u"projectmember", null=True, blank=True)
+    is_author = models.BooleanField(verbose_name=u"是否为项目管理员", default=False)
     is_active = models.BooleanField(verbose_name=u"是否启用", default=True)
     is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
     ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)

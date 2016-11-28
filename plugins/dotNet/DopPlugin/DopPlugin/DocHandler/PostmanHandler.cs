@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -66,10 +68,21 @@ namespace DopPlugin.DocHandler
                 }
                 #endregion
 
+                Debug.WriteLine("getter api info:" + service.Value.Name);
+
                 var item = new Models.Postman.ItemModel();
 
                 #region Base
-                item.Base = new Models.Postman.BaseModel() { Name = service.Value.Name, Description = service.Value.Name, State = true, Tags = new ArrayOfString() };
+                item.Base = new Models.Postman.BaseModel() { Name = service.Value.Name, Description = "", State = true, Tags = new ArrayOfString() };
+
+                var serviceAttrs = service.Value.RequestType.GetCustomAttributes(typeof(DescriptionAttribute), true);
+                foreach (var serviceAttr in serviceAttrs)
+                {
+                    if (serviceAttr is DescriptionAttribute)
+                    {
+                        item.Base.Description = ((DescriptionAttribute)serviceAttr).Description;
+                    }
+                }
 
                 item.Base.Tags.AddRange(service.Value.Routes.Select(c => c.Path).ToList());
                 #endregion
@@ -119,27 +132,38 @@ namespace DopPlugin.DocHandler
 
             var acutalType = GetActualType(type);
 
-           var reqProps = acutalType.GetProperties();
+            var reqProps = acutalType.GetProperties();
             foreach (var propInfo in reqProps)
             {
                 var fieldModel = new Models.Postman.FieldModel();
                 fieldModel.FieldName = propInfo.Name;
                 fieldModel.IsArray = IsArray(propInfo.PropertyType);
-                fieldModel.Type = GetJsonTypeDefine(GetActualType(propInfo.PropertyType));
+                fieldModel.FieldType = GetJsonTypeDefine(GetActualType(propInfo.PropertyType));
 
-                var attrs = propInfo.GetCustomAttributes(typeof(ApiMemberAttribute), false);
+                var attrs = propInfo.GetCustomAttributes(typeof(ApiMemberAttribute), true);
+
                 foreach (var attrItem in attrs)
                 {
                     var apiDefine = (ApiMemberAttribute)attrItem;
 
-                    fieldModel.FieldName = apiDefine.Name;
-                    fieldModel.Description = apiDefine.Description;
+                    if (!string.IsNullOrWhiteSpace(apiDefine.Name))
+                    {
+                        fieldModel.FieldName = apiDefine.Name;
+                    }
+                    if (!string.IsNullOrWhiteSpace(apiDefine.Description))
+                    {
+                        fieldModel.Description = apiDefine.Description;
+                    }
                     fieldModel.IsRequired = apiDefine.IsRequired;
                 }
 
                 if (IsExistsChild(propInfo.PropertyType))
                 {
-                    fieldModel.ChildItem = GetFieldModels(GetActualType(propInfo.PropertyType));
+                    var propActualType = GetActualType(propInfo.PropertyType);
+                    if (propActualType != type)
+                    {
+                        fieldModel.ChildItem = GetFieldModels(propActualType);
+                    }
                 }
 
                 result.Add(fieldModel);
@@ -198,7 +222,7 @@ namespace DopPlugin.DocHandler
         public string GetJsonTypeDefine(Type type)
         {
             var result = "xx";
-
+            
             if (type.FullName.Equals(typeof(Int16).FullName)
                 || type.FullName.Equals(typeof(Int32).FullName)
                 || type.FullName.Equals(typeof(Int64).FullName)

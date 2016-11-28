@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Web.UI;
 using ServiceStack.DataAnnotations;
 using ServiceStack.ServiceHost;
+using ServiceStack.ServiceInterface.ServiceModel;
 
 namespace DopPlugin.Models
 {
@@ -18,6 +20,14 @@ namespace DopPlugin.Models
         [DataContract]
         public class ItemModel
         {
+            public ItemModel()
+            {
+                Base = new BaseModel();
+                Request = new RequestModel();
+                Response = new ResponseModel();
+                ErrorCode = new List<ErrorCodeModel>();
+            }
+
             [DataMember(Name = "base")]
             public BaseModel Base { get; set; }
 
@@ -35,6 +45,11 @@ namespace DopPlugin.Models
         [DataContract]
         public class InfoModel
         {
+            public InfoModel()
+            {
+                Project = "";
+            }
+
             [DataMember(Name = "project")]
             public string Project { get; set; }
 
@@ -43,6 +58,15 @@ namespace DopPlugin.Models
         [DataContract]
         public class BaseModel
         {
+            public BaseModel()
+            {
+                Name = "";
+                Mock = "";
+                Tags = new List<string>();
+                Description = "";
+                State = false;
+            }
+
             [DataMember(Name = "name")]
             public string Name { get; set; }
 
@@ -63,6 +87,16 @@ namespace DopPlugin.Models
         [DataContract]
         public class RequestModel
         {
+            public RequestModel()
+            {
+                Url = "";
+                Method = "";
+                Headers = new List<FieldModel>();
+                ContentType = "";
+                QueryString = new List<FieldModel>();
+                Body = new List<FieldModel>();
+            }
+
             [DataMember(Name = "url")]
             public string Url { get; set; }
 
@@ -85,6 +119,12 @@ namespace DopPlugin.Models
         [DataContract]
         public class ResponseModel
         {
+            public ResponseModel()
+            {
+                Mode = "";
+                Body = new List<FieldModel>();
+            }
+
             /// <summary>
             /// urlencoded , raw
             /// </summary>
@@ -98,11 +138,21 @@ namespace DopPlugin.Models
         [DataContract]
         public class FieldModel
         {
+            public FieldModel()
+            {
+                FieldName = "";
+                FieldType = "";
+                Default = "";
+                Example = "";
+                Description = "";
+                ChildItem = new List<FieldModel>();
+            }
+
             [DataMember(Name = "field_name")]
             public string FieldName { get; set; }
 
             [DataMember(Name = "field_type")]
-            public string Type { get; set; }
+            public string FieldType { get; set; }
 
             [DataMember(Name = "is_array")]
             public bool IsArray { get; set; }
@@ -127,6 +177,13 @@ namespace DopPlugin.Models
         [DataContract]
         public class ErrorCodeModel
         {
+            public ErrorCodeModel()
+            {
+                ErrorCode = "";
+                DisplayMessage = "";
+                Description = "";
+            }
+
             [DataMember(Name = "error_code")]
             public string ErrorCode { get; set; }
 

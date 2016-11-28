@@ -16,6 +16,9 @@
 <script src="{% static "js/require.js" %}?v={{ config.v }}"></script>
 <script src="{% static "js/lib/angular.min.js" %}?v={{ config.v }}"></script>
 <script src="{% static "js/lib/bootstrap.min.js" %}?v={{ config.v }}"></script>
+<script>
+    window.webRoot = '{{ config.WEB_ROOT }}';
+</script>
 </head>
 
 <body {% block body_attributes %}{% endblock %}>

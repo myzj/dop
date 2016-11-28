@@ -27,6 +27,17 @@ namespace TestWeb.Service
         public long timestamp { get; set; }
 
         public List<int> ids { get; set; }
+
+        public TestItem1 TestItem1 { get; set; }
+
+        public List<TestItem1> TestItem1s { get; set; }
+    }
+
+    public class TestItem1
+    {
+        public string t1p { get; set; }
+
+        public string t2p { get; set; }
     }
 
     public class Hello1

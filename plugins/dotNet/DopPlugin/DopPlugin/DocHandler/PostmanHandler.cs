@@ -14,20 +14,26 @@ namespace DopPlugin.DocHandler
 {
     public class PostmanHandler
     {
+
+        ///// <summary>
+        ///// json 数据类型字典
+        ///// </summary>
+        //private Dictionary<string, string> jsonDataTypeDict = new Dictionary<string, string>();
+
         public Models.Postman ModelData;
         public string[] FilterNames { get; set; }
 
         public PostmanHandler(string[] filterNames)
         {
             #region Init json datatype list
-            jsonDataTypeDict.Add(typeof(bool).FullName, "boolean");
-            jsonDataTypeDict.Add(typeof(DateTime).FullName, "string");
-            jsonDataTypeDict.Add(typeof(Int16).FullName, "int");
-            jsonDataTypeDict.Add(typeof(Int32).FullName, "int");
-            jsonDataTypeDict.Add(typeof(Int64).FullName, "int");
-            jsonDataTypeDict.Add(typeof(float).FullName, "int");
-            jsonDataTypeDict.Add(typeof(double).FullName, "int");
-            jsonDataTypeDict.Add(typeof(decimal).FullName, "int");
+            //jsonDataTypeDict.Add(typeof(bool).FullName, "boolean");
+            //jsonDataTypeDict.Add(typeof(DateTime).FullName, "string");
+            //jsonDataTypeDict.Add(typeof(Int16).FullName, "int");
+            //jsonDataTypeDict.Add(typeof(Int32).FullName, "int");
+            //jsonDataTypeDict.Add(typeof(Int64).FullName, "int");
+            //jsonDataTypeDict.Add(typeof(float).FullName, "int");
+            //jsonDataTypeDict.Add(typeof(double).FullName, "int");
+            //jsonDataTypeDict.Add(typeof(decimal).FullName, "int");
             #endregion
 
             FilterNames = filterNames;
@@ -102,11 +108,18 @@ namespace DopPlugin.DocHandler
             }
         }
 
+        /// <summary>
+        /// 根据类型，反射所有属性，返回 FieldModel 列表
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         private List<Postman.FieldModel> GetFieldModels(Type type)
         {
             var result = new List<Postman.FieldModel>();
 
-            var reqProps = type.GetProperties();
+            var acutalType = GetActualType(type);
+
+           var reqProps = acutalType.GetProperties();
             foreach (var propInfo in reqProps)
             {
                 var fieldModel = new Models.Postman.FieldModel();
@@ -122,6 +135,11 @@ namespace DopPlugin.DocHandler
                     fieldModel.FieldName = apiDefine.Name;
                     fieldModel.Description = apiDefine.Description;
                     fieldModel.IsRequired = apiDefine.IsRequired;
+                }
+
+                if (IsExistsChild(propInfo.PropertyType))
+                {
+                    fieldModel.ChildItem = GetFieldModels(GetActualType(propInfo.PropertyType));
                 }
 
                 result.Add(fieldModel);
@@ -167,10 +185,10 @@ namespace DopPlugin.DocHandler
             }
         }
 
-        /// <summary>
-        /// json 数据类型字典
-        /// </summary>
-        private Dictionary<string, string> jsonDataTypeDict = new Dictionary<string, string>();
+        private bool IsExistsChild(Type type)
+        {
+            return GetJsonTypeDefine(GetActualType(type)) == "object";
+        }
 
         /// <summary>
         /// 获取json类型定义
@@ -179,11 +197,37 @@ namespace DopPlugin.DocHandler
         /// <returns></returns>
         public string GetJsonTypeDefine(Type type)
         {
-            var result = "string";
-            if (jsonDataTypeDict.ContainsKey(type.FullName))
+            var result = "xx";
+
+            if (type.FullName.Equals(typeof(Int16).FullName)
+                || type.FullName.Equals(typeof(Int32).FullName)
+                || type.FullName.Equals(typeof(Int64).FullName)
+                || type.FullName.Equals(typeof(float).FullName)
+                || type.FullName.Equals(typeof(double).FullName)
+                || type.FullName.Equals(typeof(decimal).FullName)
+                )
             {
-                result = jsonDataTypeDict[type.FullName];
+                result = "int";
             }
+            else if (type.FullName.Equals(typeof(bool).FullName))
+            {
+                result = "boolean";
+            }
+            else if (type.FullName.Equals(typeof(DateTime).FullName)
+                || type.FullName.Equals(typeof(string).FullName)
+                )
+            {
+                result = "string";
+            }
+            else if (type.IsGenericType)
+            {
+
+            }
+            else if (type.IsClass)
+            {
+                result = "object";
+            }
+
             return result;
         }
 

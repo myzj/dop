@@ -15,6 +15,12 @@ def login(request):
     return render(request, 'login.html', params)
 
 @login_check
+def teamlist(request):
+    params = {}
+    params['title'] = 'Team列表'
+    return render(request, 'atm/teamlist.html', params)
+
+@login_check
 def apilist(request):
     params = {}
     params['title'] = 'API列表'

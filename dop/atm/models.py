@@ -20,13 +20,8 @@ content_types = (
 
 # position types
 position_types = (
-    (1, "ReqHeader"),
-    (2, "ReqPath"),
-    (3, "ReqQueryString"),
-    (4, "ReqBody"),
-    (5, "ReqCookie"),
-    (6, "RespHeader"),
-    (7, "RespBody"),
+    (1, "Request"),
+    (2, "Response"),
 )
 
 

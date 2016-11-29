@@ -31,6 +31,8 @@ CONSTANT = {
     "300023": ["", u"新增项目异常"],
     "300024": ["", u"找不到关联的团队"],
     "300025": ["", u"找不到关联的项目"],
+    "300026": ["Add interface fail", u"新增API接口失败"],
+    "300027": ["Add interface throw exception", u"新增API接口出现异常"],
 
 }
 

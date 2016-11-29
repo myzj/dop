@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="{% static "css/apipage.css" %}?v={{ config.v }}">
 {%endblock%}
 {% block container %}
-<div class="container">
+<div class="container" ng-controller="apiMain">
     <div class="api-top">
         <div class="row">
             <div class="col-xs-1">APIS</div>
@@ -167,7 +167,7 @@
 
 <script type="text/javascript">
     require(['{% static "js/config.js" %}?v={{config.v}}'], function () {
-        require(['controller/test']);
+        require(['controller/atm/apilist']);
     });
 </script>
 {%endblock%}

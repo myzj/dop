@@ -76,7 +76,7 @@
             <div class="edit-main team-list" ng-controller="ProjectMain">
                 <ul>
                     <li class="listLi" ng-repeat="List in projectArr">
-                        <a href="/apilist?team=@{List.project_id}@">
+                        <a href="/apilist?project=@{List.project_id}@">
                             <p class="team-pic"><img ng-src="@{List.project_pic_url}@"/></p>
 
                             <p class="team-name">@{List.project_name}@</p>

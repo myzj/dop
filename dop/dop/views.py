@@ -30,7 +30,7 @@ def projectlist(request):
 def apilist(request):
     params = {}
     params['title'] = 'API列表'
-    return render(request, 'apilist.html', params)
+    return render(request, 'atm/apilist.html', params)
 
 @login_check
 def index(request):

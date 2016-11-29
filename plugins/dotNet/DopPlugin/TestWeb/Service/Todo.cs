@@ -10,8 +10,8 @@ namespace TestWeb.Service
 {
     //Request DTO 
     [Route(path: "/test1", Notes = "备注", Summary = "总结")]
-    [Route(path: "/test11")]
-    [Description("adfasdf")]
+    [Route(path: "/Hello")]
+    [Description("测试接口 Hello")]
     public class Hello
     {
         [ApiMember(Name = "name", Description = "测试的名称")]

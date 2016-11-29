@@ -130,11 +130,11 @@ class InterFace(object):
                             new_error_code.description = item.get("description")
                         new_error_code.save()
                 print '--------------Call create_interface finished! -----------'
-                return True
-            return False
+                return True, ""
+            return False, getMessage("300026")
         except BaseException, ex:
             except_info(ex)
-            return False
+            return False, getMessage("300027") + ": " + str(ex)
 
 
 # 查询API接口明细
@@ -159,12 +159,12 @@ def qry_interface_detail(request):
             return JSONResponse(queryset)
         except BaseException, ex:
             except_info(ex)
-            queryset['errorcode'] = 300015
-            queryset['errormsg'] = getMessage('300015')
+            queryset['errorcode'] = 100007
+            queryset['errormsg'] = getMessage('100007')
             return JSONResponse(queryset)
     else:
-        queryset['errorcode'] = 300014
-        queryset['errormsg'] = "查询API接口明细出现异常"
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)
 
 
@@ -190,8 +190,8 @@ def add_interface(request):
                     user = user_filter[0]
             if user is None:
                 queryset['success'] = False
-                queryset['errorcode'] = 300015
-                queryset['errormsg'] = getMessage('300015')
+                queryset['errorcode'] = 200003
+                queryset['errormsg'] = getMessage('200003')
                 return JSONResponse(queryset)
             data["user_id"] = user.id
             data["user"] = user
@@ -201,55 +201,55 @@ def add_interface(request):
                 if field not in params:
                     errmsg += field + ', '
             if errmsg:
-                queryset['errorcode'] = 300004
-                queryset['errormsg'] = errmsg + ' ' + getMessage('300004')
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
                 return JSONResponse(queryset)
             info = params.get("info")
             if not isinstance(info, dict):
-                queryset['errorcode'] = 300005
-                queryset['errormsg'] = 'info ' + 'Parameter type error'
+                queryset['errorcode'] = 100008
+                queryset['errormsg'] = 'info ' + getMessage('100008')
                 return JSONResponse(queryset)
             if "project" not in info:
-                queryset['errorcode'] = 300004
-                queryset['errormsg'] = 'info属性值的project为必填属性 ' + getMessage('300004')
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = 'info属性值的project为必填属性 ' + getMessage('100001')
                 return JSONResponse(queryset)
             project_id = int(info.get("project"))
             project_filter = Project.objects.filter(id=project_id, is_deleted=False, is_active=True)
             if not project_filter:
-                queryset['errorcode'] = 300004
-                queryset['errormsg'] = "项目ID为:{0},查不到符合条件的项目".format(project_id)
+                queryset['errorcode'] = 300025
+                queryset['errormsg'] = "项目ID为:{0},{1}".format(project_id, getMessage("300025"))
                 return JSONResponse(queryset)
             data["project_id"] = project_id
             data["project"] = project_filter[0]
             item = params.get("item")
             if not isinstance(item, list):
-                queryset['errorcode'] = 300005
-                queryset['errormsg'] = 'item ' + 'Parameter type error'
+                queryset['errorcode'] = 100008
+                queryset['errormsg'] = 'item ' + getMessage('100008')
                 return JSONResponse(queryset)
             for rec in item:
                 for key1 in ["base", "request"]:
                     if key1 not in rec:
-                        queryset['errorcode'] = 300004
-                        queryset['errormsg'] = key1 + ' ' + getMessage('300004')
+                        queryset['errorcode'] = 100001
+                        queryset['errormsg'] = key1 + ' ' + getMessage('100001')
                         return JSONResponse(queryset)
                 base = rec.get("base")
                 if not isinstance(base, dict):
-                    queryset['errorcode'] = 300005
-                    queryset['errormsg'] = 'base ' + 'Parameter type error'
+                    queryset['errorcode'] = 100008
+                    queryset['errormsg'] = 'base ' + getMessage('100008')
                     return JSONResponse(queryset)
                 for key2 in ["name", "state"]:
                     if key2 not in base:
-                        queryset['errorcode'] = 300004
-                        queryset['errormsg'] = key2 + ' ' + getMessage('300004')
+                        queryset['errorcode'] = 100001
+                        queryset['errormsg'] = key2 + ' ' + getMessage('100001')
                         return JSONResponse(queryset)
                 if not base.get("name"):
-                    queryset['errorcode'] = 300004
-                    queryset['errormsg'] = 'base属性值的name为必填属性  ' + getMessage('300004')
+                    queryset['errorcode'] = 100001
+                    queryset['errormsg'] = 'base属性值的name为必填属性  ' + getMessage('100001')
                     return JSONResponse(queryset)
                 data["name"] = base.get("name")
                 if not base.get("state"):
-                    queryset['errorcode'] = 300004
-                    queryset['errormsg'] = 'base属性值的state为必填属性  ' + getMessage('300004')
+                    queryset['errorcode'] = 100001
+                    queryset['errormsg'] = 'base属性值的state为必填属性  ' + getMessage('100001')
                     return JSONResponse(queryset)
                 data["state"] = base.get("state")
                 if base.get("mock"):
@@ -261,13 +261,13 @@ def add_interface(request):
 
                 req = rec.get("request")
                 if not isinstance(req, dict):
-                    queryset['errorcode'] = 300005
-                    queryset['errormsg'] = 'req ' + 'Parameter type error'
+                    queryset['errorcode'] = 100008
+                    queryset['errormsg'] = 'req ' + getMessage('100008')
                     return JSONResponse(queryset)
                 for key3 in ["url", "method", "content_type"]:
                     if key3 not in req or not req.get(key3):
-                        queryset['errorcode'] = 300004
-                        queryset['errormsg'] = key3 + ' ' + getMessage('300004')
+                        queryset['errorcode'] = 100001
+                        queryset['errormsg'] = key3 + ' ' + getMessage('100001')
                         return JSONResponse(queryset)
                     data[key3] = req.get(key3)
                 data['req_data'] = req
@@ -278,31 +278,32 @@ def add_interface(request):
                 if rec.get("error_code"):
                     error_code = rec.get("error_code")
                     if not isinstance(error_code, list):
-                        queryset['errorcode'] = 300005
-                        queryset['errormsg'] = 'error_code ' + 'Parameter type error'
+                        queryset['errorcode'] = 100008
+                        queryset['errormsg'] = 'error_code ' + getMessage('100008')
                         return JSONResponse(queryset)
                     check_err = map(lambda x: isinstance(x, dict), error_code)
                     if False in check_err:
-                        queryset['errorcode'] = 300005
-                        queryset['errormsg'] = 'error_code value type ' + 'Parameter type error'
+                        queryset['errorcode'] = 100008
+                        queryset['errormsg'] = 'error_code value type ' + getMessage('100008')
                         return JSONResponse(queryset)
                     for err_rec in error_code:
                         if "error_code" not in err_rec and not err_rec.get("error_code"):
-                            queryset['errorcode'] = 300004
-                            queryset['errormsg'] = 'error_code属性值的error_code为必填属性  ' + getMessage('300004')
+                            queryset['errorcode'] = 100001
+                            queryset['errormsg'] = 'error_code属性值的error_code为必填属性  ' + getMessage('100001')
                             return JSONResponse(queryset)
                     data["error_code"] = error_code
 
                 # call write data to db
                 itf = InterFace(data=data)
-                flag = itf.create_interface()
+                flag, msg = itf.create_interface()
                 data.pop("project")
                 data.pop("user")
                 queryset["result"] = data
                 if flag:
                     error_msg = "Add new interface success !"
                 else:
-                    error_msg = "Add new interface fail !"
+                    queryset['errorcode'] = 300026
+                    error_msg = getMessage("300026") + msg
                 queryset["errormsg"] = error_msg
             return JSONResponse(queryset)
         except BaseException, ex:

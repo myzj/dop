@@ -45,119 +45,27 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>1</td>
+            <tr ng-repeat="List in apiArr">
+                <td>@{}@</td>
                 <td>
                     <a href="javascript:;">View</a>|
                     <a href="javascript:;">Mock</a>|
                     <a href="javascript:;">Test</a>
                 </td>
                 <td>
-                    获取购物车
+                    @{List.interface_name}@
                 </td>
                 <td>
-                    /v1/getshopping
+                    @{List.url}@
                 </td>
                 <td>
-                    POST
+                    @{List.method}@
                 </td>
                 <td>
-                    Goods,Query
+                    @{List.tags}@
                 </td>
                 <td>
-                    2016-11-24 12:22
-                </td>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>
-                    <a href="javascript:;">View</a>|
-                    <a href="javascript:;">Mock</a>|
-                    <a href="javascript:;">Test</a>
-                </td>
-                <td>
-                    获取购物车
-                </td>
-                <td>
-                    /v1/getshopping
-                </td>
-                <td>
-                    POST
-                </td>
-                <td>
-                    Goods,Query
-                </td>
-                <td>
-                    2016-11-24 12:22
-                </td>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>
-                    <a href="javascript:;">View</a>|
-                    <a href="javascript:;">Mock</a>|
-                    <a href="javascript:;">Test</a>
-                </td>
-                <td>
-                    获取购物车
-                </td>
-                <td>
-                    /v1/getshopping
-                </td>
-                <td>
-                    POST
-                </td>
-                <td>
-                    Goods,Query
-                </td>
-                <td>
-                    2016-11-24 12:22
-                </td>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>
-                    <a href="javascript:;">View</a>|
-                    <a href="javascript:;">Mock</a>|
-                    <a href="javascript:;">Test</a>
-                </td>
-                <td>
-                    获取购物车
-                </td>
-                <td>
-                    /v1/getshopping
-                </td>
-                <td>
-                    POST
-                </td>
-                <td>
-                    Goods,Query
-                </td>
-                <td>
-                    2016-11-24 12:22
-                </td>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>
-                    <a href="javascript:;">View</a>|
-                    <a href="javascript:;">Mock</a>|
-                    <a href="javascript:;">Test</a>
-                </td>
-                <td>
-                    获取购物车
-                </td>
-                <td>
-                    /v1/getshopping
-                </td>
-                <td>
-                    POST
-                </td>
-                <td>
-                    Goods,Query
-                </td>
-                <td>
-                    2016-11-24 12:22
+                    @{List.update_time}@
                 </td>
             </tr>
             </tbody>

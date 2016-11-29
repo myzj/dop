@@ -193,8 +193,6 @@ def add_interface(request):
                 queryset['errorcode'] = 200003
                 queryset['errormsg'] = getMessage('200003')
                 return JSONResponse(queryset)
-            data["user_id"] = user.id
-            data["user"] = user
             required_fields = ['info', 'item']
             errmsg = ''
             for field in required_fields:
@@ -219,14 +217,16 @@ def add_interface(request):
                 queryset['errorcode'] = 300025
                 queryset['errormsg'] = "项目ID为:{0},{1}".format(project_id, getMessage("300025"))
                 return JSONResponse(queryset)
-            data["project_id"] = project_id
-            data["project"] = project_filter[0]
             item = params.get("item")
             if not isinstance(item, list):
                 queryset['errorcode'] = 100008
                 queryset['errormsg'] = 'item ' + getMessage('100008')
                 return JSONResponse(queryset)
             for rec in item:
+                data["user_id"] = user.id
+                data["user"] = user
+                data["project_id"] = project_id
+                data["project"] = project_filter[0]
                 for key1 in ["base", "request"]:
                     if key1 not in rec:
                         queryset['errorcode'] = 100001
@@ -296,9 +296,10 @@ def add_interface(request):
                 # call write data to db
                 itf = InterFace(data=data)
                 flag, msg = itf.create_interface()
-                data.pop("project")
-                data.pop("user")
-                queryset["result"] = data
+                view_data = data
+                view_data.pop("project")
+                view_data.pop("user")
+                queryset["result"] = view_data
                 if flag:
                     error_msg = "Add new interface success !"
                 else:

@@ -139,6 +139,7 @@ namespace DopPlugin.DocHandler
                 fieldModel.FieldName = propInfo.Name;
                 fieldModel.IsArray = IsArray(propInfo.PropertyType);
                 fieldModel.FieldType = GetJsonTypeDefine(GetActualType(propInfo.PropertyType));
+                fieldModel.Default = GetJsonTypeDefaultValue(propInfo.PropertyType);
 
                 var attrs = propInfo.GetCustomAttributes(typeof(ApiMemberAttribute), true);
 
@@ -170,6 +171,28 @@ namespace DopPlugin.DocHandler
             }
 
             return result;
+        }
+
+        private string GetJsonTypeDefaultValue(Type type)
+        {
+            if (type.IsGenericType)
+            {
+                return "";
+            }
+
+            var jsonType = GetJsonTypeDefine(type);
+            switch (jsonType)
+            {
+                case "int":
+                    return "0";
+                case "boolean":
+                    return "false";
+                case "string":
+                    return "";
+                case "object":
+                    return "";
+            }
+            return "";
         }
 
         // 判断类型是否属于数组
@@ -222,7 +245,7 @@ namespace DopPlugin.DocHandler
         public string GetJsonTypeDefine(Type type)
         {
             var result = "xx";
-            
+
             if (type.FullName.Equals(typeof(Int16).FullName)
                 || type.FullName.Equals(typeof(Int32).FullName)
                 || type.FullName.Equals(typeof(Int64).FullName)

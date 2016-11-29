@@ -77,7 +77,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'dop.wsgi.application'
 
 # session过期时间设置
-SESSION_COOKIE_AGE = 60*30
+SESSION_COOKIE_AGE = 60*30*100
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases

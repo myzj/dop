@@ -40,16 +40,22 @@ namespace TestWeb.Service
         public string t2p { get; set; }
     }
 
+    [Description("Hello1接口")]
     public class Hello1
     {
+        [ApiMember(Description = "姓名")]
         public string Name { get; set; }
 
+        [ApiMember(Description = "用户ID")]
         public int UserId { get; set; }
 
+        [ApiMember(Description = "是否删除")]
         public bool IsDelete { get; set; }
 
+        [ApiMember(Description = "创建时间")]
         public DateTime CreateTime { get; set; }
 
+        [ApiMember(Description = "时间戳")]
         public long timestamp { get; set; }
     }
 

@@ -9,7 +9,7 @@
         var imgUrl = "//img.boodoll.cn/";
         var newWebUrl = "//wap.muyingzhijia.com:8003/";*/
 
-        var dopWebUrl = "http://192.168.60.21:8050/";
+        var dopWebUrl = "/";
         var login = dopWebUrl + "api/req_login";
         var req_team_list = dopWebUrl + "api/req_team_list";
 

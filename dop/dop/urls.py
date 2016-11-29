@@ -20,8 +20,7 @@ from dop import views
 from atm import atm_api
 from settings import STATICFILES_DIRS
 from django.views.generic import RedirectView
-
-
+import atm.interface as itf
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
 
@@ -34,6 +33,8 @@ urlpatterns = [
     url(r'(?i)^api/project_name_check/?$', atm_api.project_name_check),  # 检查团队名称是否可用
     url(r'(?i)^api/add_project/?$', atm_api.add_project),  # 增加项目列表
     url(r'(?i)^api/req_api_list/?$', atm_api.req_api_list),  # 查询接口列表
+    url(r'(?i)^api/qry/api_detail/?$', itf.qry_interface_detail),  # 查询API接口明细
+    url(r'(?i)^api/add/new_api/?$', itf.add_interface),  # 新增API接口
 
     url(r'^test/?$', views.test),
     url(r'^login/?$', views.login),

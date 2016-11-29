@@ -113,12 +113,31 @@
   .textarea{
     display: block;
     width: 98%;
-    height: 150px;
+    height: 150px !important;
     resize: none;
     outline: none;
   }
 
   .select-width{
     width: 150px;
+  }
+}
+
+.req-content{
+    width: 90%;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    margin: 20px auto;
+    background: #f1f1f1;
+    padding: 0;
+  .add-btn{
+    background:#428bca ;
+    padding: 4px 10px;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .row {
+    margin: 0;
   }
 }

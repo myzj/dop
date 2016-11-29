@@ -58,8 +58,8 @@ def req_login(request):
             queryset['errormsg'] = str(ex) + ' ' + getMessage('100006')
             return JSONResponse(queryset)
     else:
-        queryset['errorcode'] = 300014
-        queryset['errormsg'] = getMessage('300014')
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)
 
 
@@ -157,8 +157,8 @@ def req_team(request):
             queryset['errormsg'] = getMessage('300021')
             return JSONResponse(queryset)
     else:
-        queryset['errorcode'] = 300014
-        queryset['errormsg'] = getMessage('300014')
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)
 
 
@@ -178,8 +178,8 @@ def add_team(request):
                     errmsg += field + ' '
             if errmsg:
                 queryset['success'] = False
-                queryset['errorcode'] = 300013
-                queryset['errormsg'] = errmsg + getMessage('300013')
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + getMessage('100001')
                 return JSONResponse(queryset)
             try:
                 team_name = params.get('team_name')
@@ -228,8 +228,8 @@ def add_team(request):
             return JSONResponse(queryset)
     else:
         queryset['success'] = False
-        queryset['errorcode'] = 300014
-        queryset['errormsg'] = getMessage('300014')
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)
 
 
@@ -267,8 +267,8 @@ def team_name_check(request):
             return JSONResponse(queryset)
     else:
         queryset['success'] = False
-        queryset['errorcode'] = 300014
-        queryset['errormsg'] = getMessage('300014')
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)
 
 
@@ -324,8 +324,8 @@ def req_project(request):
             queryset['errormsg'] = getMessage('300021')
             return JSONResponse(queryset)
     else:
-        queryset['errorcode'] = 300014
-        queryset['errormsg'] = getMessage('300014')
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)
 
 
@@ -362,8 +362,8 @@ def project_name_check(request):
             return JSONResponse(queryset)
     else:
         queryset['success'] = False
-        queryset['errorcode'] = 300014
-        queryset['errormsg'] = getMessage('300014')
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)
 
 
@@ -383,8 +383,8 @@ def add_project(request):
                     errmsg += field + ' '
             if errmsg:
                 queryset['success'] = False
-                queryset['errorcode'] = 300013
-                queryset['errormsg'] = errmsg + getMessage('300013')
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + getMessage('100001')
                 return JSONResponse(queryset)
 
             # 检查当前用户是否已经登录
@@ -434,8 +434,8 @@ def add_project(request):
             return JSONResponse(queryset)
     else:
         queryset['success'] = False
-        queryset['errorcode'] = 300014
-        queryset['errormsg'] = getMessage('300014')
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)
 
 
@@ -491,6 +491,6 @@ def req_api_list(request):
             queryset['errormsg'] = getMessage('300021')
             return JSONResponse(queryset)
     else:
-        queryset['errorcode'] = 300014
-        queryset['errormsg'] = getMessage('300014')
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)

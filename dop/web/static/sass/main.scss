@@ -10,11 +10,12 @@ body {
   line-height: 30px;
   text-align: center;
 }
-input[type="text"],textarea{
+input[type="text"],input[type=file],textarea{
   padding:3px 6px!important;
   font-size:13px!important;
   height:30px!important;
   line-height:30px!important;
+  display: inline-block!important;
 }
 textarea{
   line-height: 20px!important;

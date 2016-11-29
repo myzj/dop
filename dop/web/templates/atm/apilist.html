@@ -1,0 +1,123 @@
+{% extends "shared/base.html" %}
+{% load staticfiles %}
+{% block head %}
+    <link rel="stylesheet" href="{% static "css/main.css" %}?v={{ config.v }}">
+    <link rel="stylesheet" href="{% static "css/global/form-elements.css" %}?v={{ config.v }}">
+{% endblock %}
+{% block container %}
+    <header>
+        <div class="container">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <!-- Brand and toggle get grouped for better mobile display -->
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                                data-target="#bs-example-navbar-collapse-1">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#">Brand</a>
+                    </div>
+
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                            <li class="active"><a href="#">Link</a></li>
+                            <li><a href="#">Link</a></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <span
+                                        class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="#">Action</a></li>
+                                    <li><a href="#">Another action</a></li>
+                                    <li><a href="#">Something else here</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="#">Separated link</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="#">One more separated link</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <form class="navbar-form navbar-left" role="">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search">
+                            </div>
+                            <button type="submit" class="btn btn-default">Submit</button>
+                        </form>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../">Dropdown <span
+                                        class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="#">Action</a></li>
+                                    <li><a href="#">Another action</a></li>
+                                    <li><a href="#">Something else here</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="#">Separated link</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- /.navbar-collapse -->
+                </div>
+                <!-- /.container-fluid -->
+            </nav>
+        </div>
+    </header>
+    <div class="content-box teamListyle">
+        <div class="container">
+            <h3>Teams</h3>
+
+            <p>{{ msg }}</p>
+
+            {#projectlist?team=123#}
+            <div class="edit-main team-list" ng-controller="TeamMain">
+                <ul>
+                    <li class="listLi" ng-repeat="List in teamArr">
+                        <a href="/projectlist?team=@{List.team_id}@">
+                            <p class="team-pic"><img ng-src="@{List.team_pic_url}@"/></p>
+
+                            <p class="team-name">@{List.team_name}@</p>
+
+                            <p class="team-ctime">创建时间：@{List.ctime}@</p>
+                        </a>
+                    </li>
+                    <li ng-click="addTeam()" class="">添加</li>
+                </ul>
+                <div class="loadTips">
+                    <p ng-show="isLast">下拉加载下一页....</p>
+
+                    <p ng-hide="isLast">列表已加载完....</p>
+                </div>
+                <div class="dialog" ng-show="isDialogShow">
+                    <div class="dialogBox addTeam">
+                        <h3>Team Edit</h3>
+
+                        <div class="addTeam-main">
+                            <p><span class="dsc">TeamName</span><input class="tName" placeholder="请输入名称" type="text">
+                            </p>
+
+                            <p><span class="dsc">picUrl</span><input class="tPic" placeholder="上传图片" type="text"></p>
+
+                            <p><span class="dsc">Description</span><textarea class="tDec"
+                                                                             placeholder="请输入描述"></textarea></p>
+
+                            <div class="addBtn">
+                                <span ng-click="saveDate()" class="active">save</span>
+                                <span ng-click="closeDialog()">close</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        require(['{% static "js/config.js" %}?v={{config.v}}'], function () {
+            require(['controller/atm/team']);
+        });
+    </script>
+{% endblock %}

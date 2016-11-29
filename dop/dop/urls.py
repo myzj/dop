@@ -41,6 +41,7 @@ urlpatterns = [
     url(r'^teamlist/?$', views.teamlist),
     url(r'^projectlist/?$', views.projectlist),
     url(r'^apilist/?$', views.apilist),
+    url(r'^api_edit/?$', views.api_edit),
 
     url(r'^$', RedirectView.as_view(url='/index/', permanent=True)),
     url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': STATICFILES_DIRS[0], 'show_indexes': True}),

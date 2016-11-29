@@ -6,6 +6,15 @@
                 log.log.apply(this, arguments);
             }
         };
+        //重置angular 模板
+        $.getApp = function(){
+            var app = angular.module('app', []);
+            app.config(function($interpolateProvider) {
+              $interpolateProvider.startSymbol('@{');
+              $interpolateProvider.endSymbol('}@');
+            });
+            return app;
+        };
         $.url = url;
         $.loading = function (bool) {
             var html = '<div class="touchweb_mask"><div class="loading" ><div class="gif_img"></div></div></div>';

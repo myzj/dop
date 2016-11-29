@@ -10,7 +10,11 @@ body {
   line-height: 30px;
   text-align: center;
 }
-
+ul,li,p,span{
+  list-style: none;
+  padding:0;
+  margin:0;
+}
 strong {
   font-weight: 500;
 }
@@ -269,4 +273,33 @@ img {
   display: inline-block;
   width: 100%;
   text-align: center;
+}
+.teamListyle{
+  .edit-main{
+    ul:after{
+      content: '';
+      display:block;height:0;clear:both;visibility:hidden;
+    }
+    li{
+      border: 1px solid #C7C7C7;
+      width:240px;
+      height:320px;
+      float: left;
+      display: inline-block;
+      margin:10px 12px 10px 12px;
+      padding:8px 10px;
+      .team-pic{
+        height:200px;
+        img{
+          height:100%;
+        }
+      }
+      .team-name{
+        height:20px;
+      }
+      .team-ctime{
+        height:20px;
+      }
+    }
+  }
 }

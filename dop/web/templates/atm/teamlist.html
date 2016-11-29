@@ -61,13 +61,24 @@
 </nav>
     </div>
 </header>
-<div class="content-box">
-    <h3>Teams</h3>
-    <div class="edit-main team-list" ng-controller="teamList">
+<div class="content-box teamListyle">
+    <div class="container">
+        <h3>Teams</h3>
+    <p>{{msg}}</p>
+    <div class="edit-main team-list" ng-controller="TeamMain">
         <ul>
-            <input ng-model="msg">
-            <p ng-bind="msg"></p>
+            <li class="listLi" ng-repeat="List in teamArr">
+                <p class="team-pic"><img ng-src="@{List.team_pic_url}@" /></p>
+                <p class="team-name">@{List.team_name}@</p>
+                <p class="team-ctime">创建时间：@{List.ctime}@</p>
+            </li>
+            <li class="">添加</li>
         </ul>
+        <div class="loadTips">
+            <p ng-show="isLast">下拉加载下一页....</p>
+            <p ng-hide="isLast">列表已加载完....</p>
+        </div>
+    </div>
     </div>
 </div>
 <script type="text/javascript">

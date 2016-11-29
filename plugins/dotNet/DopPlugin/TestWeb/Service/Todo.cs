@@ -10,8 +10,8 @@ namespace TestWeb.Service
 {
     //Request DTO 
     [Route(path: "/test1", Notes = "备注", Summary = "总结")]
-    [Route(path: "/test11")]
-    [Description("adfasdf")]
+    [Route(path: "/Hello")]
+    [Description("测试接口 Hello")]
     public class Hello
     {
         [ApiMember(Name = "name", Description = "测试的名称")]
@@ -20,23 +20,31 @@ namespace TestWeb.Service
         [ApiMember(Name = "user_id", Description = "用户id")]
         public int UserId { get; set; }
 
+        [ApiMember(Description = "用户id")]
         public bool IsDelete { get; set; }
 
+        [ApiMember(Description = "用户id")]
         public DateTime CreateTime { get; set; }
 
+        [ApiMember(Description = "用户id")]
         public long timestamp { get; set; }
 
+        [ApiMember(Description = "用户id")]
         public List<int> ids { get; set; }
 
+        [ApiMember(Description = "用户id")]
         public TestItem1 TestItem1 { get; set; }
 
+        [ApiMember(Description = "用户id")]
         public List<TestItem1> TestItem1s { get; set; }
     }
 
     public class TestItem1
     {
+        [ApiMember(Description = "用户id")]
         public string t1p { get; set; }
 
+        [ApiMember(Description = "用户id")]
         public string t2p { get; set; }
     }
 
@@ -62,18 +70,26 @@ namespace TestWeb.Service
     //Response DTO 
     public class HelloResponse
     {
+        [ApiMember(Description = "用户id")]
         public string Name { get; set; }
 
+        [ApiMember(Description = "用户id")]
         public int UserId { get; set; }
 
+        [ApiMember(Description = "用户id")]
         public bool IsDelete { get; set; }
 
+        [ApiMember(Description = "用户id")]
         public DateTime CreateTime { get; set; }
 
+        [ApiMember(Description = "用户id")]
         public long timestamp { get; set; }
 
+        [ApiMember(Description = "用户id")]
         public string Result { get; set; }
-        public ResponseStatus ResponseStatus { get; set; } //Where Exceptions get auto-serialized 
+
+        //[ApiMember(Description = "用户id")]
+        //public ResponseStatus ResponseStatus { get; set; } //Where Exceptions get auto-serialized 
     }
 
     //Can be called via any endpoint or format, see: http://servicestack.net/ServiceStack.Hello/ 

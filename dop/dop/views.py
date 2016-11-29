@@ -23,10 +23,16 @@ def teamlist(request):
 
 
 @login_check
+def projectlist(request):
+    params = {}
+    params['title'] = '项目列表'
+    return render(request, 'atm/projectlist.html', params)
+
+@login_check
 def apilist(request):
     params = {}
     params['title'] = 'API列表'
-    return render(request, 'apilist.html', params)
+    return render(request, 'atm/apilist.html', params)
 
 
 @login_check

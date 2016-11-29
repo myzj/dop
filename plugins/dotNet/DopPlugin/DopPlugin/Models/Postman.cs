@@ -40,6 +40,52 @@ namespace DopPlugin.Models
             [DataMember(Name = "error_code")]
             public List<ErrorCodeModel> ErrorCode { get; set; }
 
+            //是否有效的
+            public bool IsValid()
+            {
+                var result = true;
+                if (Base != null && Request != null && Response != null)
+                {
+                    if (string.IsNullOrWhiteSpace(Base.Description)
+                        || (Base.Description ?? "").IndexOf("###", StringComparison.Ordinal) >= 0
+                        || CheckFieldDescriptionExisEmpty(Request.Body)
+                        || CheckFieldDescriptionExisEmpty(Response.Body)
+                        )
+                    {
+                        result = false;
+                    }
+                }
+                return result;
+            }
+
+            /// <summary>
+            /// 检查字段备注是否存在为空的，需要递归查询
+            /// </summary>
+            /// <param name="fieldModels"></param>
+            /// <returns></returns>
+            private bool CheckFieldDescriptionExisEmpty(List<FieldModel> fieldModels)
+            {
+                var result = false;
+
+                foreach (var fieldModel in fieldModels)
+                {
+                    if (string.IsNullOrWhiteSpace(fieldModel.Description))
+                    {
+                        result = true;
+                        break;
+                    }
+                    else
+                    {
+                        if (fieldModel.ChildItem.Any())
+                        {
+                            result = CheckFieldDescriptionExisEmpty(fieldModel.ChildItem);
+                        }
+                    }
+                }
+
+                return result;
+            }
+
         }
 
         [DataContract]

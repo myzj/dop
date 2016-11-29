@@ -10,11 +10,22 @@ body {
   line-height: 30px;
   text-align: center;
 }
-ul,li,p,span{
-  list-style: none;
-  padding:0;
-  margin:0;
+input[type="text"],input[type=file],textarea{
+  padding:3px 6px!important;
+  font-size:13px!important;
+  height:30px!important;
+  line-height:30px!important;
+  display: inline-block!important;
 }
+textarea{
+  line-height: 20px!important;
+}
+ul, li, p, span,h3,h2,h1 {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
 strong {
   font-weight: 500;
 }
@@ -274,32 +285,124 @@ img {
   width: 100%;
   text-align: center;
 }
-.teamListyle{
-  .edit-main{
-    ul:after{
+
+.teamListyle {
+  .edit-main {
+    ul:after {
       content: '';
-      display:block;height:0;clear:both;visibility:hidden;
+      display: block;
+      height: 0;
+      clear: both;
+      visibility: hidden;
     }
-    li{
+    li {
       border: 1px solid #C7C7C7;
-      width:240px;
-      height:320px;
+      width: 240px;
+      height: 320px;
       float: left;
       display: inline-block;
-      margin:10px 12px 10px 12px;
-      padding:8px 10px;
-      .team-pic{
-        height:200px;
-        img{
-          height:100%;
+      margin: 10px 12px 10px 12px;
+      padding: 8px 10px;
+      .team-pic {
+        height: 200px;
+        img {
+          height: 100%;
         }
       }
-      .team-name{
-        height:20px;
+      .team-name {
+        height: 20px;
       }
-      .team-ctime{
-        height:20px;
+      .team-ctime {
+        height: 20px;
       }
     }
+  }
+}
+
+.dialog {
+  h3{
+    text-align: left;
+    padding-left:8px;
+    font-size:14px;
+    background: #f2f2f2;
+    border-bottom: 1px solid #cccccc;
+    margin-bottom: 8px;
+  }
+  position: fixed;
+  left:0;
+  top:0;
+  height: 100%;
+  width: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+  align-items: center;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    box-sizing: border-box;
+  background: rgba(0,0,0,0.4);
+  .dialogBox {
+    overflow: hidden;
+    width: 100%;
+
+    padding:0px;
+    -webkit-border-radius: .5rem;
+    border-radius: 0.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+    background-color: #fff;
+  }
+}
+.addTeam{
+width:460px!important;
+  p{
+    vertical-align: top;
+    text-align: left;
+    padding:5px 20px;
+  }
+  .dsc{
+    font-size:16px;
+  }
+  input{
+    width: 280px;
+  }
+  textarea{
+    width:280px;
+    min-height:100px;
+  }
+  .dsc{
+    width:120px;
+    display: inline-block;
+  }
+  .addBtn{
+    text-align: right;
+    margin-top:20px;
+    padding:10px 10px 10px 0;
+    border-top:1px solid #cccccc;
+    span{
+      font-weight:bold;
+      border-radius: 6px;
+      color: #000;
+      padding:6px 20px;
+      background: #d7d7d7;
+    }
+    span.active{
+      color: #fff;
+      background: #0099ff;
+    }
+    span:hover{
+      background: #00ccff;
+    }
+
   }
 }

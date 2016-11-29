@@ -2,7 +2,7 @@ require(['lib/common'],
     function () {
         angular.element(document).ready(function () {
             var app = $.getApp();
-            app.controller('TeamMain', function ($scope, $http) {
+            app.controller('ProjectMain', function ($scope, $http) {
                 $scope.isLast = true;
                 $scope.isDialogShow = false;
                 var curIndex = 1,        //当前页数
@@ -35,12 +35,12 @@ require(['lib/common'],
                         "pageIndex": index,
                         "pageSize": pageSize
                     };
-                    $http.get('/api/req_team_list?pageIndex=' + datainfo.pageIndex + '&pageSize=' + datainfo.pageSize)
+                    $http.get('/api/req_project_list?pageIndex=' + datainfo.pageIndex + '&pageSize=' + datainfo.pageSize)
                         .success(function (data) {
                             onloading = true;
                             curIndex++;
                             if (data.errorcode == 0) {
-                                var getdata = data.result.teamList;
+                                var getdata = data.result.projectList;
                                 if (getdata.length < pageSize) {
                                     isLoadOut = false;
                                     $scope.isLast = false;
@@ -48,11 +48,10 @@ require(['lib/common'],
                                 for (i = 0; i < getdata.length; i++) {
                                     dataArr.push(getdata[i])
                                 }
-                                $scope.teamArr = dataArr;
+                                $scope.projectArr = dataArr;
                                 if(isAutoLoad){
                                     loadDate(true);
                                 }
-                                console.log(dataArr)
                             } else if (data.errorcode == 300021) {      //300021 列表页码已超出实际页数
                                 isLoadOut = false;
                                 $scope.isLast = false;
@@ -65,19 +64,22 @@ require(['lib/common'],
                     $scope.closeDialog = function () {
                         $scope.isDialogShow = false;
                     };
-                    $scope.saveDate = function () {
-                        var tname = $('.tName').val();
-                        var tpic = $('.tPic').val();
-                        var tdec = $('.tDec').val();
+                    $scope.saveProject = function () {
                         var datainfo = {
-                            "tname": tname,
-                            "tpic": tpic,
-                            "tdec": tdec
+                            "pName": $('.pName').val(),
+                            "team_id": $.url.getParam("team"),
+                            "tdec": $('.tDec').val(),
+                            "thost":$('.thost').val()
                         };
                         $http({
                             method: 'post',
-                            url: '/api/add_team?team_name',
-                            data: {team_name: datainfo.tname, pic_url: datainfo.tpic, description: datainfo.tdec}
+                            url: '/api/add_project?team_name',
+                            data: {
+                                project_name: datainfo.pName,
+                                host: datainfo.thost,
+                                team_id: datainfo.team_id,
+                                description: datainfo.tdec
+                            }
                         }).success(function (data) {
                             if (data.errorcode == 0) {
 

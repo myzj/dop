@@ -39,6 +39,7 @@ urlpatterns = [
     url(r'^login/?$', views.login),
     url(r'^index/?$', views.index),
     url(r'^teamlist/?$', views.teamlist),
+    url(r'^projectlist/?$', views.projectlist),
     url(r'^apilist/?$', views.apilist),
     url(r'^api_edit/?$', views.api_edit),
 

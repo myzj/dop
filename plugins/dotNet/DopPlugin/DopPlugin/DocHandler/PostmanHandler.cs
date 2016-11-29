@@ -73,7 +73,7 @@ namespace DopPlugin.DocHandler
                 var item = new Models.Postman.ItemModel();
 
                 #region Base
-                item.Base = new Models.Postman.BaseModel() { Name = service.Value.Name, Description = "", State = true, Tags = new ArrayOfString() };
+                item.Base = new Models.Postman.BaseModel() { Name = service.Value.Name, Description = "### ", State = true, Tags = new ArrayOfString() };
 
                 var serviceAttrs = service.Value.RequestType.GetCustomAttributes(typeof(DescriptionAttribute), true);
                 foreach (var serviceAttr in serviceAttrs)

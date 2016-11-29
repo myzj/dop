@@ -119,6 +119,7 @@ except ImportError:
     pass
 
 if DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
     STATIC_URL = '/static/'
 else:
     STATIC_URL = config.STATIC_URL

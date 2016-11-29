@@ -123,7 +123,7 @@ if DEBUG:
     STATIC_URL = '/static/'
 else:
     STATIC_URL = config.STATIC_URL
-    STATIC_ROOT = os.path.join(BASE_DIR, "static")
-    STATICFILES_DIRS = (
-        os.path.join(BASE_DIR, "web/static"),
-    )
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "web/static"),
+)

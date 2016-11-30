@@ -2,7 +2,7 @@
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
-from models import Interface, MetaData, ErrorCode, Project
+from models import Interface, MetaData, ErrorCode, Project, LockInfo, ProjectMember
 from django.contrib.auth.models import User
 from common import except_info
 import time
@@ -149,18 +149,63 @@ def qry_interface_detail(request):
             if 'api_id' in request.GET and request.GET['api_id'] != '':
                 api_id = request.GET['api_id']
             else:
-                errmsg += 'api_id' + ', '
+                errmsg += 'api_id,'
                 queryset['errorcode'] = 100001
                 queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
                 return JSONResponse(queryset)
             api_id = int(api_id)
+            interface_filter = Interface.objects.filter(id=api_id, is_deleted=False)
+            if not interface_filter:
+                queryset['success'] = False
+                queryset['errorcode'] = 300029
+                queryset['errormsg'] = getMessage('300029')
+                return JSONResponse(queryset)
+            interface = interface_filter[0]
+            user_info = request.session.get("user", default=None)
+            user = None
+            if user_info:
+                user_id = int(user_info.get("id"))
+                user_filter = User.objects.filter(id=user_id)
+                if user_filter:
+                    user = user_filter[0]
+            if user is None and 'is_modify' in request.GET and request.GET['is_modify'] == 'true':
+                queryset['success'] = False
+                queryset['errorcode'] = 200003
+                queryset['errormsg'] = getMessage('200003')
+                return JSONResponse(queryset)
+            print 'user_id:', user.id
+            print 'is_modify:', request.GET['is_modify']
+            if 'is_modify' in request.GET and request.GET['is_modify'] == 'true':
+                members_filter = ProjectMember.objects.filter(project=interface.project, is_deleted=False, is_active=True)
+                members = []
+                if members_filter:
+                    members = map(lambda x: x.user, members_filter)
+                if user not in members:
+                    queryset['success'] = False
+                    queryset['errorcode'] = 300031
+                    queryset['errormsg'] = getMessage('300031')
+                    return JSONResponse(queryset)
+                # check the interface was locked
+                lock_filter = LockInfo.objects.filter(interface=interface, is_locked=True, is_deleted=False)
+                if lock_filter and lock_filter[0].lock_user.id != user.id:
+                    queryset['errorcode'] = 300030
+                    queryset['errormsg'] = getMessage('300030')
+                    return JSONResponse(queryset)
+                if not lock_filter:  # Add lock info
+                    print 'Lock the interface id={0}'.format(api_id)
+                    new_lock = LockInfo()
+                    new_lock.interface = interface
+                    new_lock.lock_user = user
+                    new_lock.is_locked = True
+                    new_lock.save()
             interface = InterFace(api_id)
             queryset["result"] = interface.get_metadata
             return JSONResponse(queryset)
         except BaseException, ex:
             except_info(ex)
-            queryset['errorcode'] = 100007
-            queryset['errormsg'] = getMessage('100007')
+            queryset["success"] = False
+            queryset['errorcode'] = 100028
+            queryset['errormsg'] = getMessage('100028') + "\n" + str(ex)
             return JSONResponse(queryset)
     else:
         queryset['errorcode'] = 100002
@@ -193,8 +238,6 @@ def add_interface(request):
                 queryset['errorcode'] = 200003
                 queryset['errormsg'] = getMessage('200003')
                 return JSONResponse(queryset)
-            data["user_id"] = user.id
-            data["user"] = user
             required_fields = ['info', 'item']
             errmsg = ''
             for field in required_fields:
@@ -206,8 +249,8 @@ def add_interface(request):
                 return JSONResponse(queryset)
             info = params.get("info")
             if not isinstance(info, dict):
-                queryset['errorcode'] = 100008
-                queryset['errormsg'] = 'info ' + getMessage('100008')
+                queryset['errorcode'] = 100007
+                queryset['errormsg'] = 'info ' + getMessage('100007')
                 return JSONResponse(queryset)
             if "project" not in info:
                 queryset['errorcode'] = 100001
@@ -219,14 +262,16 @@ def add_interface(request):
                 queryset['errorcode'] = 300025
                 queryset['errormsg'] = "项目ID为:{0},{1}".format(project_id, getMessage("300025"))
                 return JSONResponse(queryset)
-            data["project_id"] = project_id
-            data["project"] = project_filter[0]
             item = params.get("item")
             if not isinstance(item, list):
-                queryset['errorcode'] = 100008
-                queryset['errormsg'] = 'item ' + getMessage('100008')
+                queryset['errorcode'] = 100007
+                queryset['errormsg'] = 'item ' + getMessage('100007')
                 return JSONResponse(queryset)
             for rec in item:
+                data["user_id"] = user.id
+                data["user"] = user
+                data["project_id"] = project_id
+                data["project"] = project_filter[0]
                 for key1 in ["base", "request"]:
                     if key1 not in rec:
                         queryset['errorcode'] = 100001
@@ -234,8 +279,8 @@ def add_interface(request):
                         return JSONResponse(queryset)
                 base = rec.get("base")
                 if not isinstance(base, dict):
-                    queryset['errorcode'] = 100008
-                    queryset['errormsg'] = 'base ' + getMessage('100008')
+                    queryset['errorcode'] = 100007
+                    queryset['errormsg'] = 'base ' + getMessage('100007')
                     return JSONResponse(queryset)
                 for key2 in ["name", "state"]:
                     if key2 not in base:
@@ -261,8 +306,8 @@ def add_interface(request):
 
                 req = rec.get("request")
                 if not isinstance(req, dict):
-                    queryset['errorcode'] = 100008
-                    queryset['errormsg'] = 'req ' + getMessage('100008')
+                    queryset['errorcode'] = 100007
+                    queryset['errormsg'] = 'req ' + getMessage('100007')
                     return JSONResponse(queryset)
                 for key3 in ["url", "method", "content_type"]:
                     if key3 not in req or not req.get(key3):
@@ -278,13 +323,13 @@ def add_interface(request):
                 if rec.get("error_code"):
                     error_code = rec.get("error_code")
                     if not isinstance(error_code, list):
-                        queryset['errorcode'] = 100008
-                        queryset['errormsg'] = 'error_code ' + getMessage('100008')
+                        queryset['errorcode'] = 100007
+                        queryset['errormsg'] = 'error_code ' + getMessage('100007')
                         return JSONResponse(queryset)
                     check_err = map(lambda x: isinstance(x, dict), error_code)
                     if False in check_err:
-                        queryset['errorcode'] = 100008
-                        queryset['errormsg'] = 'error_code value type ' + getMessage('100008')
+                        queryset['errorcode'] = 100007
+                        queryset['errormsg'] = 'error_code value type ' + getMessage('100007')
                         return JSONResponse(queryset)
                     for err_rec in error_code:
                         if "error_code" not in err_rec and not err_rec.get("error_code"):
@@ -296,9 +341,10 @@ def add_interface(request):
                 # call write data to db
                 itf = InterFace(data=data)
                 flag, msg = itf.create_interface()
-                data.pop("project")
-                data.pop("user")
-                queryset["result"] = data
+                view_data = data
+                view_data.pop("project")
+                view_data.pop("user")
+                queryset["result"] = view_data
                 if flag:
                     error_msg = "Add new interface success !"
                 else:
@@ -308,5 +354,8 @@ def add_interface(request):
             return JSONResponse(queryset)
         except BaseException, ex:
             except_info(ex)
+            queryset['success'] = False
+            queryset['errorcode'] = 300027
+            queryset['errormsg'] = getMessage('300027') + "\n" + str(ex)
             return JSONResponse(queryset)
 

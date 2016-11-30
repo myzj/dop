@@ -282,7 +282,7 @@ def req_project(request):
             team_filter = None
             project_match = None
             if 'team_id' in request.GET and request.GET['team_id'] != '':
-                team_filter = Team.objects.filter(is_deleted=False, is_active=True, id=request.GET['team_id'])
+                team_filter = Team.objects.filter(is_deleted=False, is_active=True, id=int(request.GET['team_id']))
                 if team_filter:
                     project_match = Project.objects.filter(is_deleted=False, is_active=True, team=team_filter[0]).order_by(
                         '-utime')
@@ -403,7 +403,7 @@ def add_project(request):
                     return JSONResponse(queryset)
                 else:
                     # 检查相关联的Team是否存在
-                    team_filter = Team.objects.filter(is_active=True, is_deleted=False, id=team_id)
+                    team_filter = Team.objects.filter(is_active=True, is_deleted=False, id=int(team_id))
                     if team_filter:
                         user = user_filter[0]
                         new_project = Project()
@@ -451,7 +451,7 @@ def req_api_list(request):
             api_match = None
             # 传入项目id
             if 'project_id' in request.GET and request.GET['project_id'] != '':
-                project_filter = Project.objects.filter(is_deleted=False, is_active=True, id=request.GET['project_id'])
+                project_filter = Project.objects.filter(is_deleted=False, is_active=True, id=int(request.GET['project_id']))
                 if project_filter:
                     api_match = Interface.objects.filter(is_deleted=False, is_active=True, project=project_filter[0])
                 else:

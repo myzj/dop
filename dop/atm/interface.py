@@ -637,3 +637,65 @@ def update_interface(request):
         queryset['errorcode'] = 100002
         queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)
+
+
+# API解锁
+@csrf_exempt
+@interface_check_login
+def cancel_lock(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+    if request.method == 'GET':
+        try:
+            errmsg = ''
+            if 'api_id' in request.GET and request.GET['api_id'] != '':
+                api_id = request.GET['api_id']
+            else:
+                errmsg += 'api_id,'
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
+                return JSONResponse(queryset)
+            api_id = int(api_id)
+            interface_filter = Interface.objects.filter(id=api_id, is_deleted=False)
+            if not interface_filter:
+                queryset['success'] = False
+                queryset['errorcode'] = 300029
+                queryset['errormsg'] = getMessage('300029')
+                return JSONResponse(queryset)
+            interface = interface_filter[0]
+            user_info = request.session.get("user", default=None)
+            user = None
+            if user_info:
+                user_id = int(user_info.get("id"))
+                user_filter = User.objects.filter(id=user_id)
+                if user_filter:
+                    user = user_filter[0]
+            if user is None:
+                queryset['success'] = False
+                queryset['errorcode'] = 200003
+                queryset['errormsg'] = getMessage('200003')
+                return JSONResponse(queryset)
+            # check the interface was locked
+            lock_filter = LockInfo.objects.filter(interface=interface, is_locked=True, is_deleted=False)
+            if not lock_filter:
+                queryset['errorcode'] = 300034
+                queryset['errormsg'] = getMessage('300034')
+                return JSONResponse(queryset)
+            if lock_filter[0].lock_user.id != user.id:
+                queryset['errorcode'] = 300035
+                queryset['errormsg'] = getMessage('300035')
+                return JSONResponse(queryset)
+            lock_filter.update(is_locked=False)  # 解锁
+            queryset["errormsg"] = 'Unlock the api_id={0} success.'.format(api_id)
+            return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset["success"] = False
+            queryset['errorcode'] = 300036
+            queryset['errormsg'] = getMessage('300036') + "\n" + str(ex)
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)

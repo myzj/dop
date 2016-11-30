@@ -2,7 +2,7 @@ require(['lib/common'],
     function () {
         angular.element(document).ready(function () {
             var app = $.getApp();
-            app.controller('apiMain', function ($scope, $http) {
+            app.controller('myDoc', function ($scope, $http) {
                 var pageSize = 6,
                     dataArr = [];        //数组content
                 getTeamDate(1);

@@ -13,7 +13,7 @@
             <p>{{ msg }}</p>
 
             {#projectlist?team=123#}
-            <div class="edit-main team-list" ng-controller="TeamMain">
+            <div class="edit-main team-list">
                 <ul>
                     <li class="listLi" ng-repeat="List in teamArr">
                         <a href="/projectlist?team=@{List.team_id}@">

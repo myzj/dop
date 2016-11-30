@@ -29,24 +29,11 @@
                    dataInfo = {
 
                    };
-                   $http.get('/api/req_project_list?pageIndex=' + datainfo.pageIndex + '&pageSize=' + datainfo.pageSize)
+                   $http.get('/api/req_project_list?pageIndex=')
                         .success(function (data) {
                             if (data.errorcode == 0) {
-                                var getdata = data.result.projectList;
-                                if (getdata.length < pageSize) {
-                                    isLoadOut = false;
-                                    $scope.isLast = false;
-                                }
-                                for (i = 0; i < getdata.length; i++) {
-                                    dataArr.push(getdata[i])
-                                }
-                                $scope.projectArr = dataArr;
-                                if(isAutoLoad){
-                                    loadDate(true);
-                                }
+
                             } else if (data.errorcode == 300021) {      //300021 列表页码已超出实际页数
-                                isLoadOut = false;
-                                $scope.isLast = false;
                             }
                         });
                }

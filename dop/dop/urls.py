@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'(?i)^api/req_api_list/?$', atm_api.req_api_list),  # 查询接口列表
     url(r'(?i)^api/qry/api_detail/?$', itf.qry_interface_detail),  # 查询API接口明细
     url(r'(?i)^api/add/new_api/?$', itf.add_interface),  # 新增API接口
+    url(r'(?i)^api/mdf/api_info/?$', itf.update_interface),  # 修改API接口
 
     url(r'^test/?$', views.test),
     url(r'^login/?$', views.login),

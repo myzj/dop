@@ -14,7 +14,7 @@
                 <li class="active">十一月</li>
             </ol>
             <div class="edit-btns">
-                <button type="button" class="btn btn-primary">Edit</button>
+                <button type="button" ng-click="doEdit()" class="btn btn-primary">Edit</button>
                 <button type="button" class="btn btn-success">Save</button>
             </div>
         </div>
@@ -34,19 +34,19 @@
                     <div class="row">
                         <div class="col-xs-2">Name:</div>
                         <div class="col-xs-10">
-                            <input type="text" placeholder="请输入接口名称..." class="form-control text-input">
+                            <input type="text" ng-disabled='@{isEdit}@' ng-model="api_base.name" placeholder="请输入接口名称..." class="form-control text-input">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-2">Mock:</div>
                         <div class="col-xs-10">
-                            <textarea class="form-control textarea" cols="30" rows="10"></textarea>
+                            <textarea ng-model="api_base.mock" class="form-control textarea" cols="30" rows="10"></textarea>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-2">Description:</div>
                         <div class="col-xs-10">
-                            <textarea class="form-control textarea" cols="30" rows="10"></textarea>
+                            <textarea ng-model="api_base.decription" class="form-control textarea" cols="30" rows="10"></textarea>
                         </div>
                     </div>
                     <div class="row">
@@ -881,5 +881,8 @@
             });
 
         });
+    require(['{% static "js/config.js" %}?v={{config.v}}'], function () {
+        require(['controller/atm/api_edit']);
+    });
     </script>
 {% endblock %}

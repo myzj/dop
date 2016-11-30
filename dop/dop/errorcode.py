@@ -35,6 +35,9 @@ CONSTANT = {
     "100028": ["Query interface detail information throw exception", u"查询API接口明细信息出现异常"],
     "300029": ["No qualified interface information", u"没有符合条件的API接口信息"],
     "300030": ["API interface was locked", u"API接口已经被锁不能编辑"],
+    "300031": ["You have no right to edit the interface", u"您无权编辑该API接口"],
+    "300032": ["Update interface fail", u"更新API接口失败"],
+    "300033": ["Update interface throw exception", u"更新API接口出现异常"],
 
 }
 

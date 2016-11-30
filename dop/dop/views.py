@@ -30,7 +30,7 @@ def projectlist(request):
     try:
         if request.GET and request.GET['team'] != '':
             team_id = request.GET['team']
-            team_filter = Team.objects.filter(is_deleted=False, is_active=True, id=team_id)
+            team_filter = Team.objects.filter(is_deleted=False, is_active=True, id=int(team_id))
             if team_filter:
                 params['team_name'] = team_filter[0].team_name
             else:

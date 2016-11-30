@@ -8,6 +8,7 @@
     <meta name="format-detection" content="telephone=no"/>
     <!-- 默认的CSS -->
     <link rel="shortcut icon" href="{% static "images/myzj.ico" %}"/>
+<link rel="stylesheet" href="{% static "css/common.css" %}?v={{ config.v }}">
     <link rel="stylesheet" href="{% static "css/global/bootstrap.min.css" %}?v={{ config.v }}">
     {% block head %}
     {% endblock %}
@@ -21,7 +22,7 @@
 </script>
 </head>
 
-<body {% block body_attributes %}{% endblock %}>
+<body {% block body_attributes %}{% endblock %} ng-controller="myDoc">
 {% block container %}{% endblock %}
 <!-- 其他页面需要加载的js在此扩展 -->
 

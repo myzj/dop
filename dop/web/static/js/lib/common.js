@@ -1,5 +1,6 @@
-﻿define('lib/common', ['lib/makeUrl','lib/url'], //
-    function (makeUrl,url) {
+﻿define('lib/common', ['lib/makeUrl', 'lib/url'], //
+    function (makeUrl, url) {
+
         $.makeUrl = makeUrl;
         $.log = function (o, title) {
             if (window._debug_) {
@@ -7,14 +8,52 @@
             }
         };
         //重置angular 模板
-        $.getApp = function(){
-            var app = angular.module('app', []);
-            app.config(function($interpolateProvider) {
-              $interpolateProvider.startSymbol('@{');
-              $interpolateProvider.endSymbol('}@');
-            });
-            return app;
+        $.getApp = function () {
+            if(!window.app) {
+                var app = angular.module('app', []);
+                app.config(function ($interpolateProvider) {
+                    $interpolateProvider.startSymbol('@{');
+                    $interpolateProvider.endSymbol('}@');
+                });
+                window.app = app;
+                return app;
+            }else{
+                return window.app;
+            }
         };
+
+        $.initHeadController = function () {
+            var app = $.getApp();
+            app.controller('navbar', function ($scope, $http) {
+               $scope.logOut = function(){
+                   dataInfo = {
+
+                   };
+                   $http.get('/api/req_project_list?pageIndex=' + datainfo.pageIndex + '&pageSize=' + datainfo.pageSize)
+                        .success(function (data) {
+                            if (data.errorcode == 0) {
+                                var getdata = data.result.projectList;
+                                if (getdata.length < pageSize) {
+                                    isLoadOut = false;
+                                    $scope.isLast = false;
+                                }
+                                for (i = 0; i < getdata.length; i++) {
+                                    dataArr.push(getdata[i])
+                                }
+                                $scope.projectArr = dataArr;
+                                if(isAutoLoad){
+                                    loadDate(true);
+                                }
+                            } else if (data.errorcode == 300021) {      //300021 列表页码已超出实际页数
+                                isLoadOut = false;
+                                $scope.isLast = false;
+                            }
+                        });
+               }
+           });
+        };
+        $.initHeadController();
+
         $.url = url;
         $.loading = function (bool) {
             var html = '<div class="touchweb_mask"><div class="loading" ><div class="gif_img"></div></div></div>';
@@ -22,7 +61,7 @@
                 $(".touchweb_mask").remove();
             } else {
                 $("body").append(html);
-                $(".touchweb_mask").css('display','block');
+                $(".touchweb_mask").css('display', 'block');
             }
         }
         $.xsr = function () {
@@ -154,11 +193,11 @@
                     }
                     break;
                 default:
-                    //三个参数的时候
+                //三个参数的时候
 
             }
 
         };
         return $;
-});
+    });
 

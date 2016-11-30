@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="{% static "css/apipage.css" %}?v={{ config.v }}">
 {%endblock%}
 {% block container %}
+{% include "shared/headerBar.html" %}
 <div class="container" ng-controller="apiMain">
     <div class="api-top">
         <div class="row">

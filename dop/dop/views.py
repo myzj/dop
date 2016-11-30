@@ -46,4 +46,4 @@ def index(request):
 def api_edit(request):
     params = {}
     params['title'] = 'api编辑'
-    return render(request, 'api_edit.html', params)
+    return render(request, 'atm/api_edit.html', params)

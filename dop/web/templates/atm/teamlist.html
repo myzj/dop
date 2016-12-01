@@ -2,8 +2,8 @@
 {% load staticfiles %}
 {% block head %}
     <link rel="stylesheet" href="{% static "css/main.css" %}?v={{ config.v }}">
-    <link rel="stylesheet" href="{% static "css/global/form-elements.css" %}?v={{ config.v }}">
 {% endblock %}
+
 {% block container %}
     {% include "shared/headerBar.html" %}
     <div class="content-box teamListyle">
@@ -24,13 +24,16 @@
                             <p class="team-ctime">创建时间：@{List.ctime}@</p>
                         </a>
                     </li>
+                    {%if isHideAdd != 1%}
                     <li ng-click="addTeam()" class="">添加</li>
+                    {% endif  %}
                 </ul>
                 <div class="loadTips">
                     <p ng-show="isLast">下拉加载下一页....</p>
 
                     <p ng-hide="isLast">列表已加载完....</p>
                 </div>
+                {%if isHideAdd != 1%}
                 <div class="dialog" ng-show="isDialogShow">
                     <div class="dialogBox addTeam">
                         <h3>Team Edit</h3>
@@ -41,8 +44,7 @@
 
                             <p><span class="dsc">picUrl</span><input class="tPic" placeholder="上传图片" type="text"></p>
 
-                            <p><span class="dsc">Description</span><textarea class="tDec"
-                                                                             placeholder="请输入描述"></textarea></p>
+                            <p><span class="dsc">Description</span><textarea class="tDec" placeholder="请输入描述"></textarea></p>
 
                             <div class="addBtn">
                                 <span ng-click="saveDate()" class="active">save</span>
@@ -51,6 +53,7 @@
                         </div>
                     </div>
                 </div>
+                {% endif  %}
             </div>
         </div>
     </div>

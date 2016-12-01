@@ -67,11 +67,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DocHandler\PostmanHandler.cs" />
+    <Compile Include="DocHandler\AtmHandler.cs" />
     <Compile Include="DopPlugins\DocsPlugin.cs" />
     <Compile Include="DopHandler.cs" />
     <Compile Include="DopPlugins\AbsDopPlugin.cs" />
-    <Compile Include="Models\Postman.cs" />
+    <Compile Include="Models\AtmModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Router.cs" />
   </ItemGroup>

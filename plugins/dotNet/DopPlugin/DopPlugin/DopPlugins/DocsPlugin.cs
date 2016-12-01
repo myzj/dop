@@ -23,13 +23,13 @@ namespace DopPlugin.DopPlugins
 
             var filterNames = apis.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-            var postman = new PostmanHandler(filterNames);
+            var postman = new AtmHandler(filterNames);
 
             switch (act)
             {
                 case "CHECK":
                     {
-                        var newItem = new List<Postman.ItemModel>();
+                        var newItem = new List<AtmModel.ItemModel>();
                         foreach (var itemModel in postman.ModelData.Item)
                         {
                             if (!itemModel.IsValid())

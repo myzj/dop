@@ -37,9 +37,22 @@ require(['lib/common'],
                 function getTeamDate(index,isAutoLoad) {
                     var datainfo = {
                         "pageIndex": index,
-                        "pageSize": pageSize
+                        "pageSize": pageSize,
+                        "team":$.url.getParam("team")
                     };
-                    $http.get('/api/req_project_list?pageIndex=' + datainfo.pageIndex + '&pageSize=' + datainfo.pageSize)
+                    var teamStr = "";
+                    var keywordStr = "";
+                    var keyword = $.url.getParam("keyword");
+                    var team = $.url.getParam("team");
+                    if(keyword != null && keyword.length >0){
+                        datainfo.keyword = keyword;
+                        keywordStr = "&keyword=" + keyword;
+                    }
+                    if(team != null && team.length >0){
+                        datainfo.team = team;
+                        teamStr = "&team_id=" + team;
+                    }
+                    $http.get('/api/req_project_list?pageIndex=' + datainfo.pageIndex + '&pageSize=' + datainfo.pageSize+ teamStr + keywordStr)
                         .success(function (data) {
                             onloading = true;
                             curIndex++;

@@ -41,6 +41,8 @@ CONSTANT = {
     "300034": ["No qualified lock information", u"没有符合条件的API被锁信息"],
     "300035": ["You have no right to unlock the interface", u"您无权解锁"],
     "300036": ["Unlock interface lock throw exception", u"解锁API接口出现异常"],
+    "300037": ["Delete interface throw exception", u"删除API接口出现异常"],
+    "300038": ["You have no right to delete the interface", u"您无权删除该API接口"],
 
 }
 

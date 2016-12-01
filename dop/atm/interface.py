@@ -646,6 +646,84 @@ def update_interface(request):
         return JSONResponse(queryset)
 
 
+# 删除API接口信息
+@csrf_exempt
+@interface_check_login
+def delete_interface(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+    if request.method == 'DELETE':
+        try:
+            now = datetime.datetime.now()
+            params = json.loads(request.read())
+            errmsg = ''
+            if 'api_id' in params and params.get('api_id') != '':
+                api_id = params.get('api_id')
+            else:
+                errmsg += 'api_id,'
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
+                return JSONResponse(queryset)
+            api_id = int(api_id)
+            interface_filter = Interface.objects.filter(id=api_id, is_deleted=False)
+            if not interface_filter:
+                queryset['success'] = False
+                queryset['errorcode'] = 300029
+                queryset['errormsg'] = getMessage('300029')
+                return JSONResponse(queryset)
+            interface = interface_filter[0]
+            user_info = request.session.get("user", default=None)
+            user = None
+            if user_info:
+                user_id = int(user_info.get("id"))
+                user_filter = User.objects.filter(id=user_id)
+                if user_filter:
+                    user = user_filter[0]
+            if user is None:
+                queryset['success'] = False
+                queryset['errorcode'] = 200003
+                queryset['errormsg'] = getMessage('200003')
+                return JSONResponse(queryset)
+            # check user role
+            members_filter = ProjectMember.objects.filter(project=interface.project, is_deleted=False, is_active=True)
+            members = []
+            if members_filter:
+                members = map(lambda x: x.user, members_filter)
+            if user not in members:
+                queryset['success'] = False
+                queryset['errorcode'] = 300038
+                queryset['errormsg'] = getMessage('300038')
+                return JSONResponse(queryset)
+
+            # check the interface was locked
+            lock_filter = LockInfo.objects.filter(interface=interface, is_deleted=False)
+            if lock_filter:
+                lock_filter.update(is_deleted=True, utime=now)  # 删除锁
+            # check meta data
+            meta_data_filter = MetaData.objects.filter(interface=interface, is_deleted=False)
+            if meta_data_filter:
+                meta_data_filter.update(is_deleted=True, utime=now, modifier=user)
+            # check error code
+            err_code_filter = ErrorCode.objects.filter(interface=interface, is_deleted=False)
+            if err_code_filter:
+                err_code_filter.update(is_deleted=True, utime=now, modifier=user)
+            # delete the interface
+            interface_filter.update(is_deleted=True, utime=now, modifier=user)
+            queryset["errormsg"] = 'Delete the api_id={0} success.'.format(api_id)
+            return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset["success"] = False
+            queryset['errorcode'] = 300037
+            queryset['errormsg'] = getMessage('300037') + "\n" + str(ex)
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)
+
+
 # API解锁
 @csrf_exempt
 @interface_check_login

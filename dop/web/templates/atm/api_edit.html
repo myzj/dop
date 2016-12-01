@@ -21,32 +21,33 @@
         <div class="edit-body">
             <div class="tab">
                 <ul>
-                    <li id="spanBase" class="active">
-                        spanBase
-                    </li>
+                    <li id="Base" class="active">Base</li>
                     <li id="Request">Request</li>
                     <li id="Response">Response</li>
                     <li id="ErrorCode">ErrorCode</li>
                 </ul>
             </div>
             <div class="edit-content">
-                <div id="spanBase_Main" class="content-list">
+                <div id="Base_Main" class="content-list">
                     <div class="row">
                         <div class="col-xs-2">Name:</div>
                         <div class="col-xs-10">
-                            <input type="text" ng-disabled='@{isEdit}@' ng-model="spanBase.name" placeholder="请输入接口名称..." class="form-control text-input">
+                            <input type="text" ng-disabled='@{isEdit}@' ng-model="Base.name"
+                                   placeholder="请输入接口名称..." class="form-control text-input">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-2">Mock:</div>
                         <div class="col-xs-10">
-                            <textarea ng-disabled='@{isEdit}@' ng-model="spanBase.mock" class="form-control textarea" cols="30" rows="10"></textarea>
+                            <textarea ng-disabled='@{isEdit}@' ng-model="Base.mock" class="form-control textarea"
+                                      cols="30" rows="10"></textarea>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-2">Description:</div>
                         <div class="col-xs-10">
-                            <textarea ng-disabled='@{isEdit}@' ng-model="spanBase.decription" class="form-control textarea" cols="30" rows="10"></textarea>
+                            <textarea ng-disabled='@{isEdit}@' ng-model="Base.decription"
+                                      class="form-control textarea" cols="30" rows="10"></textarea>
                         </div>
                     </div>
                     <div class="row">
@@ -68,13 +69,15 @@
                     <div class="row">
                         <div class="col-xs-2">URL:</div>
                         <div class="col-xs-10">
-                            <input ng-disabled='@{isEdit}@' type="text" ng-model="Request.url" placeholder="请输入路径..." class="form-control text-input">
+                            <input ng-disabled='@{isEdit}@' type="text" ng-model="Request.url" placeholder="请输入路径..."
+                                   class="form-control text-input">
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-2" >Method:</div>
+                        <div class="col-xs-2">Method:</div>
                         <div class="col-xs-10">
-                            <select ng-disabled='@{isEdit}@' ng-model="Request.method" class="form-control select-width">
+                            <select ng-disabled='@{isEdit}@' ng-model="Request.method"
+                                    class="form-control select-width">
                                 <option>POST</option>
                                 <option>GET</option>
                                 <option>PUT</option>
@@ -85,7 +88,8 @@
                     <div class="row">
                         <div class="col-xs-2">ContentType:</div>
                         <div class="col-xs-10">
-                            <select ng-disabled='@{isEdit}@' ng-model="Request.content_type" class="form-control select-width">
+                            <select ng-disabled='@{isEdit}@' ng-model="Request.content_type"
+                                    class="form-control select-width">
                                 <option>1</option>
                                 <option>application/json</option>
                                 <option>3</option>
@@ -95,13 +99,137 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="req-content" ng-repeat="apiList in AllDate">
+                        <div ng-if="Request.headers.length" class="req-content" id="Request-Headers">
+                            <div class="api-top">
+                                <div class="row">
+                                    <div class="col-xs-1">Headers</div>
+                                    <div class="col-xs-9"></div>
+                                    <div class="col-xs-1"><a class="add-btn">BulkEdit</a></div>
+                                    <div class="col-xs-1"><a ng-click="Add_headerDate()" class="add-btn">+Add</a></div>
+                                </div>
+                            </div>
+                            <div class="api-body">
+                                <table class="table">
+                                    <thead>
+                                    <tr style="font-size:14px;">
+                                        <th style="min-width:120px;">名称</th>
+                                        <th style="width:60px;">类型</th>
+                                        <th style="width:60px;">是否<br>必填</th>
+                                        <th style="width:60px;">默认值</th>
+                                        <th style="width:60px;">示例</th>
+                                        <th style="width:60px;">描述</th>
+                                        <th style="width:110px;min-width:100px;">操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="RequestDate in Request.headers">
+                                        <td class="tab-name">
+                                            <input ng-init="RequestDate.field_name = ''"
+                                                   ng-model="RequestDate.field_name" type="text" class="form-control"/>
+                                        </td>
+                                        <td class="tab-type">
+                                            <select ng-model="RequestDate.field_type" class="form-control select-width">
+                                                <option>number</option>
+                                                <option>boolean</option>
+                                                <option>string</option>
+                                                <option>object</option>
+                                            </select>
+                                        </td>
+                                        <td class="tab-must">
+                                            <input ng-init="RequestDate.is_required = 'flase'"
+                                                   ng-model="RequestDate.is_required" type="checkbox" name="is_requrie">
+                                        </td>
+                                        <td class="tab-def">
+                                            <input ng-init="RequestDate.default = ''" ng-model="RequestDate.default"
+                                                   type="text" class="form-control"/>
+                                        </td>
+                                        <td class="tab-exmple">
+                                            <input ng-init="RequestDate.example = ''" ng-model="RequestDate.example"
+                                                   type="text" class="form-control"/>
+                                        </td>
+                                        <td class="tab-dec">
+                                            <input ng-change="a()" ng-model="RequestDate.description" type="text"
+                                                   class="form-control"/>
+                                        </td>
+                                        <td class="tab-oper">
+                                            <a ng-click="Del_headerDate($index)" href="javascript:;">移除</a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div ng-if="Request.query_string.length" class="req-content" id="Request-QueryString">
+                            <div class="api-top">
+                                <div class="row">
+                                    <div class="col-xs-1">QueryString</div>
+                                    <div class="col-xs-9"></div>
+                                    <div class="col-xs-1"><a class="add-btn">BulkEdit</a></div>
+                                    <div class="col-xs-1"><a ng-click="Add_QueryStringDate()" class="add-btn">+Add</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="api-body">
+                                <table class="table">
+                                    <thead>
+                                    <tr style="font-size:14px;">
+                                        <th style="min-width:120px;">名称</th>
+                                        <th style="width:60px;">类型</th>
+                                        <th style="width:60px;">是否<br>必填</th>
+                                        <th style="width:60px;">默认值</th>
+                                        <th style="width:60px;">示例</th>
+                                        <th style="width:60px;">描述</th>
+                                        <th style="width:110px;min-width:100px;">操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="RequestDate in Request.query_string">
+                                        <td class="tab-name">
+                                            <input ng-model="RequestDate.field_name" type="text" class="form-control"/>
+                                        </td>
+                                        <td class="tab-type">
+                                            <select ng-model="RequestDate.field_type" class="form-control select-width">
+                                                <option>number</option>
+                                                <option>boolean</option>
+                                                <option>string</option>
+                                                <option>object</option>
+                                            </select>
+                                        </td>
+                                        <td class="tab-must">
+                                            <input ng-model="RequestDate.is_required" type="checkbox" name="is_requrie">
+                                        </td>
+                                        <td class="tab-def">
+                                            <input ng-model="RequestDate.default" type="text" class="form-control"/>
+                                        </td>
+                                        <td class="tab-exmple">
+                                            <input ng-model="RequestDate.example" type="text" class="form-control"/>
+                                        </td>
+                                        <td class="tab-dec">
+                                            <input ng-model="RequestDate.description" type="text" class="form-control"/>
+                                        </td>
+                                        <td class="tab-oper">
+                                            <a ng-click="Del_QueryStringDate($index)" href="javascript:;">移除</a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div ng-if="Request.body.data.length" class="req-content" id="Request-Body">
                             <div class="api-top">
                                 <div class="row">
                                     <div class="col-xs-1">Body</div>
-                                    <div class="col-xs-9"></div>
+                                    <div class="col-xs-6"></div>
+                                    <div class="col-xs-3" style="text-align: right">
+                                        <select style="float:right;height:30px;width:100px;padding:4px 3px; display: inherit"
+                                                ng-model="Request.body.mode" class="form-control select-width">
+                                            <option>urlencoded</option>
+                                            <option>raw</option>
+                                        </select>
+                                        <span style="float: right;padding-right:10px;">mode</span>
+                                    </div>
                                     <div class="col-xs-1"><a class="add-btn">BulkEdit</a></div>
-                                    <div class="col-xs-1"><a class="add-btn">+Add</a></div>
+                                    <div class="col-xs-1"><a ng-click="Add_bodyDate()" class="add-btn">+Add</a></div>
                                 </div>
                             </div>
                             <div class="api-body">
@@ -119,40 +247,47 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
+                                    <tr ng-repeat="RequestDate in Request.body.data">
                                         <td class="tab-name">
-                                            <input type="text" class="form-control"/>
+                                            <div style="padding:0;" class="col-xs-1">11</div>
+                                            <div style="padding:0;" class="col-xs-11"><input
+                                                    ng-model="RequestDate.field_name" type="text" class="form-control"/>
+                                            </div>
                                         </td>
                                         <td class="tab-type">
-                                            <select class="form-control select-width">
-                                                <option>Number</option>
-                                                <option>Float</option>
-                                                <option>String</option>
-                                                <option>Boolean</option>
+                                            <select ng-model="RequestDate.field_type" class="form-control select-width">
+                                                <option>number</option>
+                                                <option>boolean</option>
+                                                <option>string</option>
+                                                <option>object</option>
                                             </select>
                                         </td>
                                         <td class="tab-arr">
-                                            <input type="checkbox" name="is_requrie">
+                                            <input ng-model="RequestDate.is_array" type="checkbox" name="is_requrie">
                                         </td>
                                         <td class="tab-must">
-                                            <input type="checkbox" name="is_requrie">
+                                            <input ng-model="RequestDate.is_required" type="checkbox" name="is_requrie">
                                         </td>
                                         <td class="tab-def">
-                                            <input type="text" class="form-control"/>
+                                            <input ng-model="RequestDate.default" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-exmple">
-                                            <input type="text" class="form-control"/>
+                                            <input ng-model="RequestDate.example" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-dec">
-                                            <input type="text" class="form-control"/>
+                                            <input ng-model="RequestDate.description" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-oper">
-                                            <a href="javascript:;">新增</a>|
-                                            <a href="javascript:;">移除</a>
+                                            <span ng-click="Add_bodyChildDate()"
+                                                  ng-if="RequestDate.field_type == 'object' && Request.body.mode == 'raw'"><a
+                                                    href="javascript:;">新增</a>|</span>
+                                            <a ng-click="Del_bodyDate($index)" href="javascript:;">移除</a>
                                         </td>
                                     </tr>
                                     </tbody>
                                 </table>
+
+
                             </div>
                         </div>
                     </div>
@@ -347,7 +482,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="Response_Main" class="content-list" style="display: none;">
+                <div id="ErrorCodes_Main" class="content-list" style="display: none;">
                     <div class="req-content">
                         <div class="api-top">
                             <div class="row">
@@ -474,8 +609,8 @@
             });
 
         });
-    require(['{% static "js/config.js" %}?v={{config.v}}'], function () {
-        require(['controller/atm/api_edit']);
-    });
+        require(['{% static "js/config.js" %}?v={{config.v}}'], function () {
+            require(['controller/atm/api_edit']);
+        });
     </script>
 {% endblock %}

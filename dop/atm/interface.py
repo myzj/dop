@@ -103,19 +103,19 @@ class InterFace(object):
                     new_interface.description = self.data.get("description")
                 new_interface.save()
                 if self.data.get("req_data"):
-                    new_meta_data = MetaData()
-                    new_meta_data.interface = new_interface
-                    new_meta_data.author = self.data.get("user")
-                    new_meta_data.position = position_dict.get("Request")
-                    new_meta_data.data = str(self.data.get("req_data"))
-                    new_meta_data.save()
+                    new_req_meta_data = MetaData()
+                    new_req_meta_data.interface = new_interface
+                    new_req_meta_data.author = self.data.get("user")
+                    new_req_meta_data.position = position_dict.get("Request")
+                    new_req_meta_data.data = str(self.data.get("req_data"))
+                    new_req_meta_data.save()
                 if self.data.get("resp_data"):
-                    new_meta_data = MetaData()
-                    new_meta_data.interface = new_interface
-                    new_meta_data.author = self.data.get("user")
-                    new_meta_data.position = position_dict.get("Response")
-                    new_meta_data.data = str(self.data.get("resp_data"))
-                    new_meta_data.save()
+                    new_resp_meta_data = MetaData()
+                    new_resp_meta_data.interface = new_interface
+                    new_resp_meta_data.author = self.data.get("user")
+                    new_resp_meta_data.position = position_dict.get("Response")
+                    new_resp_meta_data.data = str(self.data.get("resp_data"))
+                    new_resp_meta_data.save()
                 if self.data.get("error_code"):
                     for item in self.data.get("error_code"):
                         new_error_code = ErrorCode()
@@ -138,6 +138,7 @@ class InterFace(object):
     def modify_interface(self):
         try:
             print '--------------Call modify_interface -----------'
+            now = datetime.datetime.now()
             if self.data and isinstance(self.data, dict):  # data is not None and is a dictionary
                 # update base
                 mdf_interface = Interface.objects.get(id=1)
@@ -155,6 +156,7 @@ class InterFace(object):
                     mdf_interface.tags = str(self.data.get("tags"))
                 if self.data.get("description"):
                     mdf_interface.description = self.data.get("description")
+                mdf_interface.utime = now
                 mdf_interface.save()
 
                 # update request
@@ -167,6 +169,7 @@ class InterFace(object):
                         req_meta_data.modifier = self.data.get("user")
                         req_meta_data.position = position_dict.get("Request")
                         req_meta_data.data = str(self.data.get("req_data"))
+                        req_meta_data.utime = now
                         req_meta_data.save()
                     else:
                         new_meta_data = MetaData()
@@ -186,6 +189,7 @@ class InterFace(object):
                         resp_meta_data.modifier = self.data.get("user")
                         resp_meta_data.position = position_dict.get("Response")
                         resp_meta_data.data = str(self.data.get("resp_data"))
+                        resp_meta_data.utime = now
                         resp_meta_data.save()
                     else:
                         new_meta_data = MetaData()
@@ -196,7 +200,7 @@ class InterFace(object):
                         new_meta_data.save()
                 else:
                     if resp_filter:
-                        resp_filter.update(is_deleted=True, modifier=self.data.get("user"))
+                        resp_filter.update(is_deleted=True, modifier=self.data.get("user"), utime=now)
 
                 # update error code
                 org_err_code_filter = ErrorCode.objects.filter(interface=mdf_interface, is_deleted=False, is_active=True)
@@ -218,6 +222,7 @@ class InterFace(object):
                                 up_error_code.description = item.get("description")
                             else:
                                 up_error_code.description = ""
+                            up_error_code.utime = now
                             up_error_code.save()
                             org_dict.pop(item.get("error_code"))
                         else:
@@ -234,10 +239,11 @@ class InterFace(object):
                         for value in org_dict.itervalues():
                             value.modifier = self.data.get("user")
                             value.is_deleted = True
+                            value.utime = now
                             value.save()
                 else:
                     if org_err_code_filter:
-                        org_err_code_filter.update(is_deleted=True, modifier=self.data.get("user"))
+                        org_err_code_filter.update(is_deleted=True, modifier=self.data.get("user"), utime=now)
 
                 print '--------------Call modify_interface finished! -----------'
                 return True, ""
@@ -255,6 +261,7 @@ def qry_interface_detail(request):
         'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
     if request.method == 'GET':
         try:
+            now = datetime.datetime.now()
             errmsg = ''
             if 'api_id' in request.GET and request.GET['api_id'] != '':
                 api_id = request.GET['api_id']
@@ -648,6 +655,7 @@ def cancel_lock(request):
         'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
     if request.method == 'GET':
         try:
+            now = datetime.datetime.now()
             errmsg = ''
             if 'api_id' in request.GET and request.GET['api_id'] != '':
                 api_id = request.GET['api_id']
@@ -686,7 +694,7 @@ def cancel_lock(request):
                 queryset['errorcode'] = 300035
                 queryset['errormsg'] = getMessage('300035')
                 return JSONResponse(queryset)
-            lock_filter.update(is_locked=False)  # 解锁
+            lock_filter.update(is_locked=False, utime=now)  # 解锁
             queryset["errormsg"] = 'Unlock the api_id={0} success.'.format(api_id)
             return JSONResponse(queryset)
         except BaseException, ex:

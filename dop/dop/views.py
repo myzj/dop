@@ -20,7 +20,9 @@ def login(request):
 @login_check
 def teamlist(request):
     params = {}
-    if request.GET and request.GET['keyword'] is not None:
+    path = request.get_full_path()
+    path_params = path.split("?")
+    if "keyword" in path_params[1]:
         params['isHideAdd'] = 1
     params['title'] = 'Team列表'
     return render(request, 'atm/teamlist.html', params)
@@ -29,7 +31,9 @@ def teamlist(request):
 @login_check
 def projectlist(request):
     params = {}
-    if request.GET and request.GET['keyword'] is not None:
+    path = request.get_full_path()
+    path_params = path.split("?")
+    if "keyword" in path_params[1]:
         params['isHideAdd'] = 1
     params['title'] = '项目列表'
     return render(request, 'atm/projectlist.html', params)

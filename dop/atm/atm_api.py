@@ -483,9 +483,15 @@ def req_api_list(request):
             if api_match.count() > 0:
                 api_page = api_pages.page(queryset['result']['pageIndex'])
                 for api in api_page.object_list:
+
                     result = {'id': api.id, 'interface_name': api.interface_name, 'description': api.description, 'url': api.url, 'method': api.method, \
-                              'content_type': api.content_type, 'remark': api.remark, 'tags': api.tags, \
+                              'content_type': api.content_type, 'remark': api.remark,  \
                               'update_time': api.utime.strftime('%Y-%m-%d %H:%M:%S')}
+                    try:
+                        result["tags"] = eval(api.tags)
+                    except BaseException, ex:
+                        except_info(ex)
+                        result["tags"] = []
                     queryset['result']['apiList'].append(result)
                 return JSONResponse(queryset)
             else:

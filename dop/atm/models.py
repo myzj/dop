@@ -38,6 +38,9 @@ class Team(models.Model):
     ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
     utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
 
+    def __unicode__(self):
+        return u'id={0}  {1}'.format(self.id, self.team_name)
+
     class Meta:
         verbose_name = u"团队"
         verbose_name_plural = verbose_name
@@ -58,6 +61,9 @@ class Project(models.Model):
     modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"project_modifier", null=True, blank=True)
     ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
     utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
+
+    def __unicode__(self):
+        return u'id={0}  {1}'.format(self.id, self.project_name)
 
     class Meta:
         verbose_name = u"项目"
@@ -98,6 +104,9 @@ class Interface(models.Model):
     modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"interface_modifier", null=True, blank=True)
     ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
     utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
+
+    def __unicode__(self):
+        return u'id={0}  {1}'.format(self.id, self.interface_name)
 
     class Meta:
         unique_together = ('project', 'method', 'url')

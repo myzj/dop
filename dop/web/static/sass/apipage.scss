@@ -135,3 +135,19 @@
     margin: 0;
   }
 }
+.tab-name{
+
+}
+.tab-type{
+  select{
+    width:80px!important;
+    padding:4px 6px!important;
+    display: inherit!important;
+    height: 30px!important;
+  }
+}
+.tab-def,.tab-exmple,.tab-dec{
+  input{
+    width:100px!important;
+  }
+}

@@ -21,32 +21,32 @@
         <div class="edit-body">
             <div class="tab">
                 <ul>
-                    <li class="active">
+                    <li id="spanBase" class="active">
                         spanBase
                     </li>
-                    <li>Request</li>
-                    <li>Response</li>
-                    <li>ErrorCode</li>
+                    <li id="Request">Request</li>
+                    <li id="Response">Response</li>
+                    <li id="ErrorCode">ErrorCode</li>
                 </ul>
             </div>
             <div class="edit-content">
-                <div class="content-list">
+                <div id="spanBase_Main" class="content-list">
                     <div class="row">
                         <div class="col-xs-2">Name:</div>
                         <div class="col-xs-10">
-                            <input type="text" ng-disabled='@{isEdit}@' ng-model="api_base.name" placeholder="请输入接口名称..." class="form-control text-input">
+                            <input type="text" ng-disabled='@{isEdit}@' ng-model="spanBase.name" placeholder="请输入接口名称..." class="form-control text-input">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-2">Mock:</div>
                         <div class="col-xs-10">
-                            <textarea ng-model="api_base.mock" class="form-control textarea" cols="30" rows="10"></textarea>
+                            <textarea ng-disabled='@{isEdit}@' ng-model="spanBase.mock" class="form-control textarea" cols="30" rows="10"></textarea>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-2">Description:</div>
                         <div class="col-xs-10">
-                            <textarea ng-model="api_base.decription" class="form-control textarea" cols="30" rows="10"></textarea>
+                            <textarea ng-disabled='@{isEdit}@' ng-model="spanBase.decription" class="form-control textarea" cols="30" rows="10"></textarea>
                         </div>
                     </div>
                     <div class="row">
@@ -59,22 +59,22 @@
                     <div class="row">
                         <div class="col-xs-2">State:</div>
                         <div class="col-xs-10">
-                            <label><input type="radio" name="state"/>Enable</label>
-                            <label><input type="radio" name="state"/>Disable</label>
+                            <label><input ng-disabled='@{isEdit}@' type="radio" name="state"/>Enable</label>
+                            <label><input ng-disabled='@{isEdit}@' type="radio" name="state"/>Disable</label>
                         </div>
                     </div>
                 </div>
-                <div class="content-list" style="display: none;">
+                <div id="Request_Main" class="content-list" style="display: none;">
                     <div class="row">
                         <div class="col-xs-2">URL:</div>
                         <div class="col-xs-10">
-                            <input type="text" placeholder="请输入路劲..." class="form-control text-input">
+                            <input ng-disabled='@{isEdit}@' type="text" ng-model="Request.url" placeholder="请输入路径..." class="form-control text-input">
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-2">Method:</div>
+                        <div class="col-xs-2" >Method:</div>
                         <div class="col-xs-10">
-                            <select class="form-control select-width">
+                            <select ng-disabled='@{isEdit}@' ng-model="Request.method" class="form-control select-width">
                                 <option>POST</option>
                                 <option>GET</option>
                                 <option>PUT</option>
@@ -85,9 +85,9 @@
                     <div class="row">
                         <div class="col-xs-2">ContentType:</div>
                         <div class="col-xs-10">
-                            <select class="form-control select-width">
+                            <select ng-disabled='@{isEdit}@' ng-model="Request.content_type" class="form-control select-width">
                                 <option>1</option>
-                                <option>2</option>
+                                <option>application/json</option>
                                 <option>3</option>
                                 <option>4</option>
                                 <option>5</option>
@@ -95,286 +95,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="req-content">
-                            <div class="api-top">
-                                <div class="row">
-                                    <div class="col-xs-1">Headers</div>
-                                    <div class="col-xs-9"></div>
-                                    <div class="col-xs-1"><a class="add-btn">BulkEdit</a></div>
-                                    <div class="col-xs-1"><a class="add-btn">+Add</a></div>
-                                </div>
-                            </div>
-                            <div class="api-body">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>名称</th>
-                                        <th>类型</th>
-                                        <th>是否必填</th>
-                                        <th>默认值</th>
-                                        <th>示例</th>
-                                        <th>描述</th>
-                                        <th>操作</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <select class="form-control select-width">
-                                                <option>Number</option>
-                                                <option>Float</option>
-                                                <option>String</option>
-                                                <option>Boolean</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" name="is_requrie">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <a href="javascript:;">移除</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <select class="form-control select-width">
-                                                <option>Number</option>
-                                                <option>Float</option>
-                                                <option>String</option>
-                                                <option>Boolean</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" name="is_requrie">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <a href="javascript:;">移除</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <select class="form-control select-width">
-                                                <option>Number</option>
-                                                <option>Float</option>
-                                                <option>String</option>
-                                                <option>Boolean</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" name="is_requrie">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <a href="javascript:;">移除</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <select class="form-control select-width">
-                                                <option>Number</option>
-                                                <option>Float</option>
-                                                <option>String</option>
-                                                <option>Boolean</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" name="is_requrie">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <a href="javascript:;">移除</a>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="req-content">
-                            <div class="api-top">
-                                <div class="row">
-                                    <div class="col-xs-1">QueryString</div>
-                                    <div class="col-xs-9"></div>
-                                    <div class="col-xs-1"><a class="add-btn">BulkEdit</a></div>
-                                    <div class="col-xs-1"><a class="add-btn">+Add</a></div>
-                                </div>
-                            </div>
-                            <div class="api-body">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>名称</th>
-                                        <th>类型</th>
-                                        <th>是否必填</th>
-                                        <th>默认值</th>
-                                        <th>示例</th>
-                                        <th>描述</th>
-                                        <th>操作</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <select class="form-control select-width">
-                                                <option>Number</option>
-                                                <option>Float</option>
-                                                <option>String</option>
-                                                <option>Boolean</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" name="is_requrie">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <a href="javascript:;">移除</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <select class="form-control select-width">
-                                                <option>Number</option>
-                                                <option>Float</option>
-                                                <option>String</option>
-                                                <option>Boolean</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" name="is_requrie">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <a href="javascript:;">移除</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <select class="form-control select-width">
-                                                <option>Number</option>
-                                                <option>Float</option>
-                                                <option>String</option>
-                                                <option>Boolean</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" name="is_requrie">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <a href="javascript:;">移除</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <select class="form-control select-width">
-                                                <option>Number</option>
-                                                <option>Float</option>
-                                                <option>String</option>
-                                                <option>Boolean</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" name="is_requrie">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <a href="javascript:;">移除</a>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="req-content">
+                        <div class="req-content" ng-repeat="apiList in AllDate">
                             <div class="api-top">
                                 <div class="row">
                                     <div class="col-xs-1">Body</div>
@@ -386,23 +107,23 @@
                             <div class="api-body">
                                 <table class="table">
                                     <thead>
-                                    <tr>
-                                        <th>名称</th>
-                                        <th>类型</th>
-                                        <th>是否数组</th>
-                                        <th>是否必填</th>
-                                        <th>默认值</th>
-                                        <th>示例</th>
-                                        <th>描述</th>
-                                        <th style="min-width: 120px">操作</th>
+                                    <tr style="font-size:14px;">
+                                        <th style="min-width:120px;">名称</th>
+                                        <th style="width:60px;">类型</th>
+                                        <th style="width:60px;">是否<br>数组</th>
+                                        <th style="width:60px;">是否<br>必填</th>
+                                        <th style="width:60px;">默认值</th>
+                                        <th style="width:60px;">示例</th>
+                                        <th style="width:60px;">描述</th>
+                                        <th style="width:110px;min-width:100px;">操作</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr>
-                                        <td>
+                                        <td class="tab-name">
                                             <input type="text" class="form-control"/>
                                         </td>
-                                        <td>
+                                        <td class="tab-type">
                                             <select class="form-control select-width">
                                                 <option>Number</option>
                                                 <option>Float</option>
@@ -410,150 +131,22 @@
                                                 <option>Boolean</option>
                                             </select>
                                         </td>
-                                        <td>
+                                        <td class="tab-arr">
                                             <input type="checkbox" name="is_requrie">
                                         </td>
-                                        <td>
+                                        <td class="tab-must">
                                             <input type="checkbox" name="is_requrie">
                                         </td>
-                                        <td>
+                                        <td class="tab-def">
                                             <input type="text" class="form-control"/>
                                         </td>
-                                        <td>
+                                        <td class="tab-exmple">
                                             <input type="text" class="form-control"/>
                                         </td>
-                                        <td>
+                                        <td class="tab-dec">
                                             <input type="text" class="form-control"/>
                                         </td>
-                                        <td>
-                                            <a href="javascript:;">新增</a>|
-                                            <a href="javascript:;">移除</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <select class="form-control select-width">
-                                                <option>Number</option>
-                                                <option>Float</option>
-                                                <option>String</option>
-                                                <option>Boolean</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" name="is_requrie">
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" name="is_requrie">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <a href="javascript:;">新增</a>|
-                                            <a href="javascript:;">移除</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <select class="form-control select-width">
-                                                <option>Number</option>
-                                                <option>Float</option>
-                                                <option>String</option>
-                                                <option>Boolean</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" name="is_requrie">
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" name="is_requrie">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <a href="javascript:;">新增</a>|
-                                            <a href="javascript:;">移除</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <select class="form-control select-width">
-                                                <option>Number</option>
-                                                <option>Float</option>
-                                                <option>String</option>
-                                                <option>Boolean</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" name="is_requrie">
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" name="is_requrie">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <a href="javascript:;">新增</a>|
-                                            <a href="javascript:;">移除</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <select class="form-control select-width">
-                                                <option>Number</option>
-                                                <option>Float</option>
-                                                <option>String</option>
-                                                <option>Boolean</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" name="is_requrie">
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" name="is_requrie">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"/>
-                                        </td>
-                                        <td>
+                                        <td class="tab-oper">
                                             <a href="javascript:;">新增</a>|
                                             <a href="javascript:;">移除</a>
                                         </td>
@@ -564,7 +157,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="content-list" style="display: none;">
+                <div id="Response_Main" class="content-list" style="display: none;">
                     <div class="req-content">
                         <div class="api-top">
                             <div class="row">
@@ -754,7 +347,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="content-list" style="display: none;">
+                <div id="Response_Main" class="content-list" style="display: none;">
                     <div class="req-content">
                         <div class="api-top">
                             <div class="row">

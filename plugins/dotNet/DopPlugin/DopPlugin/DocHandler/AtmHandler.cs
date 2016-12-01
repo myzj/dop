@@ -100,7 +100,10 @@ namespace DopPlugin.DocHandler
                 }
                 item.Base.Tags.AddRange(service.Value.Actions);
 
-                request.Body = GetFieldModels(service.Value.RequestType);
+                request.Body = new AtmModel.RequestBodyModel();
+
+                request.Body.Mode = "raw";
+                request.Body.Data = GetFieldModels(service.Value.RequestType);
 
                 item.Request = request;
                 #endregion
@@ -108,9 +111,7 @@ namespace DopPlugin.DocHandler
                 #region Response
 
                 var response = new Models.AtmModel.ResponseModel();
-
-                response.Mode = "raw";
-
+                
                 response.Body = GetFieldModels(service.Value.ResponseType);
 
                 item.Response = response;

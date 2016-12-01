@@ -48,7 +48,7 @@ namespace DopPlugin.Models
                 {
                     if (string.IsNullOrWhiteSpace(Base.Description)
                         || (Base.Description ?? "").IndexOf("###", StringComparison.Ordinal) >= 0
-                        || CheckFieldDescriptionExisEmpty(Request.Body)
+                        || CheckFieldDescriptionExisEmpty(Request.Body.Data)
                         || CheckFieldDescriptionExisEmpty(Response.Body)
                         )
                     {
@@ -140,7 +140,7 @@ namespace DopPlugin.Models
                 Headers = new List<FieldModel>();
                 ContentType = "";
                 QueryString = new List<FieldModel>();
-                Body = new List<FieldModel>();
+                Body = new RequestBodyModel();
             }
 
             [DataMember(Name = "url")]
@@ -159,16 +159,16 @@ namespace DopPlugin.Models
             public List<FieldModel> QueryString { get; set; }
 
             [DataMember(Name = "body")]
-            public List<FieldModel> Body { get; set; }
+            public RequestBodyModel Body { get; set; }
         }
 
         [DataContract]
-        public class ResponseModel
+        public class RequestBodyModel
         {
-            public ResponseModel()
+            public RequestBodyModel()
             {
                 Mode = "";
-                Body = new List<FieldModel>();
+                Data = new List<FieldModel>();
             }
 
             /// <summary>
@@ -177,6 +177,13 @@ namespace DopPlugin.Models
             [DataMember(Name = "mode")]
             public string Mode { get; set; }
 
+            [DataMember(Name = "data")]
+            public List<FieldModel> Data { get; set; }
+        }
+
+        [DataContract]
+        public class ResponseModel
+        {
             [DataMember(Name = "body")]
             public List<FieldModel> Body { get; set; }
         }

@@ -14,7 +14,7 @@ namespace DopPlugin.Models
     //Postman
 
     [DataContract]
-    public class Postman
+    public class AtmModel
     {
         #region 内部类
         [DataContract]

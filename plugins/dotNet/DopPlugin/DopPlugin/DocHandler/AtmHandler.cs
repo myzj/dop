@@ -14,7 +14,7 @@ using ServiceStack.WebHost.Endpoints;
 
 namespace DopPlugin.DocHandler
 {
-    public class PostmanHandler
+    public class AtmHandler
     {
 
         ///// <summary>
@@ -22,10 +22,10 @@ namespace DopPlugin.DocHandler
         ///// </summary>
         //private Dictionary<string, string> jsonDataTypeDict = new Dictionary<string, string>();
 
-        public Models.Postman ModelData;
+        public Models.AtmModel ModelData;
         public string[] FilterNames { get; set; }
 
-        public PostmanHandler(string[] filterNames)
+        public AtmHandler(string[] filterNames)
         {
             #region Init json datatype list
             //jsonDataTypeDict.Add(typeof(bool).FullName, "boolean");
@@ -42,11 +42,11 @@ namespace DopPlugin.DocHandler
 
             var req = HttpContext.Current.Request;
 
-            ModelData = new Postman();
-            ModelData.Info = new Models.Postman.InfoModel() { Project = req.Url.Port.ToString() };
+            ModelData = new AtmModel();
+            ModelData.Info = new Models.AtmModel.InfoModel() { Project = req.Url.Port.ToString() };
 
             var serviceMap = EndpointHost.Config.ServiceManager.Metadata.OperationNamesMap;
-            ModelData.Item = new List<Models.Postman.ItemModel>();
+            ModelData.Item = new List<Models.AtmModel.ItemModel>();
             foreach (var service in serviceMap)
             {
                 #region Filter Api
@@ -70,10 +70,10 @@ namespace DopPlugin.DocHandler
 
                 Debug.WriteLine("getter api info:" + service.Value.Name);
 
-                var item = new Models.Postman.ItemModel();
+                var item = new Models.AtmModel.ItemModel();
 
                 #region Base
-                item.Base = new Models.Postman.BaseModel() { Name = service.Value.Name, Description = "### ", State = true, Tags = new ArrayOfString() };
+                item.Base = new Models.AtmModel.BaseModel() { Name = service.Value.Name, Description = "### ", State = true, Tags = new ArrayOfString() };
 
                 var serviceAttrs = service.Value.RequestType.GetCustomAttributes(typeof(DescriptionAttribute), true);
                 foreach (var serviceAttr in serviceAttrs)
@@ -88,7 +88,7 @@ namespace DopPlugin.DocHandler
                 #endregion
 
                 #region Request
-                var request = new Models.Postman.RequestModel()
+                var request = new Models.AtmModel.RequestModel()
                 {
                     Url = "/json/reply/" + service.Value.Name,
                     ContentType = "application/json"
@@ -107,7 +107,7 @@ namespace DopPlugin.DocHandler
 
                 #region Response
 
-                var response = new Models.Postman.ResponseModel();
+                var response = new Models.AtmModel.ResponseModel();
 
                 response.Mode = "raw";
 
@@ -126,16 +126,16 @@ namespace DopPlugin.DocHandler
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        private List<Postman.FieldModel> GetFieldModels(Type type)
+        private List<AtmModel.FieldModel> GetFieldModels(Type type)
         {
-            var result = new List<Postman.FieldModel>();
+            var result = new List<AtmModel.FieldModel>();
 
             var acutalType = GetActualType(type);
 
             var reqProps = acutalType.GetProperties();
             foreach (var propInfo in reqProps)
             {
-                var fieldModel = new Models.Postman.FieldModel();
+                var fieldModel = new Models.AtmModel.FieldModel();
                 fieldModel.FieldName = propInfo.Name;
                 fieldModel.IsArray = IsArray(propInfo.PropertyType);
                 fieldModel.FieldType = GetJsonTypeDefine(GetActualType(propInfo.PropertyType));

@@ -20,6 +20,8 @@ def login(request):
 @login_check
 def teamlist(request):
     params = {}
+    if request.GET and request.GET['keyword'] != '':
+        params['isHideAdd'] = 1
     params['title'] = 'Team列表'
     return render(request, 'atm/teamlist.html', params)
 
@@ -27,19 +29,6 @@ def teamlist(request):
 @login_check
 def projectlist(request):
     params = {}
-    try:
-        if request.GET and request.GET['team'] != '':
-            team_id = request.GET['team']
-            team_filter = Team.objects.filter(is_deleted=False, is_active=True, id=int(team_id))
-            if team_filter:
-                params['team_name'] = team_filter[0].team_name
-            else:
-                return render(request, '404.html', params)
-        else:
-            return render(request, '404.html', params)
-    except BaseException, ex:
-        except_info(ex)
-        return render(request, '404.html', params)
     params['title'] = '项目列表'
     return render(request, 'atm/projectlist.html', params)
 
@@ -62,3 +51,18 @@ def api_edit(request):
     params = {}
     params['title'] = 'api编辑'
     return render(request, 'atm/api_edit.html', params)
+
+
+@login_check
+def search_page(request):
+    params = {}
+    params['title'] = '查询页面'
+    return render(request, 'atm/search.html', params)
+
+
+@login_check
+def search_api(request):
+    params = {}
+    params['title'] = '查询页面'
+    return render(request, 'atm/search_api.html', params)
+

@@ -68,15 +68,20 @@ def req_logout(request):
     queryset = {'timestamp': int(time.mktime(
         time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), 'success': False, \
         'errorcode': 0, 'errormsg': ''}
-    try:
-        request.session['user'] = None
-        return HttpResponseRedirect("/login")
-    except BaseException, ex:
-        except_info(ex)
-        queryset['errorcode'] = 200005
-        queryset['errormsg'] = str(ex) + ' ' + getMessage('200005')
+    if request.method == "GET":
+        try:
+            request.session['user'] = None
+            queryset['success'] = True
+            return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset['errorcode'] = 200005
+            queryset['errormsg'] = str(ex) + ' ' + getMessage('200005')
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)
-
 
 # 检查登录
 @csrf_exempt

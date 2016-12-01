@@ -5,28 +5,28 @@ require(['lib/common'],
             app.controller('myDoc', function ($scope, $http) {
                 $scope.isEdit = true;
                 $scope.doEdit = function () {
-                                $scope.isEdit = false;
-                                alert($scope.isEdit)
-                            }
+                    $scope.isEdit = false;
+                    var boxId = $('.tab').find('li.active').attr('id');
+                    $('#'+ boxId + '_Main').find('input,textarea,select').removeAttr('disabled')
+                }
                 var datainfo = {
                     "api_id": $.url.getParam("apiid"),
                 };
                 $http.get('/api/qry/api_detail?api_id=' + datainfo.api_id)
                     .success(function (data) {
                         if (data.errorcode == 0) {
-
                             var ApiDate = data.result;
                             if (ApiDate.base) {
-                                $scope.api_base = ApiDate.base;
+                                $scope.spanBase = ApiDate.base;
                             }
                             if (ApiDate.error_code) {
-                                api_error_code = ApiDate.error_code;
+                                $scope.errorCode = ApiDate.error_code;
                             }
                             if (ApiDate.request) {
-                                api_request = ApiDate.request;
+                                $scope.Request = ApiDate.request;
                             }
                             if (ApiDate.response) {
-                                api_response = ApiDate.response;
+                                $scope.Response = ApiDate.response;
                             }
                         }
                     });

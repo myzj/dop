@@ -255,7 +255,7 @@ namespace DopPlugin.DocHandler
                 || type.FullName.Equals(typeof(decimal).FullName)
                 )
             {
-                result = "int";
+                result = "number";
             }
             else if (type.FullName.Equals(typeof(bool).FullName))
             {

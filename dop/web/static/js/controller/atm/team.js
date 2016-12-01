@@ -35,7 +35,13 @@ require(['lib/common'],
                         "pageIndex": index,
                         "pageSize": pageSize
                     };
-                    $http.get('/api/req_team_list?pageIndex=' + datainfo.pageIndex + '&pageSize=' + datainfo.pageSize)
+                    var keywordStr = "";
+                    var keyword = $.url.getParam("keyword");
+                    if(keyword != null && keyword.length >0){
+                        datainfo.keyword = keyword;
+                        keywordStr = "&keyword=" + keyword;
+                    }
+                    $http.get('/api/req_team_list?pageIndex=' + datainfo.pageIndex + '&pageSize=' + datainfo.pageSize + keywordStr)
                         .success(function (data) {
                             onloading = true;
                             curIndex++;

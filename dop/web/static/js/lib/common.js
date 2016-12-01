@@ -26,18 +26,34 @@
             var app = $.getApp();
             app.controller('navbar', function ($scope, $http) {
                $scope.logOut = function(){
-                   dataInfo = {
-
-                   };
-                   $http.get('/api/req_project_list?pageIndex=')
-                        .success(function (data) {
-                            if (data.errorcode == 0) {
-
-                            } else if (data.errorcode == 300021) {      //300021 列表页码已超出实际页数
-                            }
-                        });
+                   $http.get('/api/req_logout').success(function (data) {
+                        if(data.errorcode == 0){
+                            window.location.href="/"
+                        }
+                    });
                }
            });
+            $(".changeType .dropdown-menu li").click(function(){
+                var _this = $(this);
+                $(".changeType .dropdown-toggle").attr("data-value", _this.attr("data-value"));
+                $(".changeType .dropdown-toggle").html(_this.attr("data-name")+ '<span class="caret"></span>');
+            });
+            $("#search-btn").click(function(){
+                var keyword = $.trim($("#keyword").val());
+                var type = $("#search-type").attr("data-value");  // 1:api, 2:Team; 3:Project
+                if(keyword.length <= 0){
+                    return;
+                }else{
+                    if(type == "1"){
+                        window.location.href = "/apilist?keyword=" + decodeURIComponent(keyword);
+                    }else if(type == "2"){
+                        window.location.href = "/teamlist?keyword=" + decodeURIComponent(keyword);
+                    }else if(type == "3"){
+                        window.location.href = "/projectlist?keyword=" + decodeURIComponent(keyword);
+                    }
+                }
+            });
+
         };
         $.initHeadController();
 

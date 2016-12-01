@@ -156,3 +156,16 @@
 .req-content .row {
   margin: 0;
 }
+
+/* line 142, ../sass/apipage.scss */
+.tab-type select {
+  width: 80px !important;
+  padding: 4px 6px !important;
+  display: inherit !important;
+  height: 30px !important;
+}
+
+/* line 150, ../sass/apipage.scss */
+.tab-def input, .tab-exmple input, .tab-dec input {
+  width: 100px !important;
+}

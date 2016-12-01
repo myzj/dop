@@ -68,15 +68,20 @@ def req_logout(request):
     queryset = {'timestamp': int(time.mktime(
         time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), 'success': False, \
         'errorcode': 0, 'errormsg': ''}
-    try:
-        request.session['user'] = None
-        return HttpResponseRedirect("/login")
-    except BaseException, ex:
-        except_info(ex)
-        queryset['errorcode'] = 200005
-        queryset['errormsg'] = str(ex) + ' ' + getMessage('200005')
+    if request.method == "GET":
+        try:
+            request.session['user'] = None
+            queryset['success'] = True
+            return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset['errorcode'] = 200005
+            queryset['errormsg'] = str(ex) + ' ' + getMessage('200005')
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)
-
 
 # 检查登录
 @csrf_exempt
@@ -478,9 +483,15 @@ def req_api_list(request):
             if api_match.count() > 0:
                 api_page = api_pages.page(queryset['result']['pageIndex'])
                 for api in api_page.object_list:
+
                     result = {'id': api.id, 'interface_name': api.interface_name, 'description': api.description, 'url': api.url, 'method': api.method, \
-                              'content_type': api.content_type, 'remark': api.remark, 'tags': api.tags, \
+                              'content_type': api.content_type, 'remark': api.remark,  \
                               'update_time': api.utime.strftime('%Y-%m-%d %H:%M:%S')}
+                    try:
+                        result["tags"] = eval(api.tags)
+                    except BaseException, ex:
+                        except_info(ex)
+                        result["tags"] = []
                     queryset['result']['apiList'].append(result)
                 return JSONResponse(queryset)
             else:

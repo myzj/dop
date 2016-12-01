@@ -17,28 +17,27 @@
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">Teams</a></li>
-                        <li><a href="#">Projects</a></li>
-                        <li><a href="#">APIs</a></li>
-                        <li><a href="#">Tests</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">API <span
+                        <li {% if config.path == "/teamlist" %} class="active" {%endif%}><a href="/teamlist">Teams</a></li>
+                        <li {% if config.path == "/projectlist" %} class="active" {%endif%}><a href="/projectlist">Projects</a></li>
+                        <li {% if config.path == "/apilist" %} class="active" {%endif%}><a href="/apilist">APIs</a></li>
+                        <li class="dropdown changeType">
+                            <a href="javascript:;" class="dropdown-toggle" id="search-type" data-value="1" data-toggle="dropdown">API<span
                                     class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="#">API</a></li>
+                                <li data-value="1" data-name="API"><a href="javascript:;" >API</a></li>
                                 <li class="divider"></li>
-                                <li><a href="#">Team</a></li>
+                                <li data-value="2" data-name="Team"><a href="javascript:;" >Team</a></li>
                                 <li class="divider"></li>
-                                <li><a href="#">Project</a></li>
+                                <li data-value="3" data-name="Project"><a href="javascript:;" >Project</a></li>
                             </ul>
                         </li>
                     </ul>
-                    <form class="navbar-form navbar-left" role="">
+                    <div class="navbar-form navbar-left" role="">
                         <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Search">
+                            <input type="text" id="keyword" class="form-control" placeholder="Search">
                         </div>
-                        <button type="submit" class="btn btn-default">Submit</button>
-                    </form>
+                        <a href="javascript:;" id="search-btn" class="btn btn-default">搜索</a>
+                    </div>
                     <ul class="nav navbar-nav navbar-right">
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user_info.username }} <span
@@ -46,7 +45,7 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="#">My Project</a></li>
                                 <li class="divider"></li>
-                                <li><a href="#">Logout</a></li>
+                                <li><a href="javascript:;" ng-click="logOut()">Logout</a></li>
                             </ul>
                         </li>
                     </ul>

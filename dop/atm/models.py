@@ -109,7 +109,6 @@ class Interface(models.Model):
         return u'id={0}  {1}'.format(self.id, self.interface_name)
 
     class Meta:
-        unique_together = ('project', 'method', 'url')
         verbose_name = u"API应用接口"
         verbose_name_plural = verbose_name
         db_table = "interface"

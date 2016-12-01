@@ -20,7 +20,7 @@ def login(request):
 @login_check
 def teamlist(request):
     params = {}
-    if request.GET and request.GET['keyword'] != '':
+    if request.GET and request.GET['keyword'] is not None:
         params['isHideAdd'] = 1
     params['title'] = 'Team列表'
     return render(request, 'atm/teamlist.html', params)
@@ -29,6 +29,8 @@ def teamlist(request):
 @login_check
 def projectlist(request):
     params = {}
+    if request.GET and request.GET['keyword'] is not None:
+        params['isHideAdd'] = 1
     params['title'] = '项目列表'
     return render(request, 'atm/projectlist.html', params)
 
@@ -65,4 +67,10 @@ def search_api(request):
     params = {}
     params['title'] = '查询页面'
     return render(request, 'atm/search_api.html', params)
+
+@login_check
+def my_project(request):
+    params = {}
+    params['title'] = '我的项目'
+    return render(request, 'atm/my_project.html', params)
 

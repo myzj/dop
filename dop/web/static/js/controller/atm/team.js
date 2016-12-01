@@ -2,7 +2,7 @@ require(['lib/common'],
     function () {
         angular.element(document).ready(function () {
             var app = $.getApp();
-            app.controller('TeamMain', function ($scope, $http) {
+            app.controller('myDoc', function ($scope, $http) {
                 $scope.isLast = true;
                 $scope.isDialogShow = false;
                 var curIndex = 1,        //当前页数

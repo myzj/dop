@@ -12,8 +12,7 @@ CONSTANT = {
     "100004": ["", u"网络异常"],
     "100005": ["", u"用户信息获取失败"],
     "100006": ["", u"信息获取失败"],
-    "100007": ["Query interface detail information throw exception", u"查询API接口明细信息出现异常"],
-    "100008": ["Parameter type error", u"参数类型错误"],
+    "100007": ["Parameter type error", u"参数类型错误"],
 
     "200001": ["", u"账户已禁用"],
     "200002": ["", u"密码不正确"],
@@ -33,6 +32,15 @@ CONSTANT = {
     "300025": ["", u"找不到关联的项目"],
     "300026": ["Add interface fail", u"新增API接口失败"],
     "300027": ["Add interface throw exception", u"新增API接口出现异常"],
+    "300028": ["Query interface detail information throw exception", u"查询API接口明细信息出现异常"],
+    "300029": ["No qualified interface information", u"没有符合条件的API接口信息"],
+    "300030": ["API interface was locked", u"API接口已经被锁不能编辑"],
+    "300031": ["You have no right to edit the interface", u"您无权编辑该API接口"],
+    "300032": ["Update interface fail", u"更新API接口失败"],
+    "300033": ["Update interface throw exception", u"更新API接口出现异常"],
+    "300034": ["No qualified lock information", u"没有符合条件的API被锁信息"],
+    "300035": ["You have no right to unlock the interface", u"您无权解锁"],
+    "300036": ["Unlock interface lock throw exception", u"解锁API接口出现异常"],
 
 }
 

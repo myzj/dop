@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'(?i)^api/mdf/api_info/?$', itf.update_interface),  # 修改API接口
     url(r'(?i)^api/del/api_info/?$', itf.delete_interface),  # 删除API接口
     url(r'(?i)^api/cancel/lock/?$', itf.cancel_lock),  # 解锁
+    url(r'(?i)^api/check/data/?$', itf.check_data),  # 导入数据预检
 
     url(r'^test/?$', views.test),
     url(r'^login/?$', views.login),

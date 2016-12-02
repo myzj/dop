@@ -202,7 +202,8 @@ class InterFace(object):
                         resp_filter.update(is_deleted=True, modifier=self.data.get("user"), utime=now)
 
                 # update error code
-                org_err_code_filter = ErrorCode.objects.filter(interface=mdf_interface, is_deleted=False, is_active=True)
+                org_err_code_filter = ErrorCode.objects.filter(interface=mdf_interface, is_deleted=False,
+                                                               is_active=True)
                 org_dict = {}
                 if org_err_code_filter:
                     for org_rec in org_err_code_filter:
@@ -658,6 +659,10 @@ def add_interface(request):
                         return_data["failed"].append(rec)
             queryset["return_data"] = return_data
             queryset["count"] = count
+            msg = u'新增:{0}, 更新:{1},待更新:{2},成功:{3},失败:{4}'.format(count.get("new_num"), count.get("update_num"),
+                                                                 count.get("pre_update_num"), count.get("success_num"),
+                                                                 count.get("fail_num"))
+            queryset['errormsg'] = msg
             return JSONResponse(queryset)
         except BaseException, ex:
             except_info(ex)
@@ -1025,4 +1030,3 @@ def check_data(request):
         queryset['errorcode'] = 100002
         queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)
-

@@ -169,3 +169,10 @@
 .tab-def input, .tab-exmple input, .tab-dec input {
   width: 100px !important;
 }
+
+/* line 155, ../sass/apipage.scss */
+.bulkEdit textarea {
+  width: 96%;
+  margin-top: 15px;
+  min-height: 200px;
+}

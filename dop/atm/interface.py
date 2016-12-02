@@ -128,7 +128,7 @@ class InterFace(object):
                             new_error_code.description = item.get("description")
                         new_error_code.save()
                 print '--------------Call create_interface finished! -----------'
-                return True, ""
+                return True, "", new_interface
             return False, getMessage("300026")
         except BaseException, ex:
             except_info(ex)
@@ -253,11 +253,9 @@ class InterFace(object):
 
 
 # 添加API修改记录
-def add_modify_record(user=None, interface=None):
+def add_modify_record(user=None, interface=None, data=""):
     try:
         if user and interface:
-            itf = InterFace(interface.id)
-            data = itf.get_metadata
             new_history = EditHistory()
             new_history.interface = interface
             new_history.content = str(data)
@@ -273,12 +271,13 @@ def add_modify_record(user=None, interface=None):
 
 # check interface
 def check_interface(project=None, url=""):
-    check_msg = {"is_existed": False, "is_locked": False}
+    check_msg = {"is_existed": False, "is_locked": False, "api": None}
     try:
         if project and url:
             interface_filter = Interface.objects.filter(project=project, url=url, is_deleted=False)
             if interface_filter:
                 check_msg["is_existed"] = True
+                check_msg["api"] = interface_filter[0]
                 # check lock info
                 lock_filter = LockInfo.objects.filter(interface=interface_filter[0], is_locked=True, is_deleted=False)
                 if lock_filter:
@@ -473,7 +472,7 @@ def add_interface(request):
         time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
         'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
     count = {"new_num": 0, "update_num": 0, "success_num": 0, "fail_num": 0, "pre_update_num": 0}
-    return_data = {"is_existed": [], "is_locked": []}
+    return_data = {"is_existed": [], "is_locked": [], "failed": []}
     if request.method == 'POST':
         try:
             data = {}
@@ -542,7 +541,6 @@ def add_interface(request):
                 queryset['result'] = check_msg
                 return JSONResponse(queryset)
             for rec in item:
-                is_update = False
                 data["user_id"] = user.id
                 data["user"] = user
                 data["project_id"] = project_id
@@ -624,7 +622,6 @@ def add_interface(request):
                             queryset['errormsg'] = 'error_code属性值的error_code为必填属性  ' + getMessage('100001')
                             return JSONResponse(queryset)
                     data["error_code"] = error_code
-                #count = {"new_num": 0, "update_num": 0, "success_num": 0, "fail_num": 0, "pre_update_num": 0}
                 # check interface has existed
                 check_info = check_interface(project=project_filter[0], url=data["url"])
                 if check_info["is_existed"]:  # interface has existed
@@ -636,24 +633,29 @@ def add_interface(request):
                             # call modify interface
                             itf = InterFace(data=data)
                             flag, msg = itf.modify_interface
-                            if flag:
+                            if flag:  # modify success
                                 count["update_num"] += 1
                                 count["success_num"] += 1
-                            else:
+                                add_modify_record(user=user, interface=check_info["api"], data=rec)  # Add modify record
+                            else:  # modify fail
                                 count["fail_num"] += 1
                                 queryset["result"][data.get("url")] = msg
+                                return_data["failed"].append(rec)
                         else:  # don't replace interface
                             return_data["is_existed"].append(rec)
                             count["pre_update_num"] += 1
-                # call write data to db
-                itf = InterFace(data=data)
-                flag, msg = itf.create_interface
-                if flag:
-                    error_msg = "Add new interface success !"
-                else:
-                    queryset['errorcode'] = 300026
-                    error_msg = getMessage("300026") + msg
-                queryset["errormsg"] = error_msg
+                else:  # write new interface
+                    # call write data to db
+                    itf = InterFace(data=data)
+                    flag, msg, itf = itf.create_interface
+                    if flag:  # write success
+                        count["success_num"] += 1
+                        count["new_num"] += 1
+                        add_modify_record(user=user, interface=itf, data=rec)
+                    else:  # write fail
+                        count["fail_num"] += 1
+                        queryset["result"][data.get("url")] = msg
+                        return_data["failed"].append(rec)
             return JSONResponse(queryset)
         except BaseException, ex:
             except_info(ex)
@@ -829,6 +831,7 @@ def update_interface(request):
             if flag:
                 error_msg = "Update interface id={0} success !".format(api_id)
                 lock_filter.update(is_locked=False)  # 解锁
+                add_modify_record(user=user, interface=up_interface, data=rec)  # 写修改记录
             else:
                 queryset['errorcode'] = 300032
                 error_msg = getMessage("300032") + msg

@@ -21,6 +21,7 @@ require(['lib/common'],
                     .success(function (data) {
                         if (data.errorcode == 0) {
                             var ApiDate = data.result;
+                            $scope.ApiDate = data.result
                             if (!ApiDate.base) {
                                 ApiDate.base = [];
                             }
@@ -42,45 +43,45 @@ require(['lib/common'],
                             $scope.toggleBulkEdit = function ($event, EditId) {
                                 if ($event.target.innerHTML == 'BulkEdit') {
                                     $event.target.innerHTML = 'KeyValue';
-                                    if(EditId == 'Rq_headers'){
+                                    if (EditId == 'Rq_headers') {
                                         $scope.head_visible = !$scope.head_visible;
                                         $scope.Request.headersBulk = JSON.stringify($scope.Request.headers);
                                     }
-                                    if(EditId == 'Rq_query_string'){
+                                    if (EditId == 'Rq_query_string') {
                                         $scope.query_string_visible = !$scope.query_string_visible;
                                         $scope.Request.query_stringBulk = JSON.stringify($scope.Request.query_string);
                                     }
-                                    if(EditId == 'Rq_body'){
+                                    if (EditId == 'Rq_body') {
                                         $scope.body_visible = !$scope.body_visible;
                                         $scope.Request.BodyBulk = JSON.stringify($scope.Request.body.data);
                                     }
-                                    if(EditId == 'Response'){
+                                    if (EditId == 'Response') {
                                         $scope.Response_visible = !$scope.Response_visible;
                                         $scope.ResponseBulk = JSON.stringify($scope.Response.body);
                                     }
-                                    if(EditId == 'ErrorCodes'){
+                                    if (EditId == 'ErrorCodes') {
                                         $scope.ErrorCodes_visible = !$scope.ErrorCodes_visible;
                                         $scope.ErrorCodesBulk = JSON.stringify($scope.errorCodes);
                                     }
                                 } else if ($event.target.innerHTML == 'KeyValue') {
                                     $event.target.innerHTML = 'BulkEdit';
-                                    if(EditId == 'Rq_headers'){
+                                    if (EditId == 'Rq_headers') {
                                         $scope.head_visible = !$scope.head_visible;
                                         $scope.Request.headers = JSON.parse($scope.Request.headersBulk);
                                     }
-                                    if(EditId == 'Rq_query_string'){
+                                    if (EditId == 'Rq_query_string') {
                                         $scope.query_string_visible = !$scope.query_string_visible;
                                         $scope.Request.query_string = JSON.parse($scope.Request.query_stringBulk);
                                     }
-                                    if(EditId == 'Rq_body'){
+                                    if (EditId == 'Rq_body') {
                                         $scope.body_visible = !$scope.body_visible;
                                         $scope.Request.body.data = JSON.parse($scope.Request.BodyBulk);
                                     }
-                                    if(EditId == 'Response'){
+                                    if (EditId == 'Response') {
                                         $scope.Response_visible = !$scope.Response_visible;
                                         $scope.Response.body = JSON.parse($scope.ResponseBulk);
                                     }
-                                    if(EditId == 'ErrorCodes'){
+                                    if (EditId == 'ErrorCodes') {
                                         $scope.ErrorCodes_visible = !$scope.ErrorCodes_visible;
                                         $scope.errorCodes = JSON.parse($scope.ErrorCodesBulk);
                                     }
@@ -132,6 +133,37 @@ require(['lib/common'],
 
                         }
                     });
+                $scope.enterTag = function (e) {
+                    var keycode = window.event ? e.keyCode : e.which;
+                    console.log(keycode)
+                    if (keycode == 13 || keycode == 186) {
+                        $scope.Base.tags.push(e.target.value.replace(/;；/g,''));
+                        e.target.value = '';
+                        console.log($scope.Base)
+                    }
+                }
+                $scope.saveData = function () {
+                    var upData = {
+                        "project": '17',
+                        "api_id": '165',
+                        "Arryitem": $scope.ApiDate
+                    };
+                    $http({
+                        method: 'PATCH',
+                        url: '/api/mdf/api_info',
+                        data: {
+                            info: {
+                                "project": upData.project,
+                                "api_id": upData.api_id
+                            },
+                            item: [upData.Arryitem]
+                        }
+                    }).success(function (data) {
+                        if (data.errorcode == 0) {
+
+                        }
+                    });
+                }
             });
             angular.bootstrap(document, ['app']);
         });

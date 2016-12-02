@@ -15,7 +15,7 @@
             </ol>
             <div class="edit-btns">
                 <button type="button" ng-click="doEdit()" class="btn btn-primary">Edit</button>
-                <button type="button" class="btn btn-success">Save</button>
+                <button ng-click="saveData()" type="button" class="btn btn-success">Save</button>
             </div>
         </div>
         <div class="edit-body">
@@ -53,8 +53,11 @@
                     <div class="row">
                         <div class="col-xs-2">Tags:</div>
                         <div class="col-xs-10">
-                            <span class="label label-warning">警告标签</span>
+                            <span ng-repeat="(key, value) in Base.tags" class="label label-warning">
+                                @{value}@
+                            </span>
                             <span class="label label-danger">危险标签</span>
+                            <input ng-keyup="enterTag($event)" type="text">
                         </div>
                     </div>
                     <div class="row">

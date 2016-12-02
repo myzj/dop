@@ -22,7 +22,7 @@ def teamlist(request):
     params = {}
     path = request.get_full_path()
     path_params = path.split("?")
-    if "keyword" in path_params[1]:
+    if len(path_params) > 1 and "keyword" in request.GET:
         params['isHideAdd'] = 1
     params['title'] = 'Team列表'
     return render(request, 'atm/teamlist.html', params)
@@ -33,7 +33,7 @@ def projectlist(request):
     params = {}
     path = request.get_full_path()
     path_params = path.split("?")
-    if "keyword" in path_params[1]:
+    if len(path_params) > 1 and "keyword" in request.GET:
         params['isHideAdd'] = 1
     params['title'] = '项目列表'
     return render(request, 'atm/projectlist.html', params)

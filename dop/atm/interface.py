@@ -33,7 +33,7 @@ class InterFace(object):
         if self.interface:
             try:
                 meta_data["base"] = {
-                    "decription": "" if self.interface.description is None else self.interface.description, \
+                    "description": "" if self.interface.description is None else self.interface.description, \
                     "name": self.interface.interface_name if self.interface.interface_name else "", \
                     "mock": self.interface.mockdata if self.interface.mockdata else "", \
                     "state": self.interface.is_active}

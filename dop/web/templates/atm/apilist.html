@@ -3,6 +3,13 @@
 {% block head %}
 <link rel="stylesheet" href="{% static "css/main.css" %}?v={{ config.v }}">
 <link rel="stylesheet" href="{% static "css/apipage.css" %}?v={{ config.v }}">
+<link rel="stylesheet" href="{% static "css/default.min.css" %}?v={{ config.v }}">
+<link rel="stylesheet" href="{% static "css/monokai-sublime.css" %}?v={{ config.v }}">
+
+<script src="{% static 'js/lib/beautify.js' %}?v={{ config.v }}"></script>
+<script src="{% static 'js/lib/beautify-css.js' %}?v={{ config.v }}"></script>
+<script src="{% static 'js/lib/beautify-html.js' %}?v={{ config.v }}"></script>
+
 {%endblock%}
 {% block container %}
 {% include "shared/headerBar.html" %}
@@ -10,9 +17,9 @@
     <div class="api-top">
         <div class="row">
             <div class="col-xs-1">APIS</div>
-            <div class="col-xs-9"></div>
-            <div class="col-xs-1"><a class="add-btn">+Add</a></div>
-            <div class="col-xs-1">
+            <div class="col-xs-10"></div>
+            <div class="col-xs-1"><button class="btn btn-default" id="import-action" ng-click="show_importDialo()">+Add</button></div>
+            <!--<div class="col-xs-1">
                 <div class="dropdown">
                     <button type="button" class="btn dropdown-toggle" id="dropdownMenu1"
                             data-toggle="dropdown">
@@ -28,7 +35,7 @@
                         </li>
                     </ul>
                 </div>
-            </div>
+            </div>-->
         </div>
     </div>
     <div class="api-body">
@@ -62,7 +69,11 @@
                     @{List.method}@
                 </td>
                 <td>
-                    @{List.tags}@
+                    <div class="tags">
+                        <span ng-repeat="tag in List.tags">
+                            @{tag}@
+                        </span>
+                    </div>
                 </td>
                 <td>
                     @{List.update_time}@
@@ -72,12 +83,57 @@
         </table>
         <div id="pages"><ul id="pagination" class="pagination-sm"></ul></div>
     </div>
-
 </div>
+<div class="import-box-lay import-dialog"></div>
+<div class="import-box import-dialog">
+    <div class="import-box-header">
+        <span>Import</span>
+    </div>
+    <div class="import-content">
+        <div class="row">
+            <div class="col-xs-2">IsReplace:</div>
+            <div class="col-xs-10 IsReplace">
+                <label for="">
+                    <input type="radio" name="is_replace" checked>yes
+                </label>
+                <label for="">
+                    <input type="radio" name="is_replace"> no
+                </label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-2">Date:</div>
+            <div class="col-xs-9">
+                <div class="edit-content">
+                    <textarea class="textarea" ng-model="text" id="code_data" cols="30" rows="10"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6">
+            </div>
+            <div class="col-xs-2">
+                <a class="btn btn-default"  ng-click="format()">Format</a>
+            </div>
+            <div class="col-xs-2">
+                <a class="btn btn-default" id="import-btn" ng-click="import_action()">Import</a>
+            </div>
+            <div class="col-xs-2">
+                <a class="btn btn-default" id="cancel-btn" ng-click="hide_importDialog()">Close</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 
 <script type="text/javascript">
     require(['{% static "js/config.js" %}?v={{config.v}}'], function () {
         require(['controller/atm/apilist']);
     });
 </script>
+
+
+
 {%endblock%}

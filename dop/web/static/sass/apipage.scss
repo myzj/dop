@@ -1,65 +1,82 @@
 @charset "UTF-8";
-.dropdown{
+.dropdown {
   position: relative;
 }
-.api-top{
+
+.api-top {
   padding: 5px 0;
 
 }
- .row{
-    margin: 0;
-  }
 
+.row {
+  margin: 0;
+}
 
-.api-body{
+.api-body {
   background: #fff;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
-  .table{
+  .tags {
+    span {
+      margin: 0 3px;
+      background-color: #f0ad4e;
+      display: inline;
+      padding: .2em .6em .3em;
+      font-size: 75%;
+      font-weight: 700;
+      line-height: 1;
+      color: #fff;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      border-radius: .25em;
+    }
+  }
+  .table {
     margin-bottom: 0;
-    tr{
-      th{
+    tr {
+      th {
         text-align: center;
       }
     }
   }
-  .page{
+  .page {
     border-top: 1px solid #ccc;
   }
   .pagination {
-    margin:5px auto;
+    margin: 5px auto;
   }
 }
 
-.edit-top{
+.edit-top {
   overflow: hidden;
-  .breadcrumb{
+  .breadcrumb {
     float: left;
     margin-bottom: 0;
     background: none;
   }
-  &:after{
+  &:after {
     content: " ";
     overflow: hidden;
   }
-  .edit-btns{
-        padding: 8px 15px;
+  .edit-btns {
+    padding: 8px 15px;
     float: right;
   }
 }
 
-.edit-body{
+.edit-body {
   padding: 15px 0;
   background: #fff;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
-  .tab{
-    ul{
+  .tab {
+    ul {
       overflow: hidden;
       width: 96%;
       margin: 0 auto;
     }
-    li{
+    li {
       cursor: pointer;
       float: left;
       width: 23%;
@@ -72,25 +89,25 @@
       background: #ccc;
       margin: 0 1%;
     }
-    li.active{
+    li.active {
       background: #428bca;
     }
   }
 }
 
-.edit-content{
+.edit-content {
   padding: 20px 0;
-  .row{
+  .row {
     margin-bottom: 10px;
   }
-  .col-xs-2{
+  .col-xs-2 {
     text-align: right;
   }
-  .col-xs-10{
+  .col-xs-10 {
     text-align: left;
   }
-  .text-input{
-      outline: none;
+  .text-input {
+    outline: none;
     display: block;
     width: 98%;
     padding: 5px;
@@ -101,10 +118,10 @@
     transition: all 0s;
     -ms-transition: all .0s;
   }
-  .text-input:active{
+  .text-input:active {
     padding: 5px;
   }
-  .textarea{
+  .textarea {
     display: block;
     width: 98%;
     height: 150px !important;
@@ -112,20 +129,20 @@
     outline: none;
   }
 
-  .select-width{
+  .select-width {
     width: 150px;
   }
 }
 
-.req-content{
-    width: 90%;
-    border: 1px solid #cccccc;
-    border-radius: 5px;
-    margin: 20px auto;
-    background: #f1f1f1;
-    padding: 0;
-  .add-btn{
-    background:#428bca ;
+.req-content {
+  width: 90%;
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+  margin: 20px auto;
+  background: #f1f1f1;
+  padding: 0;
+  .add-btn {
+    background: #428bca;
     padding: 4px 10px;
     color: #fff;
     border-radius: 5px;
@@ -135,19 +152,70 @@
     margin: 0;
   }
 }
-.tab-name{
+
+.tab-name {
 
 }
-.tab-type{
-  select{
-    width:80px!important;
-    padding:4px 6px!important;
-    display: inherit!important;
-    height: 30px!important;
+
+.tab-type {
+  select {
+    width: 80px !important;
+    padding: 4px 6px !important;
+    display: inherit !important;
+    height: 30px !important;
   }
 }
-.tab-def,.tab-exmple,.tab-dec{
-  input{
-    width:100px!important;
+
+.tab-def, .tab-exmple, .tab-dec {
+  input {
+    width: 100px !important;
+  }
+}
+
+.import-box-lay {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, .4);
+}
+
+.import-box {
+  display: none;
+  z-index: 101;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin: -200px 0 0 -320px;
+  border: 1px solid #ccc;
+  width: 650px;
+  background: #fff;
+
+  .import-box-header {
+    text-align: left;
+    height: 40px;
+    line-height: 40px;
+    background: #cccccc;
+    span {
+      margin-left: 30px;
+      color: #666;
+    }
+  }
+  .IsReplace {
+    text-align: left !important;
+  }
+  .row {
+    margin-bottom: 10px;
+  }
+  .import-content {
+    margin-top: 20px;
+  }
+  .text-input {
+    resize: none;
+    overflow-y: auto;
+    height: 200px !important;
   }
 }

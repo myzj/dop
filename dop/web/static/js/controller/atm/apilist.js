@@ -51,7 +51,7 @@ require(['lib/common', 'lib/jquery.twbsPagination.min'],
                                             getTeamDate(page, false);
                                         }
                                     });
-                                    if(isInit){
+                                    if (isInit) {
                                         $("#pagination .page").eq(0).addClass("active")
                                     }
                                 }
@@ -62,32 +62,34 @@ require(['lib/common', 'lib/jquery.twbsPagination.min'],
 
                         });
                 };
-                //添加team
-                /*$scope.addTeam = function () {
-                 $scope.isDialogShow = true;
-                 $scope.closeDialog = function () {
-                 $scope.isDialogShow = false;
-                 };
-                 $scope.saveDate = function () {
-                 var tname = $('.tName').val();
-                 var tpic = $('.tPic').val();
-                 var tdec = $('.tDec').val();
-                 var datainfo = {
-                 "tname": tname,
-                 "tpic": tpic,
-                 "tdec": tdec
-                 };
-                 $http({
-                 method: 'post',
-                 url: '/api/add_team?team_name',
-                 data: {team_name: datainfo.tname, pic_url: datainfo.tpic, description: datainfo.tdec}
-                 }).success(function (data) {
-                 if (data.errorcode == 0) {
 
-                 }
-                 });
-                 }
-                 }*/
+                $scope.show_importDialo = function () {
+                    $(".import-dialog").show();
+                };
+                $scope.import_action = function(){
+                    var a = $scope.text;
+                    var json = eval("("+ a +")");
+                    console.log(json);
+                };
+
+                $scope.hide_importDialog = function () {
+                    $scope.text = "";
+                    $(".import-dialog").hide();
+                };
+                $scope.format = function () {
+                    beautify();
+                };
+                function beautify() {
+                  var source = $("#code_data").val();
+
+                  var opts = {"indent_size":"3","indent_char":" ","max_preserve_newlines":"1","preserve_newlines":true,"keep_array_indentation":false,"break_chained_methods":false,"indent_scripts":"normal","brace_style":"expand","space_before_conditional":true,"unescape_strings":false,"jslint_happy":false,"end_with_newline":false,"wrap_line_length":"0"};
+
+                  var formated = js_beautify(source,opts);
+
+                  $("#code_data").val(formated);
+
+                }
+
             });
             angular.bootstrap(document, ['app']);
         });

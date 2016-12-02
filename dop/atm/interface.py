@@ -656,12 +656,16 @@ def add_interface(request):
                         count["fail_num"] += 1
                         queryset["result"][data.get("url")] = msg
                         return_data["failed"].append(rec)
+            queryset["return_data"] = return_data
+            queryset["count"] = count
             return JSONResponse(queryset)
         except BaseException, ex:
             except_info(ex)
             queryset['success'] = False
             queryset['errorcode'] = 300027
-            queryset['errormsg'] = getMessage('300027') + "\n" + str(ex)
+            queryset['errormsg'] = getMessage('300027') + str(ex)
+            queryset["return_data"] = return_data
+            queryset["count"] = count
             return JSONResponse(queryset)
 
 

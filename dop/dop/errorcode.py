@@ -13,6 +13,7 @@ CONSTANT = {
     "100005": ["", u"用户信息获取失败"],
     "100006": ["", u"信息获取失败"],
     "100007": ["Parameter type error", u"参数类型错误"],
+    "100008": ["param value error", u"参数取值错误"],
 
     "200001": ["", u"账户已禁用"],
     "200002": ["", u"密码不正确"],
@@ -42,6 +43,7 @@ CONSTANT = {
     "300035": ["You have no right to unlock the interface", u"您无权解锁"],
     "300036": ["Unlock interface lock throw exception", u"解锁API接口出现异常"],
     "300037": ["Delete interface throw exception", u"删除API接口出现异常"],
+    "300038": ["Precheck interface data fail", u"数据预检查失败"],
 
 
 }

@@ -15,7 +15,7 @@
             </ol>
             <div class="edit-btns">
                 <button type="button" ng-click="doEdit()" class="btn btn-primary">Edit</button>
-                <button type="button" class="btn btn-success">Save</button>
+                <button ng-click="saveData()" type="button" class="btn btn-success">Save</button>
             </div>
         </div>
         <div class="edit-body">
@@ -53,8 +53,11 @@
                     <div class="row">
                         <div class="col-xs-2">Tags:</div>
                         <div class="col-xs-10">
-                            <span class="label label-warning">警告标签</span>
+                            <span ng-repeat="(key, value) in Base.tags" class="label label-warning">
+                                @{value}@
+                            </span>
                             <span class="label label-danger">危险标签</span>
+                            <input ng-keyup="enterTag($event)" type="text">
                         </div>
                     </div>
                     <div class="row">
@@ -99,17 +102,17 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div ng-if="Request.headers.length" class="req-content" id="Request-Headers">
+                        <div class="req-content" id="Request-Headers">
                             <div class="api-top">
                                 <div class="row">
                                     <div class="col-xs-1">Headers</div>
                                     <div class="col-xs-9"></div>
-                                    <div class="col-xs-1"><a class="add-btn">BulkEdit</a></div>
+                                    <div class="col-xs-1"><a ng-click="toggleBulkEdit($event,'Rq_headers')" class="add-btn">BulkEdit</a></div>
                                     <div class="col-xs-1"><a ng-click="Add_headerDate()" class="add-btn">+Add</a></div>
                                 </div>
                             </div>
                             <div class="api-body">
-                                <table class="table">
+                                <table ng-hide="head_visible" class="table">
                                     <thead>
                                     <tr style="font-size:14px;">
                                         <th style="min-width:120px;">名称</th>
@@ -122,7 +125,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr ng-repeat="RequestDate in Request.headers">
+                                    <tr ng-repeat="RequestDate in Request.headers track by $index">
                                         <td class="tab-name">
                                             <input ng-init="RequestDate.field_name = ''"
                                                    ng-model="RequestDate.field_name" type="text" class="form-control"/>
@@ -157,20 +160,23 @@
                                     </tr>
                                     </tbody>
                                 </table>
+                                <div ng-show="head_visible" class="headers-bulkEdit bulkEdit">
+                                    <textarea ng-model="Request.headersBulk"></textarea>
+                                </div>
                             </div>
                         </div>
-                        <div ng-if="Request.query_string.length" class="req-content" id="Request-QueryString">
+                        <div class="req-content" id="Request-QueryString">
                             <div class="api-top">
                                 <div class="row">
                                     <div class="col-xs-1">QueryString</div>
                                     <div class="col-xs-9"></div>
-                                    <div class="col-xs-1"><a class="add-btn">BulkEdit</a></div>
+                                    <div class="col-xs-1"><a ng-click="toggleBulkEdit($event,'Rq_query_string')" class="add-btn">BulkEdit</a></div>
                                     <div class="col-xs-1"><a ng-click="Add_QueryStringDate()" class="add-btn">+Add</a>
                                     </div>
                                 </div>
                             </div>
                             <div class="api-body">
-                                <table class="table">
+                                <table ng-hide="query_string_visible" class="table">
                                     <thead>
                                     <tr style="font-size:14px;">
                                         <th style="min-width:120px;">名称</th>
@@ -183,7 +189,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr ng-repeat="RequestDate in Request.query_string">
+                                    <tr ng-repeat="RequestDate in Request.query_string track by $index">
                                         <td class="tab-name">
                                             <input ng-model="RequestDate.field_name" type="text" class="form-control"/>
                                         </td>
@@ -213,9 +219,12 @@
                                     </tr>
                                     </tbody>
                                 </table>
+                                <div ng-show="query_string_visible" class="query_string-bulkEdit bulkEdit">
+                                    <textarea ng-model="Request.query_stringBulk"></textarea>
+                                </div>
                             </div>
                         </div>
-                        <div ng-if="Request.body.data.length" class="req-content" id="Request-Body">
+                        <div class="req-content" id="Request-Body">
                             <div class="api-top">
                                 <div class="row">
                                     <div class="col-xs-1">Body</div>
@@ -228,12 +237,12 @@
                                         </select>
                                         <span style="float: right;padding-right:10px;">mode</span>
                                     </div>
-                                    <div class="col-xs-1"><a class="add-btn">BulkEdit</a></div>
+                                    <div class="col-xs-1"><a ng-click="toggleBulkEdit($event,'Rq_body')" class="add-btn">BulkEdit</a></div>
                                     <div class="col-xs-1"><a ng-click="Add_bodyDate()" class="add-btn">+Add</a></div>
                                 </div>
                             </div>
                             <div class="api-body">
-                                <table class="table">
+                                <table ng-hide="body_visible" class="table">
                                     <thead>
                                     <tr style="font-size:14px;">
                                         <th style="min-width:120px;">名称</th>
@@ -247,7 +256,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr ng-repeat="RequestDate in Request.body.data">
+                                    <tr ng-repeat="RequestDate in Request.body.data track by $index">
                                         <td class="tab-name">
                                             <div style="padding:0;" class="col-xs-1">11</div>
                                             <div style="padding:0;" class="col-xs-11"><input
@@ -286,7 +295,9 @@
                                     </tr>
                                     </tbody>
                                 </table>
-
+                                <div ng-show="body_visible" class="body-bulkEdit bulkEdit">
+                                    <textarea ng-model="Request.BodyBulk"></textarea>
+                                </div>
 
                             </div>
                         </div>
@@ -298,12 +309,12 @@
                             <div class="row">
                                 <div class="col-xs-1">Body</div>
                                 <div class="col-xs-9"></div>
-                                <div class="col-xs-1"><a class="add-btn">BulkEdit</a></div>
-                                <div class="col-xs-1"><a class="add-btn">+Add</a></div>
+                                <div class="col-xs-1"><a ng-click="toggleBulkEdit($event,'Response')" class="add-btn">BulkEdit</a></div>
+                                <div class="col-xs-1"><a ng-click="Add_ResponseDate()" class="add-btn">+Add</a></div>
                             </div>
                         </div>
                         <div class="api-body">
-                            <table class="table">
+                            <table ng-hide="Response_visible" class="table">
                                 <thead>
                                 <tr>
                                     <th>名称</th>
@@ -317,168 +328,45 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>
-                                        <input type="text" class="form-control"/>
+                                <tr ng-repeat="RequestDate in Response.body track by $index">
+                                    <td class="tab-name">
+                                        <input ng-model="RequestDate.field_name" type="text" class="form-control"/>
                                     </td>
-                                    <td>
-                                        <select class="form-control select-width">
-                                            <option>Number</option>
-                                            <option>Float</option>
-                                            <option>String</option>
-                                            <option>Boolean</option>
+                                    <td class="tab-type">
+                                        <select ng-model="RequestDate.field_type" class="form-control select-width">
+                                            <option>number</option>
+                                            <option>boolean</option>
+                                            <option>string</option>
+                                            <option>object</option>
                                         </select>
                                     </td>
-                                    <td>
-                                        <input type="checkbox" name="is_requrie">
+                                    <td class="tab-arr">
+                                        <input ng-model="RequestDate.is_array" type="checkbox" name="is_requrie">
                                     </td>
-                                    <td>
-                                        <input type="checkbox" name="is_requrie">
+                                    <td class="tab-must">
+                                        <input ng-model="RequestDate.is_required" type="checkbox" name="is_requrie">
                                     </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
+                                    <td class="tab-def">
+                                        <input ng-model="RequestDate.default" type="text" class="form-control"/>
                                     </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
+                                    <td class="tab-exmple">
+                                        <input ng-model="RequestDate.example" type="text" class="form-control"/>
                                     </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
+                                    <td class="tab-dec">
+                                        <input ng-model="RequestDate.description" type="text" class="form-control"/>
                                     </td>
-                                    <td>
-                                        <a href="javascript:;">新增</a>|
-                                        <a href="javascript:;">移除</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <select class="form-control select-width">
-                                            <option>Number</option>
-                                            <option>Float</option>
-                                            <option>String</option>
-                                            <option>Boolean</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" name="is_requrie">
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" name="is_requrie">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <a href="javascript:;">新增</a>|
-                                        <a href="javascript:;">移除</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <select class="form-control select-width">
-                                            <option>Number</option>
-                                            <option>Float</option>
-                                            <option>String</option>
-                                            <option>Boolean</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" name="is_requrie">
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" name="is_requrie">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <a href="javascript:;">新增</a>|
-                                        <a href="javascript:;">移除</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <select class="form-control select-width">
-                                            <option>Number</option>
-                                            <option>Float</option>
-                                            <option>String</option>
-                                            <option>Boolean</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" name="is_requrie">
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" name="is_requrie">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <a href="javascript:;">新增</a>|
-                                        <a href="javascript:;">移除</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <select class="form-control select-width">
-                                            <option>Number</option>
-                                            <option>Float</option>
-                                            <option>String</option>
-                                            <option>Boolean</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" name="is_requrie">
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" name="is_requrie">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <a href="javascript:;">新增</a>|
-                                        <a href="javascript:;">移除</a>
+                                    <td class="tab-oper">
+                                            <span ng-click="Add_ResponseChildDate()"
+                                                  ng-if="RequestDate.field_type == 'object'"><a
+                                                    href="javascript:;">新增</a>|</span>
+                                        <a ng-click="Del_ResponseDate($index)" href="javascript:;">移除</a>
                                     </td>
                                 </tr>
                                 </tbody>
                             </table>
+                            <div ng-show="Response_visible" class="Response-bulkEdit bulkEdit">
+                                    <textarea ng-model="ResponseBulk"></textarea>
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -488,12 +376,12 @@
                             <div class="row">
                                 <div class="col-xs-1">ErrorCodes</div>
                                 <div class="col-xs-9"></div>
-                                <div class="col-xs-1"><a class="add-btn">BulkEdit</a></div>
-                                <div class="col-xs-1"><a class="add-btn">+Add</a></div>
+                                <div class="col-xs-1"><a ng-click="toggleBulkEdit($event,'ErrorCodes')" class="add-btn">BulkEdit</a></div>
+                                <div class="col-xs-1"><a ng-click="Add_ErrorCodeDate()" class="add-btn">+Add</a></div>
                             </div>
                         </div>
                         <div class="api-body">
-                            <table class="table">
+                            <table ng-hide="ErrorCodes_visible" class="table">
                                 <thead>
                                 <tr>
                                     <th>错误码</th>
@@ -503,96 +391,28 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
+                                <tr ng-repeat="RequestDate in errorCodes track by $index">
                                     <td>
-                                        <input type="text" class="form-control"/>
+                                        <input ng-model="RequestDate.error_code" type="text" class="form-control"/>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control"/>
+                                        <input ng-model="RequestDate.display_message" type="text" class="form-control"/>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control"/>
+                                        <input ng-model="RequestDate.description" type="text" class="form-control"/>
                                     </td>
                                     <td>
-                                        <a href="javascript:;">移除</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <a href="javascript:;">移除</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <a href="javascript:;">移除</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <a href="javascript:;">移除</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <a href="javascript:;">移除</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <a href="javascript:;">移除</a>
+                                        <a ng-click="Del_ErrorCodeDate($index)" href="javascript:;">移除</a>
                                     </td>
                                 </tr>
                                 </tbody>
                             </table>
+                            <div ng-show="ErrorCodes_visible" class="ErrorCodes-bulkEdit bulkEdit">
+                                    <textarea ng-model="ErrorCodesBulk"></textarea>
+                                </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
 

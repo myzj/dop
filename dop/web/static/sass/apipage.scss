@@ -118,6 +118,7 @@
     transition: all 0s;
     -ms-transition: all .0s;
   }
+  
   .text-input:active {
     padding: 5px;
   }
@@ -217,5 +218,13 @@
     resize: none;
     overflow-y: auto;
     height: 200px !important;
+  }
+}
+.bulkEdit{
+  textarea{
+    width:96%;
+    margin-top:15px;
+    min-height:200px;
+
   }
 }

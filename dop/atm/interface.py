@@ -252,6 +252,16 @@ class InterFace(object):
             except_info(ex)
             return False, getMessage("300033") + ": " + str(ex)
 
+#
+def is_valid_date(timestr):
+    """判断是否是一个有效的日期字符串"""
+    try:
+        time.strptime(timestr, "%Y-%m-%d")
+        return True
+    except BaseException, ex:
+        except_info(ex)
+        return False
+
 
 # 添加API修改记录
 def add_modify_record(user=None, interface=None, data=""):
@@ -1023,6 +1033,89 @@ def check_data(request):
             queryset["success"] = False
             queryset['errorcode'] = 300037
             queryset['errormsg'] = "Precheck interface data fail." + str(ex)
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)
+
+
+# 查询API接口修改记录
+@csrf_exempt
+def qry_edit_history(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': []}
+    if request.method == 'GET':
+        try:
+            api_id = None
+            record_id = None
+            for item in ["record_id", "api_id"]:
+                if item in request.GET and request.GET[item] != '':
+                    req_data = request.GET[item]
+                    if req_data.find(",") == -1:
+                        match1 = re.match(r"\d", req_data)
+                        if match1:
+                            if item == "api_id":
+                                api_id = [int(req_data)]
+                            else:
+                                record_id = [int(req_data)]
+                    else:
+                        req_ids = req_data.split(",")
+                        if req_ids:
+                            req_id_str = filter(lambda x: re.match(r'\d', x), req_ids)
+                            if req_id_str:
+                                req_id = map(lambda x: int(x), req_id_str)
+                                if item == "api_id":
+                                    api_id = req_id
+                                else:
+                                    record_id = req_id
+            user = None
+            if "user" in request.GET and request.GET["user"] != '':
+                req_user = request.GET["user"]
+                user_filter = User.objects.filter(username=req_user)
+                if user_filter:
+                    user = user_filter[0]
+            timestr = None
+            if "time" in request.GET and request.GET["time"] != '':
+                req_time = request.GET["time"]
+                if is_valid_date(req_time):
+                    timestr = req_time
+            history_match = EditHistory.objects.filter(is_deleted=False)
+            if api_id:
+                itfs = Interface.objects.filter(pk__in=api_id)
+                if itfs:
+                    history_match = history_match.filter(interface__in=itfs)
+            if record_id:
+                history_match = history_match.filter(pk__in=record_id)
+            if timestr:
+                times = timestr.split('-')
+                year = times[0]
+                month = times[1]
+                day = times[2]
+                # print 'year:{0}, month:{1}, day:{2}'.format(year, month, day)
+                history_match = history_match.filter(ctime__year=year, ctime__month=month, ctime__day=day)
+            if user:
+                history_match = history_match.filter(modifier=user)
+            if history_match:
+                print 'history_match_count:', history_match.count()
+                history_match = history_match.order_by('-ctime')
+                for rec in history_match:
+                    try:
+                        content = eval(rec.content)
+                    except BaseException, ex:
+                        except_info(ex)
+                        content = rec.content
+                    temp = {"id": rec.id, "user": rec.modifier.username,
+                            "ctime": rec.ctime.strftime('%Y-%m-%d %H:%M:%S'), "api_id": rec.interface.id,
+                            "content": content}
+                    queryset["result"].append(temp)
+            return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset["success"] = False
+            queryset['errorcode'] = 300039
+            queryset['errormsg'] = getMessage('300039') + str(ex)
             return JSONResponse(queryset)
     else:
         queryset['errorcode'] = 100002

@@ -34,7 +34,7 @@ require(['lib/common', 'lib/jquery.twbsPagination.min'],
                                     dataArr.push(getdata[i])
                                 }
                                 $scope.apiArr = dataArr;
-
+                                $scope.project = $.url.getParam("project");
                                 if (getdata.length > 0) {
                                     $("#pages").show();
                                     $('#pagination').twbsPagination({
@@ -66,9 +66,9 @@ require(['lib/common', 'lib/jquery.twbsPagination.min'],
                 $scope.show_importDialo = function () {
                     $(".import-dialog").show();
                 };
-                $scope.import_action = function(){
+                $scope.import_action = function () {
                     var a = $scope.text;
-                    var json = eval("("+ a +")");
+                    var json = eval("(" + a + ")");
                     console.log(json);
                 };
 
@@ -80,13 +80,27 @@ require(['lib/common', 'lib/jquery.twbsPagination.min'],
                     beautify();
                 };
                 function beautify() {
-                  var source = $("#code_data").val();
+                    var source = $("#code_data").val();
 
-                  var opts = {"indent_size":"3","indent_char":" ","max_preserve_newlines":"1","preserve_newlines":true,"keep_array_indentation":false,"break_chained_methods":false,"indent_scripts":"normal","brace_style":"expand","space_before_conditional":true,"unescape_strings":false,"jslint_happy":false,"end_with_newline":false,"wrap_line_length":"0"};
+                    var opts = {
+                        "indent_size": "3",
+                        "indent_char": " ",
+                        "max_preserve_newlines": "1",
+                        "preserve_newlines": true,
+                        "keep_array_indentation": false,
+                        "break_chained_methods": false,
+                        "indent_scripts": "normal",
+                        "brace_style": "expand",
+                        "space_before_conditional": true,
+                        "unescape_strings": false,
+                        "jslint_happy": false,
+                        "end_with_newline": false,
+                        "wrap_line_length": "0"
+                    };
 
-                  var formated = js_beautify(source,opts);
+                    var formated = js_beautify(source, opts);
 
-                  $("#code_data").val(formated);
+                    $("#code_data").val(formated);
 
                 }
 

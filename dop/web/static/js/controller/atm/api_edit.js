@@ -11,16 +11,21 @@ require(['lib/common'],
                 $scope.ErrorCodes_visible = false;
                 $scope.doEdit = function () {
                     $scope.isEdit = false;
-                    ReloadDate();
+                    ReloadDate(true);
                     /*var boxId = $('.tab').find('li.active').attr('id');
                     $('#' + boxId + '_Main').find('input,textarea,select').removeAttr('disabled')*/
                 };
                 ReloadDate();      //初始化数据
-                function ReloadDate() {
+                function ReloadDate(boolean) {
                     var datainfo = {
                         "api_id": $.url.getParam("apiid"),
+                        "is_modify":false
                     };
-                    $http.get('/api/qry/api_detail?api_id=' + datainfo.api_id)
+                    if(boolean){
+                        datainfo.is_modify = true;
+                        console.log(111)
+                    }
+                    $http.get('/api/qry/api_detail?api_id=' + datainfo.api_id +'&is_modify='+datainfo.is_modify)
                         .success(function (data) {
                             if (data.errorcode == 0) {
                                 var ApiDate = data.result;
@@ -183,8 +188,8 @@ require(['lib/common'],
                 }
                 $scope.saveData = function () {
                     var upData = {
-                        "project": '17',
-                        "api_id": '165',
+                        "project": $.url.getParam("project"),
+                        "api_id": $.url.getParam("apiid"),
                         "Arryitem": $scope.ApiDate
                     };
                     $http({

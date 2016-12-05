@@ -67,9 +67,30 @@ require(['lib/common', 'lib/jquery.twbsPagination.min'],
                     $(".import-dialog").show();
                 };
                 $scope.import_action = function () {
-                    var a = $scope.text;
-                    var json = eval("(" + a + ")");
+
+                    var a = $.trim($scope.text);
+                    if(a.length <= 0){
+                        return;
+                    }
+
+                    try{
+                        var json = eval("(" + a + ")");
+                        alert(2);
+                    }catch (e){
+                        alert("数据格式不正确");
+                    }
                     console.log(json);
+                    json.is_replace = false;
+                    $http({
+                        method: 'POST',
+                        url: '/api/add/new_api/',
+                        data: json,
+                    }).success(function (data) {
+                        alert(data.errormsg);
+                        if(data.errorcode == 0){
+                            getTeamDate(1, true);  //重新刷新
+                        }
+                    });
                 };
 
                 $scope.hide_importDialog = function () {

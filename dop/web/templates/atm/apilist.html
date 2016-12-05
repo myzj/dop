@@ -70,8 +70,9 @@
                 </td>
                 <td>
                     <div class="tags">
-                        <span ng-repeat="tag in List.tags">
-                            @{tag}@
+                        <span ng-repeat="(key, tag) in List.tags" >
+                           @{tag}@
+                            <br ng-if="key%2==0"/>
                         </span>
                     </div>
                 </td>

@@ -40,6 +40,8 @@ urlpatterns = [
     url(r'(?i)^api/del/api_info/?$', itf.delete_interface),  # 删除API接口
     url(r'(?i)^api/cancel/lock/?$', itf.cancel_lock),  # 解锁
     url(r'(?i)^api/check/data/?$', itf.check_data),  # 导入数据预检
+    url(r'(?i)^api/qry/history/?$', itf.qry_edit_history),  # 查询API接口修改记录
+    url(r'(?i)^api/qry/member/?$', itf.qry_project_member),  # 查询项目成员
 
 
     url(r'^test/?$', views.test),

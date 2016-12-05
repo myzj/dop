@@ -293,33 +293,33 @@ def req_project(request):
             project_member = ProjectMember.objects.filter(is_deleted=False, is_active=True, user=user_filter[0])
             if not project_member:  # 返回的数据为空，说明没有加入任何项目，因此无法查询自己参与的项目列表
                 queryset['success'] = False
-                queryset['errorcode'] = 300039
-                queryset['errormsg'] = getMessage('300039')
+                queryset['errorcode'] = 300041
+                queryset['errormsg'] = getMessage('300041')
                 return JSONResponse(queryset)
-            projects = map(lambda x: x.project, project_member)
+            project_match = map(lambda x: x.project, project_member)  # 获取参与的所有的项目对象列表
             print "user_id=", user_id
             print "project_member==", project_member.count()
             if 'team_id' in request.GET and request.GET['team_id'] != '':
                 team_filter = Team.objects.filter(is_deleted=False, is_active=True, id=int(request.GET['team_id']))
                 if team_filter:
-                    projects = filter(lambda x: x.team is team_filter[0], projects)
-                    print "--------------projects:", projects
-                    # project_match = Project.objects.filter(is_deleted=False, is_active=True, team=team_filter[0]).order_by(
-                    #     '-utime')
+                    print '----team_filter:', team_filter
+                    for item in project_match:
+                        print item.team
+                    project_match = filter(lambda x: x.team.id == team_filter[0].id, project_match)
+                    print "--------------projects:", project_match
                 else:
                     queryset['errorcode'] = 300019  # 找不到匹配team id的工程列表
                     queryset['errormsg'] = getMessage('300019')
                     return JSONResponse(queryset)
             # 输入关键词查询
-            else:
-                if 'keyword' in request.GET and request.GET['keyword'] != '':
-                    project_match = Project.objects.filter(is_deleted=False, is_active=True, project_name__icontains=request.GET['keyword']) \
-                        .order_by('-utime')
-                else:
-                    project_match = Project.objects.filter(is_deleted=False, is_active=True).order_by('-utime')
+            if 'keyword' in request.GET and request.GET['keyword'] != '':
+                if project_match:
+                    project_ids = map(lambda x: int(x.id), project_match)
+                    project_match = Project.objects.filter(pk__in=project_ids, is_deleted=False, is_active=True, \
+                                                           project_name__icontains=request.GET['keyword']).order_by('-utime')
             queryset['result']['pageIndex'] = 1
             queryset['result']['pageSize'] = 10
-            queryset['result']['totalCount'] = project_match.count()
+            queryset['result']['totalCount'] = len(project_match)
             queryset['result']['projectList'] = []
             if 'pageSize' in request.GET:
                 queryset['result']['pageSize'] = request.GET['pageSize']
@@ -327,7 +327,7 @@ def req_project(request):
                 queryset['result']['pageIndex'] = request.GET['pageIndex']
             project_pages = paginator.Paginator(project_match, queryset['result']['pageSize'])
             queryset['result']['pageCount'] = project_pages.num_pages
-            if project_match.count() > 0:
+            if len(project_match) > 0:
                 project_page = project_pages.page(queryset['result']['pageIndex'])
                 for project in project_page.object_list:
                     result = {'project_name': project.project_name, 'project_id': project.id,

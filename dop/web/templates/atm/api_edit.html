@@ -3,6 +3,8 @@
 {% block head %}
     <link rel="stylesheet" href="{% static "css/main.css" %}?v={{ config.v }}">
     <link rel="stylesheet" href="{% static "css/apipage.css" %}?v={{ config.v }}">
+
+    <script src="/static/js/lib/beautify.js"></script>
 {% endblock %}
 {% block container %}
     {% include "shared/headerBar.html" %}
@@ -14,8 +16,9 @@
                 <li class="active">十一月</li>
             </ol>
             <div class="edit-btns">
-                <button type="button" ng-click="doEdit()" class="btn btn-primary">Edit</button>
-                <button ng-click="saveData()" type="button" class="btn btn-success">Save</button>
+                <button ng-show="isEdit" type="button" ng-click="doEdit()" class="btn btn-primary">Edit</button>
+                <button ng-hide="isEdit" ng-click="saveData()" type="button" class="btn btn-success">Save</button>
+                <button ng-hide="isEdit" ng-click="cancelEdit()" type="button" class="btn btn-success">Cancel</button>
             </div>
         </div>
         <div class="edit-body">
@@ -32,39 +35,39 @@
                     <div class="row">
                         <div class="col-xs-2">Name:</div>
                         <div class="col-xs-10">
-                            <input type="text" ng-disabled='@{isEdit}@' ng-model="Base.name"
+                            <input type="text" ng-disabled='isEdit' ng-model="Base.name"
                                    placeholder="请输入接口名称..." class="form-control text-input">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-2">Mock:</div>
                         <div class="col-xs-10">
-                            <textarea ng-disabled='@{isEdit}@' ng-model="Base.mock" class="form-control textarea"
+                            <textarea ng-disabled='isEdit' ng-model="Base.mock" class="form-control textarea"
                                       cols="30" rows="10"></textarea>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-2">Description:</div>
                         <div class="col-xs-10">
-                            <textarea ng-disabled='@{isEdit}@' ng-model="Base.decription"
+                            <textarea ng-disabled='isEdit' ng-model="Base.description"
                                       class="form-control textarea" cols="30" rows="10"></textarea>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-2">Tags:</div>
-                        <div class="col-xs-10">
-                            <span ng-repeat="(key, value) in Base.tags" class="label label-warning">
+                        <div class="col-xs-10 TagsTxt">
+                            <span ng-dblclick="delTags($index)" ng-repeat="(key, value) in Base.tags" class="label label-warning" ng-class-even="'label-danger'">
                                 @{value}@
                             </span>
-                            <span class="label label-danger">危险标签</span>
-                            <input ng-keyup="enterTag($event)" type="text">
+                            {#<span class="label label-danger">危险标签</span>#}
+                            <input ng-disabled='isEdit' placeholder="请创建提示标签" ng-keyup="enterTag($event)" type="text"><em class="tips">(双击删除标签)</em>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-2">State:</div>
                         <div class="col-xs-10">
-                            <label><input ng-disabled='@{isEdit}@' type="radio" name="state"/>Enable</label>
-                            <label><input ng-disabled='@{isEdit}@' type="radio" name="state"/>Disable</label>
+                            <label><input ng-click="setState(true)" ng- ng-checked="Base.state" ng-disabled='@{isEdit}@' type="radio" name="state"/>Enable</label>
+                            <label><input ng-click="setState(false)" ng-checked="!Base.state" ng-disabled='@{isEdit}@' type="radio" name="state"/>Disable</label>
                         </div>
                     </div>
                 </div>
@@ -72,14 +75,14 @@
                     <div class="row">
                         <div class="col-xs-2">URL:</div>
                         <div class="col-xs-10">
-                            <input ng-disabled='@{isEdit}@' type="text" ng-model="Request.url" placeholder="请输入路径..."
+                            <input ng-disabled='isEdit' type="text" ng-model="Request.url" placeholder="请输入路径..."
                                    class="form-control text-input">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-2">Method:</div>
-                        <div class="col-xs-10">
-                            <select ng-disabled='@{isEdit}@' ng-model="Request.method"
+                        <div class="col-xs-3">
+                            <select style="width:90%;" ng-disabled='isEdit' ng-model="Request.method"
                                     class="form-control select-width">
                                 <option>POST</option>
                                 <option>GET</option>
@@ -87,11 +90,9 @@
                                 <option>DELETE</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-xs-2">ContentType:</div>
-                        <div class="col-xs-10">
-                            <select ng-disabled='@{isEdit}@' ng-model="Request.content_type"
+                        <div class="col-xs-3">
+                            <select style="width:90%;" ng-disabled='isEdit' ng-model="Request.content_type"
                                     class="form-control select-width">
                                 <option>1</option>
                                 <option>application/json</option>
@@ -101,37 +102,38 @@
                             </select>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="req-content" id="Request-Headers">
                             <div class="api-top">
                                 <div class="row">
                                     <div class="col-xs-1">Headers</div>
                                     <div class="col-xs-9"></div>
-                                    <div class="col-xs-1"><a ng-click="toggleBulkEdit($event,'Rq_headers')" class="add-btn">BulkEdit</a></div>
-                                    <div class="col-xs-1"><a ng-click="Add_headerDate()" class="add-btn">+Add</a></div>
+                                    <div class="col-xs-1"><a ng-disabled='isEdit' ng-click="toggleBulkEdit($event,'Rq_headers')" class="add-btn">BulkEdit</a></div>
+                                    <div class="col-xs-1"><a ng-disabled='isEdit' ng-click="Add_headerDate()" class="add-btn">+Add</a></div>
                                 </div>
                             </div>
                             <div class="api-body">
                                 <table ng-hide="head_visible" class="table">
                                     <thead>
                                     <tr style="font-size:14px;">
-                                        <th style="min-width:120px;">名称</th>
-                                        <th style="width:60px;">类型</th>
-                                        <th style="width:60px;">是否<br>必填</th>
-                                        <th style="width:60px;">默认值</th>
-                                        <th style="width:60px;">示例</th>
-                                        <th style="width:60px;">描述</th>
-                                        <th style="width:110px;min-width:100px;">操作</th>
+                                        <th class="taTitle" style="min-width:120px;">名称</th>
+                                        <th class="taTitle" style="width:60px;">类型</th>
+                                        <th class="taTitle" style="width:60px;">是否<br>必填</th>
+                                        <th class="taTitle" style="width:60px;">默认值</th>
+                                        <th class="taTitle" style="width:60px;">示例</th>
+                                        <th class="taTitle" style="width:60px;">描述</th>
+                                        <th class="taTitle" style="width:110px;min-width:100px;">操作</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr ng-repeat="RequestDate in Request.headers track by $index">
                                         <td class="tab-name">
-                                            <input ng-init="RequestDate.field_name = ''"
+                                            <input ng-disabled='isEdit' ng-init="RequestDate.field_name = ''"
                                                    ng-model="RequestDate.field_name" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-type">
-                                            <select ng-model="RequestDate.field_type" class="form-control select-width">
+                                            <select ng-disabled='isEdit' ng-model="RequestDate.field_type" class="form-control select-width">
                                                 <option>number</option>
                                                 <option>boolean</option>
                                                 <option>string</option>
@@ -139,19 +141,19 @@
                                             </select>
                                         </td>
                                         <td class="tab-must">
-                                            <input ng-init="RequestDate.is_required = 'flase'"
+                                            <input ng-disabled='isEdit' ng-init="RequestDate.is_required = 'flase'"
                                                    ng-model="RequestDate.is_required" type="checkbox" name="is_requrie">
                                         </td>
                                         <td class="tab-def">
-                                            <input ng-init="RequestDate.default = ''" ng-model="RequestDate.default"
+                                            <input ng-disabled='isEdit' ng-init="RequestDate.default = ''" ng-model="RequestDate.default"
                                                    type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-exmple">
-                                            <input ng-init="RequestDate.example = ''" ng-model="RequestDate.example"
+                                            <input ng-disabled='isEdit' ng-init="RequestDate.example = ''" ng-model="RequestDate.example"
                                                    type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-dec">
-                                            <input ng-change="a()" ng-model="RequestDate.description" type="text"
+                                            <input ng-disabled='isEdit' ng-change="a()" ng-model="RequestDate.description" type="text"
                                                    class="form-control"/>
                                         </td>
                                         <td class="tab-oper">
@@ -161,7 +163,7 @@
                                     </tbody>
                                 </table>
                                 <div ng-show="head_visible" class="headers-bulkEdit bulkEdit">
-                                    <textarea ng-model="Request.headersBulk"></textarea>
+                                    <textarea ng-disabled='isEdit' ng-model="Request.headersBulk"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -179,22 +181,22 @@
                                 <table ng-hide="query_string_visible" class="table">
                                     <thead>
                                     <tr style="font-size:14px;">
-                                        <th style="min-width:120px;">名称</th>
-                                        <th style="width:60px;">类型</th>
-                                        <th style="width:60px;">是否<br>必填</th>
-                                        <th style="width:60px;">默认值</th>
-                                        <th style="width:60px;">示例</th>
-                                        <th style="width:60px;">描述</th>
-                                        <th style="width:110px;min-width:100px;">操作</th>
+                                        <th class="taTitle" style="min-width:120px;">名称</th>
+                                        <th class="taTitle" style="width:60px;">类型</th>
+                                        <th class="taTitle" style="width:60px;">是否<br>必填</th>
+                                        <th class="taTitle" style="width:60px;">默认值</th>
+                                        <th class="taTitle" style="width:60px;">示例</th>
+                                        <th class="taTitle" style="width:60px;">描述</th>
+                                        <th class="taTitle" style="width:110px;min-width:100px;">操作</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr ng-repeat="RequestDate in Request.query_string track by $index">
                                         <td class="tab-name">
-                                            <input ng-model="RequestDate.field_name" type="text" class="form-control"/>
+                                            <input ng-disabled='isEdit' ng-model="RequestDate.field_name" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-type">
-                                            <select ng-model="RequestDate.field_type" class="form-control select-width">
+                                            <select ng-disabled='isEdit' ng-model="RequestDate.field_type" class="form-control select-width">
                                                 <option>number</option>
                                                 <option>boolean</option>
                                                 <option>string</option>
@@ -202,16 +204,16 @@
                                             </select>
                                         </td>
                                         <td class="tab-must">
-                                            <input ng-model="RequestDate.is_required" type="checkbox" name="is_requrie">
+                                            <input ng-disabled='isEdit' ng-model="RequestDate.is_required" type="checkbox" name="is_requrie">
                                         </td>
                                         <td class="tab-def">
-                                            <input ng-model="RequestDate.default" type="text" class="form-control"/>
+                                            <input ng-disabled='isEdit' ng-model="RequestDate.default" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-exmple">
-                                            <input ng-model="RequestDate.example" type="text" class="form-control"/>
+                                            <input ng-disabled='isEdit' ng-model="RequestDate.example" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-dec">
-                                            <input ng-model="RequestDate.description" type="text" class="form-control"/>
+                                            <input ng-disabled='isEdit' ng-model="RequestDate.description" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-oper">
                                             <a ng-click="Del_QueryStringDate($index)" href="javascript:;">移除</a>
@@ -220,7 +222,7 @@
                                     </tbody>
                                 </table>
                                 <div ng-show="query_string_visible" class="query_string-bulkEdit bulkEdit">
-                                    <textarea ng-model="Request.query_stringBulk"></textarea>
+                                    <textarea ng-disabled='isEdit' ng-model="Request.query_stringBulk"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -230,7 +232,7 @@
                                     <div class="col-xs-1">Body</div>
                                     <div class="col-xs-6"></div>
                                     <div class="col-xs-3" style="text-align: right">
-                                        <select style="float:right;height:30px;width:100px;padding:4px 3px; display: inherit"
+                                        <select ng-disabled='isEdit' style="float:right;height:30px;width:100px;padding:4px 3px; display: inherit"
                                                 ng-model="Request.body.mode" class="form-control select-width">
                                             <option>urlencoded</option>
                                             <option>raw</option>
@@ -245,26 +247,23 @@
                                 <table ng-hide="body_visible" class="table">
                                     <thead>
                                     <tr style="font-size:14px;">
-                                        <th style="min-width:120px;">名称</th>
-                                        <th style="width:60px;">类型</th>
-                                        <th style="width:60px;">是否<br>数组</th>
-                                        <th style="width:60px;">是否<br>必填</th>
-                                        <th style="width:60px;">默认值</th>
-                                        <th style="width:60px;">示例</th>
-                                        <th style="width:60px;">描述</th>
-                                        <th style="width:110px;min-width:100px;">操作</th>
+                                        <th class="taTitle" style="min-width:120px;">名称</th>
+                                        <th class="taTitle" style="width:60px;">类型</th>
+                                        <th class="taTitle" style="width:60px;">是否<br>数组</th>
+                                        <th class="taTitle" style="width:60px;">是否<br>必填</th>
+                                        <th class="taTitle" style="width:60px;">默认值</th>
+                                        <th class="taTitle" style="width:60px;">示例</th>
+                                        <th class="taTitle" style="width:60px;">描述</th>
+                                        <th class="taTitle" style="width:110px;min-width:100px;">操作</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr ng-repeat="RequestDate in Request.body.data track by $index">
                                         <td class="tab-name">
-                                            <div style="padding:0;" class="col-xs-1">11</div>
-                                            <div style="padding:0;" class="col-xs-11"><input
-                                                    ng-model="RequestDate.field_name" type="text" class="form-control"/>
-                                            </div>
+                                            <input ng-disabled='isEdit' ng-model="RequestDate.field_name" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-type">
-                                            <select ng-model="RequestDate.field_type" class="form-control select-width">
+                                            <select ng-disabled='isEdit' ng-model="RequestDate.field_type" class="form-control select-width">
                                                 <option>number</option>
                                                 <option>boolean</option>
                                                 <option>string</option>
@@ -272,19 +271,19 @@
                                             </select>
                                         </td>
                                         <td class="tab-arr">
-                                            <input ng-model="RequestDate.is_array" type="checkbox" name="is_requrie">
+                                            <input ng-disabled='isEdit' ng-model="RequestDate.is_array" type="checkbox" name="is_requrie">
                                         </td>
                                         <td class="tab-must">
-                                            <input ng-model="RequestDate.is_required" type="checkbox" name="is_requrie">
+                                            <input ng-disabled='isEdit' ng-model="RequestDate.is_required" type="checkbox" name="is_requrie">
                                         </td>
                                         <td class="tab-def">
-                                            <input ng-model="RequestDate.default" type="text" class="form-control"/>
+                                            <input ng-disabled='isEdit' ng-model="RequestDate.default" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-exmple">
-                                            <input ng-model="RequestDate.example" type="text" class="form-control"/>
+                                            <input ng-disabled='isEdit' ng-model="RequestDate.example" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-dec">
-                                            <input ng-model="RequestDate.description" type="text" class="form-control"/>
+                                            <input ng-disabled='isEdit' ng-model="RequestDate.description" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-oper">
                                             <span ng-click="Add_bodyChildDate()"
@@ -296,7 +295,7 @@
                                     </tbody>
                                 </table>
                                 <div ng-show="body_visible" class="body-bulkEdit bulkEdit">
-                                    <textarea ng-model="Request.BodyBulk"></textarea>
+                                    <textarea ng-disabled='isEdit' ng-model="Request.BodyBulk"></textarea>
                                 </div>
 
                             </div>
@@ -317,23 +316,23 @@
                             <table ng-hide="Response_visible" class="table">
                                 <thead>
                                 <tr>
-                                    <th>名称</th>
-                                    <th>类型</th>
-                                    <th>是否数组</th>
-                                    <th>是否必填</th>
-                                    <th>默认值</th>
-                                    <th>示例</th>
-                                    <th>描述</th>
-                                    <th style="min-width: 120px">操作</th>
+                                    <th class="taTitle">名称</th>
+                                    <th class="taTitle">类型</th>
+                                    <th class="taTitle">是否数组</th>
+                                    <th class="taTitle">是否必填</th>
+                                    <th class="taTitle">默认值</th>
+                                    <th class="taTitle">示例</th>
+                                    <th class="taTitle">描述</th>
+                                    <th class="taTitle" style="min-width: 120px">操作</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="RequestDate in Response.body track by $index">
                                     <td class="tab-name">
-                                        <input ng-model="RequestDate.field_name" type="text" class="form-control"/>
+                                        <input ng-disabled='isEdit' ng-model="RequestDate.field_name" type="text" class="form-control"/>
                                     </td>
                                     <td class="tab-type">
-                                        <select ng-model="RequestDate.field_type" class="form-control select-width">
+                                        <select ng-disabled='isEdit' ng-model="RequestDate.field_type" class="form-control select-width">
                                             <option>number</option>
                                             <option>boolean</option>
                                             <option>string</option>
@@ -341,19 +340,19 @@
                                         </select>
                                     </td>
                                     <td class="tab-arr">
-                                        <input ng-model="RequestDate.is_array" type="checkbox" name="is_requrie">
+                                        <input ng-disabled='isEdit' ng-model="RequestDate.is_array" type="checkbox" name="is_requrie">
                                     </td>
                                     <td class="tab-must">
-                                        <input ng-model="RequestDate.is_required" type="checkbox" name="is_requrie">
+                                        <input ng-disabled='isEdit' ng-model="RequestDate.is_required" type="checkbox" name="is_requrie">
                                     </td>
                                     <td class="tab-def">
-                                        <input ng-model="RequestDate.default" type="text" class="form-control"/>
+                                        <input ng-disabled='isEdit' ng-model="RequestDate.default" type="text" class="form-control"/>
                                     </td>
                                     <td class="tab-exmple">
-                                        <input ng-model="RequestDate.example" type="text" class="form-control"/>
+                                        <input ng-disabled='isEdit' ng-model="RequestDate.example" type="text" class="form-control"/>
                                     </td>
                                     <td class="tab-dec">
-                                        <input ng-model="RequestDate.description" type="text" class="form-control"/>
+                                        <input ng-disabled='isEdit' ng-model="RequestDate.description" type="text" class="form-control"/>
                                     </td>
                                     <td class="tab-oper">
                                             <span ng-click="Add_ResponseChildDate()"
@@ -365,7 +364,7 @@
                                 </tbody>
                             </table>
                             <div ng-show="Response_visible" class="Response-bulkEdit bulkEdit">
-                                    <textarea ng-model="ResponseBulk"></textarea>
+                                    <textarea ng-disabled='isEdit' ng-model="ResponseBulk"></textarea>
                                 </div>
                         </div>
                     </div>
@@ -384,22 +383,22 @@
                             <table ng-hide="ErrorCodes_visible" class="table">
                                 <thead>
                                 <tr>
-                                    <th>错误码</th>
-                                    <th>显示信息</th>
-                                    <th>描述</th>
-                                    <th>操作</th>
+                                    <th class="taTitle">错误码</th>
+                                    <th class="taTitle">显示信息</th>
+                                    <th class="taTitle">描述</th>
+                                    <th class="taTitle">操作</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="RequestDate in errorCodes track by $index">
                                     <td>
-                                        <input ng-model="RequestDate.error_code" type="text" class="form-control"/>
+                                        <input ng-disabled='isEdit' ng-model="RequestDate.error_code" type="text" class="form-control"/>
                                     </td>
                                     <td>
-                                        <input ng-model="RequestDate.display_message" type="text" class="form-control"/>
+                                        <input ng-disabled='isEdit' ng-model="RequestDate.display_message" type="text" class="form-control"/>
                                     </td>
                                     <td>
-                                        <input ng-model="RequestDate.description" type="text" class="form-control"/>
+                                        <input ng-disabled='isEdit' ng-model="RequestDate.description" type="text" class="form-control"/>
                                     </td>
                                     <td>
                                         <a ng-click="Del_ErrorCodeDate($index)" href="javascript:;">移除</a>
@@ -408,7 +407,7 @@
                                 </tbody>
                             </table>
                             <div ng-show="ErrorCodes_visible" class="ErrorCodes-bulkEdit bulkEdit">
-                                    <textarea ng-model="ErrorCodesBulk"></textarea>
+                                    <textarea ng-disabled='isEdit' ng-model="ErrorCodesBulk"></textarea>
                                 </div>
                         </div>
                     </div>
@@ -417,6 +416,7 @@
         </div>
 
     </div>
+
     <script>
         $(function () {
             $(".tab ul li").click(function () {

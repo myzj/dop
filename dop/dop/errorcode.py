@@ -47,6 +47,10 @@ CONSTANT = {
     "300039": ["Query interface edit history throw exception", u"查询API接口修改记录出现异常"],
     "300040": ["Query project member throw exception", u"查询项目成员出现异常"],
     "300041": ["", u"找不到该用户关联的项目"],
+    "300042": ["You have no right to add a member", u"您不是项目组管理员无权添加成员"],
+    "300043": ["Add project member does't exist", u"新增项目成员输入用户名不存在"],
+    "300044": ["Add project member throw exception", u"新增项目成员出现异常"],
+    "300045": ["The user has existed in the project", u"新增用户已经是项目组成员,无需重复添加"],
 
 
 }

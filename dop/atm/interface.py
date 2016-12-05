@@ -1168,3 +1168,118 @@ def qry_project_member(request):
         queryset['errorcode'] = 100002
         queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)
+
+
+# 新增项目成员
+@csrf_exempt
+@interface_check_login
+def add_project_member(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+    role_dict = {1: "普通用户", 2: "管理员", 3: "超级管理员"}
+    if request.method == 'POST':
+        try:
+            params = json.loads(request.read())
+            user_info = request.session.get("user", default=None)
+            user = None
+            if user_info:
+                user_id = int(user_info.get("id"))
+                user_filter = User.objects.filter(id=user_id)
+                if user_filter:
+                    user = user_filter[0]
+            if user is None:
+                queryset['success'] = False
+                queryset['errorcode'] = 200003
+                queryset['errormsg'] = getMessage('200003')
+                return JSONResponse(queryset)
+            required_fields = ['project_id', 'username', 'role']
+            errmsg = ''
+            for field in required_fields:
+                if field not in params:
+                    errmsg += field + ', '
+            if errmsg:
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
+                return JSONResponse(queryset)
+            if not isinstance(params.get("role"), int):
+                queryset['errorcode'] = 100007
+                queryset['errormsg'] = 'role ' + getMessage('100007')
+                return JSONResponse(queryset)
+            role = params.get("role")
+            if role not in [1, 2]:
+                queryset['errorcode'] = 100008
+                queryset['errormsg'] = 'role ' + getMessage('100008')
+                return JSONResponse(queryset)
+            if not isinstance(params.get("project_id"), int):
+                queryset['errorcode'] = 100007
+                queryset['errormsg'] = 'project_id ' + getMessage('100007')
+                return JSONResponse(queryset)
+            project_id = params.get("project_id")
+            project_filter = Project.objects.filter(id=project_id, is_deleted=False, is_active=True)
+            if not project_filter:
+                queryset['errorcode'] = 300025
+                queryset['errormsg'] = "项目ID为:{0},{1}".format(project_id, getMessage("300025"))
+                return JSONResponse(queryset)
+            project = project_filter[0]
+            username = params.get("username")
+            if not isinstance(username, list):
+                queryset['errorcode'] = 100007
+                queryset['errormsg'] = 'username ' + getMessage('100007')
+                return JSONResponse(queryset)
+            # check user role
+            members_filter = ProjectMember.objects.filter(project=project, is_deleted=False, is_active=True)
+            members = []
+            if members_filter:
+                members = map(lambda x: x.user, members_filter)
+            if user not in members:
+                queryset['success'] = False
+                queryset['errorcode'] = 300042
+                queryset['errormsg'] = getMessage('300042')
+                return JSONResponse(queryset)
+            member_match = filter(lambda x: x.user.id == user.id, members_filter)
+            member = member_match[0]
+            if member.role == 1:  # 普通用户
+                queryset['success'] = False
+                queryset['errorcode'] = 300042
+                queryset['errormsg'] = getMessage('300042')
+                return JSONResponse(queryset)
+            users_filter = User.objects.filter(username__in=username)
+            if not users_filter:
+                queryset['success'] = False
+                queryset['errorcode'] = 300043
+                queryset['errormsg'] = getMessage('300043')
+                return JSONResponse(queryset)
+            suc_msg = ''
+            err_msg = ''
+            for i_user in users_filter:
+                if i_user in members:
+                    msg = u"{0} {1} ".format(i_user.username, getMessage("300045"))
+                    print msg
+                    err_msg += i_user.username + ','
+                else:
+                    new_member = ProjectMember()
+                    new_member.project = project
+                    new_member.user = i_user
+                    new_member.role = role
+                    new_member.save()
+                    suc_msg += i_user.username + ', '
+            message = ''
+            if suc_msg:
+                message = u"已经成功添加:{0}作为项目:id={1} {2}的{3};".format(suc_msg, project_id, project.project_name, \
+                                                                   role_dict.get(role))
+            if err_msg:
+                queryset["errormsg"] = message + err_msg + getMessage("300045")
+            else:
+                queryset["errormsg"] = message
+            return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset['success'] = False
+            queryset['errorcode'] = 300044
+            queryset['errormsg'] = getMessage('300044') + str(ex)
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)

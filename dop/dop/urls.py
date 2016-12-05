@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'(?i)^api/team_name_check/?$', atm_api.team_name_check),  # 检查团队名称是否可用
     url(r'(?i)^api/req_project_list/?$', atm_api.req_project),  # 获取项目列表
     url(r'(?i)^api/project_name_check/?$', atm_api.project_name_check),  # 检查团队名称是否可用
+    url(r'(?i)^api/get_user_by_name/?$', atm_api.get_user_by_name),  # 查询用户
     url(r'(?i)^api/add_project/?$', atm_api.add_project),  # 增加项目列表
     url(r'(?i)^api/req_api_list/?$', atm_api.req_api_list),  # 查询接口列表
     url(r'(?i)^api/qry/api_detail/?$', itf.qry_interface_detail),  # 查询API接口明细
@@ -39,6 +40,7 @@ urlpatterns = [
     url(r'(?i)^api/del/api_info/?$', itf.delete_interface),  # 删除API接口
     url(r'(?i)^api/cancel/lock/?$', itf.cancel_lock),  # 解锁
     url(r'(?i)^api/check/data/?$', itf.check_data),  # 导入数据预检
+
 
     url(r'^test/?$', views.test),
     url(r'^login/?$', views.login),

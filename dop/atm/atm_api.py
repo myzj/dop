@@ -10,7 +10,7 @@ from common import except_info
 from dop.errorcode import getMessage
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
-from atm.models import Team, Project, Interface
+from atm.models import Team, Project, Interface, ProjectMember
 
 
 # 用户登录
@@ -278,6 +278,7 @@ def team_name_check(request):
 
 
 # 获取工程列表
+@interface_check_login
 def req_project(request):
     queryset = {'timestamp': int(time.mktime(
         time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
@@ -286,11 +287,25 @@ def req_project(request):
         try:
             team_filter = None
             project_match = None
+            user_info = request.session.get("user", default=None)
+            user_id = int(user_info.get("id"))
+            user_filter = User.objects.filter(id=user_id)
+            project_member = ProjectMember.objects.filter(is_deleted=False, is_active=True, user=user_filter[0])
+            if not project_member:  # 返回的数据为空，说明没有加入任何项目，因此无法查询自己参与的项目列表
+                queryset['success'] = False
+                queryset['errorcode'] = 300039
+                queryset['errormsg'] = getMessage('300039')
+                return JSONResponse(queryset)
+            projects = map(lambda x: x.project, project_member)
+            print "user_id=", user_id
+            print "project_member==", project_member.count()
             if 'team_id' in request.GET and request.GET['team_id'] != '':
                 team_filter = Team.objects.filter(is_deleted=False, is_active=True, id=int(request.GET['team_id']))
                 if team_filter:
-                    project_match = Project.objects.filter(is_deleted=False, is_active=True, team=team_filter[0]).order_by(
-                        '-utime')
+                    projects = filter(lambda x: x.team is team_filter[0], projects)
+                    print "--------------projects:", projects
+                    # project_match = Project.objects.filter(is_deleted=False, is_active=True, team=team_filter[0]).order_by(
+                    #     '-utime')
                 else:
                     queryset['errorcode'] = 300019  # 找不到匹配team id的工程列表
                     queryset['errormsg'] = getMessage('300019')
@@ -335,6 +350,7 @@ def req_project(request):
 
 
 # 查询Project名称是否重复
+@interface_check_login
 def project_name_check(request):
     queryset = {'timestamp': int(time.mktime(
         time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
@@ -505,3 +521,53 @@ def req_api_list(request):
         queryset['errorcode'] = 100002
         queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)
+
+
+# 根据字符模糊匹配用户名
+@interface_check_login
+def get_user_by_name(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+    if request.method == 'GET':
+        try:
+            params = request.GET.dict()
+            required_fields = ["username"]
+            errmsg = ''
+            for field in required_fields:
+                if field not in params or not params[field]:
+                    errmsg += field + ', '
+            if errmsg:
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
+                return JSONResponse(queryset)
+            user_match = User.objects.filter(is_active=True, username__icontains=request.GET['username']).order_by('id')
+            queryset['result']['pageIndex'] = 1
+            queryset['result']['pageSize'] = 10
+            queryset['result']['totalCount'] = user_match.count()
+            queryset['result']['userList'] = []
+            if 'pageSize' in request.GET:
+                queryset['result']['pageSize'] = request.GET['pageSize']
+            if 'pageIndex' in request.GET:
+                queryset['result']['pageIndex'] = request.GET['pageIndex']
+            user_pages = paginator.Paginator(user_match, queryset['result']['pageSize'])
+            if user_match.count() > 0:
+                user_page = user_pages.page(queryset['result']['pageIndex'])
+                for user in user_page.object_list:
+                    result = {'id': user.id, "username": user.username}
+                    queryset['result']['userList'].append(result)
+                return JSONResponse(queryset)
+            else:
+                return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset['errorcode'] = 300021
+            queryset['errormsg'] = getMessage('300021')
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)
+
+
+

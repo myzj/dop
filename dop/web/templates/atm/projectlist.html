@@ -6,7 +6,7 @@
 {% block container %}
     {% include "shared/headerBar.html" %}
     <div class="content-box teamListyle">
-        <div class="container">
+        <div class="container hide">
             <h3>Projects</h3>
 
             <p>{{ msg }}</p>
@@ -29,7 +29,7 @@
                     <p ng-hide="isLast">列表已加载完....</p>
                 </div>
                 {%if isHideAdd != 1%}
-                <div class="dialog hide" ng-show="isDialogShow">
+                <div class="dialog" ng-show="isDialogShow">
                     <div class="dialogBox addTeam">
                         <h3>Team Edit</h3>
 

@@ -44,6 +44,7 @@ CONSTANT = {
     "300036": ["Unlock interface lock throw exception", u"解锁API接口出现异常"],
     "300037": ["Delete interface throw exception", u"删除API接口出现异常"],
     "300038": ["Precheck interface data fail", u"数据预检查失败"],
+    "300039": ["", u"找不到该用户关联的项目"],
 
 
 }

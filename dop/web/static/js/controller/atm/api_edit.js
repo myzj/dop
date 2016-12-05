@@ -51,19 +51,27 @@ require(['lib/common'],
                                 $scope.toggleBulkEdit = function ($event, EditId) {
                                     if ($event.target.innerHTML == 'BulkEdit') {
                                         $event.target.innerHTML = 'KeyValue';
-                                        function JSbeautify(obj){
-                                            if(obj == 'Rq_headers'){
-                                                var source = JSON.stringify($scope.Request.headers);
-                                            }else if(Rq_query_string){
-                                                var source = JSON.stringify($scope.Request.query_string);
-                                            }else if(Rq_body){
-                                                var source = JSON.stringify($scope.Request.body.data);
-                                            }else if(Response){
-                                                var source = JSON.stringify($scope.Response.body);
-                                            }else if(ErrorCodes){
-                                                var source = JSON.stringify($scope.errorCodes);
-                                            }
-                                            //var source = JSON.stringify($scope.Request.headers);
+                                        if (EditId == 'Rq_headers') {
+                                            $scope.head_visible = !$scope.head_visible;
+                                            JSbeautify()
+                                        }
+                                        if (EditId == 'Rq_query_string') {
+                                            $scope.query_string_visible = !$scope.query_string_visible;
+                                            JSbeautify()
+                                        }
+                                        if (EditId == 'Rq_body') {
+                                            $scope.body_visible = !$scope.body_visible;
+                                            JSbeautify()
+                                        }
+                                        if (EditId == 'Response') {
+                                            $scope.Response_visible = !$scope.Response_visible;
+                                            JSbeautify()
+                                        }
+                                        if (EditId == 'ErrorCodes') {
+                                            $scope.ErrorCodes_visible = !$scope.ErrorCodes_visible;
+                                            JSbeautify()
+                                        }
+                                        function JSbeautify(){
                                             var opts = {
                                                 "indent_size": "3",
                                                 "indent_char": " ",
@@ -79,31 +87,22 @@ require(['lib/common'],
                                                 "end_with_newline": false,
                                                 "wrap_line_length": "0"
                                             };
-                                            $scope.Request.headersBulk = js_beautify(source, opts);
-                                        }
-                                        if (EditId == 'Rq_headers') {
-                                            $scope.head_visible = !$scope.head_visible;
-                                            JSbeautify(Rq_headers)
-                                        }
-                                        if (EditId == 'Rq_query_string') {
-                                            $scope.query_string_visible = !$scope.query_string_visible;
-                                            JSbeautify(Rq_query_string)
-                                            //$scope.Request.query_stringBulk = JSON.stringify($scope.Request.query_string);
-                                        }
-                                        if (EditId == 'Rq_body') {
-                                            $scope.body_visible = !$scope.body_visible;
-                                            Rq_query_string(Rq_body)
-                                            //$scope.Request.BodyBulk = JSON.stringify($scope.Request.body.data);
-                                        }
-                                        if (EditId == 'Response') {
-                                            $scope.Response_visible = !$scope.Response_visible;
-                                            Rq_query_string(Response)
-                                            //$scope.ResponseBulk = JSON.stringify($scope.Response.body);
-                                        }
-                                        if (EditId == 'ErrorCodes') {
-                                            $scope.ErrorCodes_visible = !$scope.ErrorCodes_visible;
-                                            Rq_query_string(ErrorCodes)
-                                            //$scope.ErrorCodesBulk = JSON.stringify($scope.errorCodes);
+                                            if(EditId == 'Rq_headers'){
+                                                var source = JSON.stringify($scope.Request.headers);
+                                                $scope.Request.headersBulk = js_beautify(source, opts)
+                                            }else if(EditId == 'Rq_query_string'){
+                                                var source = JSON.stringify($scope.Request.query_string);
+                                                $scope.Request.query_stringBulk = js_beautify(source, opts)
+                                            }else if(EditId == 'Rq_body'){
+                                                var source = JSON.stringify($scope.Request.body.data);
+                                                $scope.Request.BodyBulk = js_beautify(source, opts)
+                                            }else if(EditId == 'Response'){
+                                                var source = JSON.stringify($scope.Response.body);
+                                                $scope.ResponseBulk = js_beautify(source, opts)
+                                            }else if(EditId == 'ErrorCodes'){
+                                                var source = JSON.stringify($scope.errorCodes);
+                                                $scope.ErrorCodesBulk = js_beautify(source, opts)
+                                            }
                                         }
                                     } else if ($event.target.innerHTML == 'KeyValue') {
                                         $event.target.innerHTML = 'BulkEdit';
@@ -203,7 +202,6 @@ require(['lib/common'],
                 }
                 $scope.saveData = function () {
                     var upData = {
-                        "project": $.url.getParam("project"),
                         "api_id": $.url.getParam("apiid"),
                         "Arryitem": $scope.ApiDate
                     };

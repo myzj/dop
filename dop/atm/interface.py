@@ -8,6 +8,7 @@ from common import except_info
 import time
 import json
 import datetime
+import re
 from common import JSONResponse
 from dop.errorcode import getMessage
 from django.views.decorators.csrf import csrf_exempt
@@ -143,7 +144,6 @@ class InterFace(object):
                 # update base
                 mdf_interface = Interface.objects.get(id=self.data.get("api_id"))
                 mdf_interface.modifier = self.data.get("user")
-                mdf_interface.project = self.data.get("project")
                 mdf_interface.interface_name = self.data.get("name")
                 mdf_interface.url = self.data.get("url")
                 mdf_interface.method = method_dict.get(self.data.get("method"))
@@ -712,22 +712,22 @@ def update_interface(request):
                 queryset['errorcode'] = 100007
                 queryset['errormsg'] = 'info ' + getMessage('100007')
                 return JSONResponse(queryset)
-            if "project" not in info or not info.get("project"):
-                queryset['errorcode'] = 100001
-                queryset['errormsg'] = 'info属性值的project为必填属性 ' + getMessage('100001')
-                return JSONResponse(queryset)
+            # if "project" not in info or not info.get("project"):
+            #     queryset['errorcode'] = 100001
+            #     queryset['errormsg'] = 'info属性值的project为必填属性 ' + getMessage('100001')
+            #     return JSONResponse(queryset)
             if "api_id" not in info or not info.get("api_id"):
                 queryset['errorcode'] = 100001
                 queryset['errormsg'] = 'info属性值的api_id为必填属性 ' + getMessage('100001')
                 return JSONResponse(queryset)
-            project_id = int(info.get("project"))
-            project_filter = Project.objects.filter(id=project_id, is_deleted=False, is_active=True)
-            if not project_filter:
-                queryset['errorcode'] = 300025
-                queryset['errormsg'] = "项目ID为:{0},{1}".format(project_id, getMessage("300025"))
-                return JSONResponse(queryset)
+            # project_id = int(info.get("project"))
+            # project_filter = Project.objects.filter(id=project_id, is_deleted=False, is_active=True)
+            # if not project_filter:
+            #     queryset['errorcode'] = 300025
+            #     queryset['errormsg'] = "项目ID为:{0},{1}".format(project_id, getMessage("300025"))
+            #     return JSONResponse(queryset)
             api_id = int(info.get("api_id"))
-            api_filter = Interface.objects.filter(id=api_id, is_deleted=False, project=project_filter[0])
+            api_filter = Interface.objects.filter(id=api_id, is_deleted=False)
             if not api_filter:
                 queryset['errorcode'] = 300029
                 queryset['errormsg'] = "API接口ID为:{0},{1}".format(api_id, getMessage("300029"))
@@ -747,8 +747,7 @@ def update_interface(request):
             rec = item[0]
             data["user_id"] = user.id
             data["user"] = user
-            data["project_id"] = project_id
-            data["project"] = project_filter[0]
+            data["project_id"] = up_interface.project.id
             for key1 in ["base", "request"]:
                 if key1 not in rec:
                     queryset['errorcode'] = 100001
@@ -834,7 +833,6 @@ def update_interface(request):
             flag, msg = itf.modify_interface
             print 'flag:', flag, " msg:", msg, " interface:", up_interface
             view_data = data
-            view_data.pop("project")
             view_data.pop("user")
             # queryset["result"] = view_data
             if flag:

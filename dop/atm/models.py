@@ -24,6 +24,12 @@ position_types = (
     (2, "Response"),
 )
 
+# role types
+role_types = (
+    (1, "普通用户"),
+    (2, "管理员"),
+    (3, "超级管理员"),
+)
 
 # 团队
 class Team(models.Model):
@@ -76,6 +82,7 @@ class ProjectMember(models.Model):
     project = models.ForeignKey(Project, verbose_name=u"项目", related_name=u"projectmember", null=True, blank=True)
     user = models.ForeignKey(User, verbose_name=u"成员", related_name=u"projectmember", null=True, blank=True)
     is_author = models.BooleanField(verbose_name=u"是否为项目管理员", default=False)
+    role = models.SmallIntegerField(verbose_name=u"用户角色", choices=role_types, default=1)
     is_active = models.BooleanField(verbose_name=u"是否启用", default=True)
     is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
     ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)

@@ -1121,3 +1121,50 @@ def qry_edit_history(request):
         queryset['errorcode'] = 100002
         queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)
+
+
+# 查询项目成员
+@csrf_exempt
+def qry_project_member(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': []}
+    if request.method == 'GET':
+        try:
+            errmsg = ''
+            if 'project_id' in request.GET and request.GET['project_id'] != '':
+                project_id = request.GET['project_id']
+            else:
+                errmsg += 'project_id,'
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
+                return JSONResponse(queryset)
+            match1 = re.match(r"\d", project_id)
+            if not match1:
+                queryset['errorcode'] = 100007
+                queryset['errormsg'] = 'project_id ' + getMessage('100007')
+                return JSONResponse(queryset)
+            project_id = int(project_id)
+            project_filter = Project.objects.filter(id=project_id, is_deleted=False)
+            if not project_filter:
+                queryset['success'] = False
+                queryset['errorcode'] = 300025
+                queryset['errormsg'] = getMessage('300025')
+                return JSONResponse(queryset)
+            project = project_filter[0]
+            members_filter = ProjectMember.objects.filter(project=project, is_deleted=False, is_active=True)
+            if members_filter:
+                for item in members_filter:
+                    temp = {"id": item.id, "role": item.role, "user": item.user.username}
+                    queryset["result"].append(temp)
+            return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset["success"] = False
+            queryset['errorcode'] = 300040
+            queryset['errormsg'] = getMessage('300040') + str(ex)
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)

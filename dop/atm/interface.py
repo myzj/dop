@@ -1250,6 +1250,12 @@ def add_project_member(request):
                 queryset['errorcode'] = 300043
                 queryset['errormsg'] = getMessage('300043')
                 return JSONResponse(queryset)
+            invalid_user = ''
+            if users_filter.count() != len(username):  # check input user is valid
+                valid_users = map(lambda x: x.username, users_filter)
+                for input_user in username:
+                    if input_user not in valid_users:
+                        invalid_user += input_user + ','
             suc_msg = ''
             err_msg = ''
             for i_user in users_filter:
@@ -1271,8 +1277,12 @@ def add_project_member(request):
                                                                    project.project_name, role_dict.get(role))
             if err_msg:
                 queryset["errormsg"] = message + err_msg[:-1] + getMessage("300045")
+                if invalid_user:
+                    queryset["errormsg"] = message + err_msg[:-1] + getMessage("300045") + ';' + invalid_user[:-1] + getMessage("300043")
             else:
                 queryset["errormsg"] = message
+                if invalid_user:
+                    queryset["errormsg"] = message + ';' + invalid_user[:-1] + getMessage("300043")
             return JSONResponse(queryset)
         except BaseException, ex:
             except_info(ex)

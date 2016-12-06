@@ -450,7 +450,7 @@ def qry_interface_detail(request):
                 lock_filter = LockInfo.objects.filter(interface=interface, is_locked=True, is_deleted=False)
                 if lock_filter and lock_filter[0].lock_user.id != user.id:
                     queryset['errorcode'] = 300030
-                    queryset['errormsg'] = getMessage('300030')
+                    queryset['errormsg'] = getMessage('300030') + ',lock_user: ' + lock_filter[0].lock_user.username
                     return JSONResponse(queryset)
                 if not lock_filter:  # Add lock info
                     print 'Lock the interface id={0}'.format(api_id)
@@ -747,7 +747,7 @@ def update_interface(request):
             lock_filter = LockInfo.objects.filter(interface=up_interface, is_locked=True, is_deleted=False)
             if lock_filter and lock_filter[0].lock_user.id != user.id:
                 queryset['errorcode'] = 300030
-                queryset['errormsg'] = getMessage('300030')
+                queryset['errormsg'] = getMessage('300030') + ',lock_user:' + lock_filter[0].lock_user.username
                 return JSONResponse(queryset)
             item = params.get("item")
             if not isinstance(item, list):
@@ -990,7 +990,7 @@ def cancel_lock(request):
                 return JSONResponse(queryset)
             if lock_filter[0].lock_user.id != user.id:
                 queryset['errorcode'] = 300035
-                queryset['errormsg'] = getMessage('300035')
+                queryset['errormsg'] = getMessage('300035') + ',lock_user:' + lock_filter[0].lock_user.username
                 return JSONResponse(queryset)
             lock_filter.update(is_locked=False, utime=now)  # 解锁
             queryset["errormsg"] = 'Unlock the api_id={0} success.'.format(api_id)

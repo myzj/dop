@@ -1283,3 +1283,103 @@ def add_project_member(request):
         queryset['errorcode'] = 100002
         queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)
+
+
+# 修改项目成员
+@csrf_exempt
+@interface_check_login
+def update_project_member(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+    role_dict = {1: "普通用户", 2: "管理员", 3: "超级管理员"}
+    if request.method == 'PATCH':
+        try:
+            params = json.loads(request.read())
+            user_info = request.session.get("user", default=None)
+            user = None
+            if user_info:
+                user_id = int(user_info.get("id"))
+                user_filter = User.objects.filter(id=user_id)
+                if user_filter:
+                    user = user_filter[0]
+            if user is None:
+                queryset['success'] = False
+                queryset['errorcode'] = 200003
+                queryset['errormsg'] = getMessage('200003')
+                return JSONResponse(queryset)
+            required_fields = ['member_id', 'role']
+            errmsg = ''
+            for field in required_fields:
+                if field not in params:
+                    errmsg += field + ', '
+            if errmsg:
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
+                return JSONResponse(queryset)
+            if not isinstance(params.get("role"), int):
+                queryset['errorcode'] = 100007
+                queryset['errormsg'] = 'role ' + getMessage('100007')
+                return JSONResponse(queryset)
+            role = params.get("role")
+            if role not in [1, 2]:
+                queryset['errorcode'] = 100008
+                queryset['errormsg'] = 'role ' + getMessage('100008')
+                return JSONResponse(queryset)
+            if not isinstance(params.get("member_id"), int):
+                queryset['errorcode'] = 100007
+                queryset['errormsg'] = 'member_id ' + getMessage('100007')
+                return JSONResponse(queryset)
+            member_id = params.get("member_id")
+            member_filter = ProjectMember.objects.filter(id=member_id, is_deleted=False, is_active=True)
+            if not member_filter:
+                queryset['errorcode'] = 300046
+                queryset['errormsg'] = "成员ID为:{0},{1}".format(member_id, getMessage("300046"))
+                return JSONResponse(queryset)
+            member = member_filter[0]
+            # check user role
+            members_filter = ProjectMember.objects.filter(project=member.project, is_deleted=False, is_active=True)
+            members = []
+            if members_filter:
+                members = map(lambda x: x.user, members_filter)
+            if user not in members:
+                queryset['success'] = False
+                queryset['errorcode'] = 300047
+                queryset['errormsg'] = getMessage('300047')
+                return JSONResponse(queryset)
+            member_match = filter(lambda x: x.user.id == user.id, members_filter)
+            member_operate = member_match[0]
+            if member_operate.role == 1:  # 普通用户
+                queryset['success'] = False
+                queryset['errorcode'] = 300047
+                queryset['errormsg'] = getMessage('300047')
+                return JSONResponse(queryset)
+            if user.id == member.user.id:
+                queryset['success'] = False
+                queryset['errorcode'] = 300048
+                queryset['errormsg'] = getMessage('300048')
+                return JSONResponse(queryset)
+
+            origin_role = member.role
+            if origin_role == role:
+                queryset['success'] = False
+                queryset['errorcode'] = 300050
+                msg = u'member_id={0} {1} 已经是{2},'.format(member_id, member.user.username, role_dict.get(role))
+                queryset['errormsg'] = msg + getMessage('300050')
+                return JSONResponse(queryset)
+            # update member role
+            member.role = role
+            member.save()
+            queryset["errormsg"] = "Update member_id={0} {3} role {1}-->{2} success." \
+                .format(member_id, role_dict.get(origin_role), role_dict.get(role), member.user.username)
+            return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset['success'] = False
+            queryset['errorcode'] = 300049
+            queryset['errormsg'] = getMessage('300049') + str(ex)
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)

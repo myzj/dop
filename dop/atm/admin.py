@@ -15,7 +15,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
 class ProjectMemberAdmin(admin.ModelAdmin):
     search_fields = ('id',)
-    list_display = ('id', 'project', 'user', 'role', 'is_active', 'is_deleted', 'ctime', 'utime',)
+    list_display = ('id', 'project', 'user', 'role', 'author', 'modifier', 'is_active', 'is_deleted', 'ctime', 'utime',)
 
 
 class InterfaceAdmin(admin.ModelAdmin):

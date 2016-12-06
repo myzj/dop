@@ -1133,7 +1133,7 @@ def qry_project_member(request):
         try:
             errmsg = ''
             if 'project_id' in request.GET and request.GET['project_id'] != '':
-                project_id = request.GET['project_id']
+                project_id = request.GET['project_id'].strip()
             else:
                 errmsg += 'project_id,'
                 queryset['errorcode'] = 100001
@@ -1153,6 +1153,19 @@ def qry_project_member(request):
                 return JSONResponse(queryset)
             project = project_filter[0]
             members_filter = ProjectMember.objects.filter(project=project, is_deleted=False, is_active=True)
+            if 'role' in request.GET and request.GET['role'] != '':
+                role_str = request.GET['role'].strip()
+                if re.match(r'\d', role_str):
+                    role_int = int(role_str)
+                    if role_int in [1, 2, 3]:
+                        role = role_int
+                        members_filter = members_filter.filter(role=role)
+            if 'username' in request.GET and request.GET['username'] != '':
+                username = request.GET['username'].strip()
+                users_filter = User.objects.filter(username__icontains=username)
+                if users_filter:
+                    user_match = list(users_filter)
+                    members_filter = members_filter.filter(user__in=user_match)
             if members_filter:
                 for item in members_filter:
                     temp = {"id": item.id, "role": item.role, "user": item.user.username}

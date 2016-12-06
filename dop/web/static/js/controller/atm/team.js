@@ -86,7 +86,9 @@ require(['lib/common'],
                             data: {team_name: datainfo.tname, pic_url: datainfo.tpic, description: datainfo.tdec}
                         }).success(function (data) {
                             if (data.errorcode == 0) {
-
+                                alert("添加成功")
+                            }else{
+                                alert(data.errormsg);
                             }
                         });
                     }

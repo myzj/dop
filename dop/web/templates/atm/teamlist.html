@@ -15,18 +15,21 @@
             {#projectlist?team=123#}
             <div class="edit-main team-list">
                 <ul>
+
+                    {%if isHideAdd != 1%}
+                    <li ng-click="addTeam()" class="addBtn">添加</li>
+                    {% endif  %}
                     <li class="listLi" ng-repeat="List in teamArr">
                         <a href="/projectlist?team=@{List.team_id}@">
-                            <p class="team-pic"><img ng-src="@{List.team_pic_url}@"/></p>
+                            <p class="team-pic">
+                                <img ng-src="@{List.team_pic_url}@" onerror="this.src='{% static "images/errorImg.jpg" %}?v={{ config.v }}'"/>
+                            </p>
 
                             <p class="team-name">@{List.team_name}@</p>
 
                             <p class="team-ctime">创建时间：@{List.ctime}@</p>
                         </a>
                     </li>
-                    {%if isHideAdd != 1%}
-                    <li ng-click="addTeam()" class="">添加</li>
-                    {% endif  %}
                 </ul>
                 <div class="loadTips">
                     <p ng-show="isLast">下拉加载下一页....</p>
@@ -34,7 +37,7 @@
                     <p ng-hide="isLast">列表已加载完....</p>
                 </div>
                 {%if isHideAdd != 1%}
-                <div class="dialog" ng-show="isDialogShow">
+                <div class="dialog ng-hide" ng-show="isDialogShow">
                     <div class="dialogBox addTeam">
                         <h3>Team Edit</h3>
 

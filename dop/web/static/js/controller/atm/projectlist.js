@@ -103,7 +103,67 @@ require(['lib/common'],
                             }
                         });
                     }
+
+
+
+
                 }
+
+                $scope.edit_project = function(project_id){
+                    alert(project_id);
+                };
+
+
+                var add_edit_project = function(options){
+                    var defaults = {
+                        type: 1,  // 1表示编辑，2表示新增
+                        title: options.title,
+                        projectId: options.projectId,
+                        projectName: options.projectName
+                    };
+                    var options = $.extend(defaults, options);
+
+                    if(options.type == 1){
+                        $.ajax({
+
+                        });
+                    }else{
+                        var html = [];
+                        html.push('<div class="dialog"><div class="dialogBox addTeam">');
+                        html.push('<h3>Project Add</h3>');
+                    }
+
+
+
+
+
+
+                    /*
+
+                        <div class="addTeam-main">
+                            <p><span class="dsc">TeamName</span><input class="pName" value="{{team_name}}" placeholder="关联团队" type="text">
+                            </p>
+
+                            <p><span class="dsc">ProjectName</span><input class="pName" placeholder="项目名称" type="text"></p>
+                            <p><span class="dsc">HOST</span><input class="thost" placeholder="目录/端口" type="text"></p>
+                            <p><span class="dsc">pic_url</span><input class="pic_url" placeholder="封面大图" type="text"></p>
+                            <p><span class="dsc">Description</span><textarea class="tDec" placeholder="请输入描述"></textarea></p>
+
+                            <div class="addBtn">
+                                <span ng-click="saveProject()" class="active">save</span>
+                                <span ng-click="closeDialog()">close</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                     */
+
+                };
+
+
+
+
             });
             angular.bootstrap(document, ['app']);
         });

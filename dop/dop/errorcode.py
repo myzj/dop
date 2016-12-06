@@ -51,6 +51,7 @@ CONSTANT = {
     "300043": ["Add project member does't exist", u"新增项目成员输入用户名不存在"],
     "300044": ["Add project member throw exception", u"新增项目成员出现异常"],
     "300045": ["The user has existed in the project", u"新增用户已经是项目组成员,无需重复添加"],
+    "300046": ["", u"该项目不存在"],
 
 
 }

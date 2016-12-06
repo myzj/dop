@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'(?i)^api/project_name_check/?$', atm_api.project_name_check),  # 检查团队名称是否可用
     url(r'(?i)^api/get_user_by_name/?$', atm_api.get_user_by_name),  # 查询用户
     url(r'(?i)^api/add_project/?$', atm_api.add_project),  # 增加项目列表
+    url(r'(?i)^api/edit_project/?$', atm_api.edit_project),  # 修改项目列表
     url(r'(?i)^api/req_api_list/?$', atm_api.req_api_list),  # 查询接口列表
     url(r'(?i)^api/qry/api_detail/?$', itf.qry_interface_detail),  # 查询API接口明细
     url(r'(?i)^api/add/new_api/?$', itf.add_interface),  # 新增API接口

@@ -51,6 +51,11 @@ CONSTANT = {
     "300043": ["Add project member does't exist", u"新增项目成员输入用户名不存在"],
     "300044": ["Add project member throw exception", u"新增项目成员出现异常"],
     "300045": ["The user has existed in the project", u"新增用户已经是项目组成员,无需重复添加"],
+    "300046": ["The project member doesn't existed ", u"查找不到匹配的项目成员信息"],
+    "300047": ["You have no right to modify a member", u"您不是项目组管理员无权修改成员角色"],
+    "300048": ["Member can't modify himself", u"管理员不能修改自己"],
+    "300049": ["Update project member throw exception", u"修改项目成员出现异常"],
+    "300050": ["No need to repeat modification the memeber role", u"无需重复修改成员角色"],
 
 
 }

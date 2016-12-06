@@ -450,7 +450,7 @@ def qry_interface_detail(request):
                 lock_filter = LockInfo.objects.filter(interface=interface, is_locked=True, is_deleted=False)
                 if lock_filter and lock_filter[0].lock_user.id != user.id:
                     queryset['errorcode'] = 300030
-                    queryset['errormsg'] = getMessage('300030') + ',lock_user: ' + lock_filter[0].lock_user.username
+                    queryset['errormsg'] = getMessage('300030') + ',请联系 ' + lock_filter[0].lock_user.username + ' 解锁.'
                     return JSONResponse(queryset)
                 if not lock_filter:  # Add lock info
                     print 'Lock the interface id={0}'.format(api_id)
@@ -747,7 +747,7 @@ def update_interface(request):
             lock_filter = LockInfo.objects.filter(interface=up_interface, is_locked=True, is_deleted=False)
             if lock_filter and lock_filter[0].lock_user.id != user.id:
                 queryset['errorcode'] = 300030
-                queryset['errormsg'] = getMessage('300030') + ',lock_user:' + lock_filter[0].lock_user.username
+                queryset['errormsg'] = getMessage('300030') + ',请联系 ' + lock_filter[0].lock_user.username + ' 解锁.'
                 return JSONResponse(queryset)
             item = params.get("item")
             if not isinstance(item, list):
@@ -990,7 +990,7 @@ def cancel_lock(request):
                 return JSONResponse(queryset)
             if lock_filter[0].lock_user.id != user.id:
                 queryset['errorcode'] = 300035
-                queryset['errormsg'] = getMessage('300035') + ',lock_user:' + lock_filter[0].lock_user.username
+                queryset['errormsg'] = getMessage('300035') + ',请联系 ' + lock_filter[0].lock_user.username + ' 解锁.'
                 return JSONResponse(queryset)
             lock_filter.update(is_locked=False, utime=now)  # 解锁
             queryset["errormsg"] = 'Unlock the api_id={0} success.'.format(api_id)
@@ -1267,8 +1267,8 @@ def add_project_member(request):
                     suc_msg += i_user.username + ', '
             message = ''
             if suc_msg:
-                message = u"已经成功添加:{0}作为项目:id={1} {2}的{3};".format(suc_msg, project_id, project.project_name, \
-                                                                   role_dict.get(role))
+                message = u"已经成功添加:{0}作为项目:id={1} {2}的{3};".format(suc_msg[:-1], project_id, \
+                                                                   project.project_name, role_dict.get(role))
             if err_msg:
                 queryset["errormsg"] = message + err_msg[:-1] + getMessage("300045")
             else:
@@ -1296,6 +1296,7 @@ def update_project_member(request):
     role_dict = {1: "普通用户", 2: "管理员", 3: "超级管理员"}
     if request.method == 'PATCH':
         try:
+            now = datetime.datetime.now()
             params = json.loads(request.read())
             user_info = request.session.get("user", default=None)
             user = None
@@ -1371,6 +1372,7 @@ def update_project_member(request):
             # update member role
             member.role = role
             member.modifier = user
+            member.utime = now
             member.save()
             queryset["errormsg"] = "Update member_id={0} {3} role {1}-->{2} success." \
                 .format(member_id, role_dict.get(origin_role), role_dict.get(role), member.user.username)
@@ -1396,6 +1398,7 @@ def delete_project_member(request):
         'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
     if request.method == 'DELETE':
         try:
+            now = datetime.datetime.now()
             params = json.loads(request.read())
             user_info = request.session.get("user", default=None)
             user = None
@@ -1455,6 +1458,7 @@ def delete_project_member(request):
             # delete the member
             member.is_deleted = True
             member.modifier = user
+            member.utime = now
             member.save()
             queryset["errormsg"] = "Delete member_id={0} {1} from project_id={2} {3} success." \
                 .format(member_id, member.user.username, member.project.id, member.project.project_name)

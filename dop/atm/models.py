@@ -85,6 +85,8 @@ class ProjectMember(models.Model):
     role = models.SmallIntegerField(verbose_name=u"用户角色", choices=role_types, default=1)
     is_active = models.BooleanField(verbose_name=u"是否启用", default=True)
     is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
+    author = models.ForeignKey(User, verbose_name=u"创建人", related_name=u"projectmember_author", null=True, blank=True)
+    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"projectmember_modifier", null=True, blank=True)
     ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
     utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
 

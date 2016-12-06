@@ -45,6 +45,7 @@ urlpatterns = [
     url(r'(?i)^api/qry/member/?$', itf.qry_project_member),  # 查询项目成员
     url(r'(?i)^api/add/member/?$', itf.add_project_member),  # 新增项目成员
     url(r'(?i)^api/mdf/member/?$', itf.update_project_member),  # 修改项目成员
+    url(r'(?i)^api/del/member/?$', itf.delete_project_member),  # 删除项目成员
 
 
     url(r'^test/?$', views.test),

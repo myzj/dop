@@ -1262,6 +1262,7 @@ def add_project_member(request):
                     new_member.project = project
                     new_member.user = i_user
                     new_member.role = role
+                    new_member.author = user
                     new_member.save()
                     suc_msg += i_user.username + ', '
             message = ''
@@ -1269,7 +1270,7 @@ def add_project_member(request):
                 message = u"已经成功添加:{0}作为项目:id={1} {2}的{3};".format(suc_msg, project_id, project.project_name, \
                                                                    role_dict.get(role))
             if err_msg:
-                queryset["errormsg"] = message + err_msg + getMessage("300045")
+                queryset["errormsg"] = message + err_msg[:-1] + getMessage("300045")
             else:
                 queryset["errormsg"] = message
             return JSONResponse(queryset)
@@ -1369,6 +1370,7 @@ def update_project_member(request):
                 return JSONResponse(queryset)
             # update member role
             member.role = role
+            member.modifier = user
             member.save()
             queryset["errormsg"] = "Update member_id={0} {3} role {1}-->{2} success." \
                 .format(member_id, role_dict.get(origin_role), role_dict.get(role), member.user.username)
@@ -1378,6 +1380,90 @@ def update_project_member(request):
             queryset['success'] = False
             queryset['errorcode'] = 300049
             queryset['errormsg'] = getMessage('300049') + str(ex)
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)
+
+
+# 删除项目成员
+@csrf_exempt
+@interface_check_login
+def delete_project_member(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+    if request.method == 'DELETE':
+        try:
+            params = json.loads(request.read())
+            user_info = request.session.get("user", default=None)
+            user = None
+            if user_info:
+                user_id = int(user_info.get("id"))
+                user_filter = User.objects.filter(id=user_id)
+                if user_filter:
+                    user = user_filter[0]
+            if user is None:
+                queryset['success'] = False
+                queryset['errorcode'] = 200003
+                queryset['errormsg'] = getMessage('200003')
+                return JSONResponse(queryset)
+            required_fields = ['member_id']
+            errmsg = ''
+            for field in required_fields:
+                if field not in params:
+                    errmsg += field + ', '
+            if errmsg:
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
+                return JSONResponse(queryset)
+
+            if not isinstance(params.get("member_id"), int):
+                queryset['errorcode'] = 100007
+                queryset['errormsg'] = 'member_id ' + getMessage('100007')
+                return JSONResponse(queryset)
+            member_id = params.get("member_id")
+            member_filter = ProjectMember.objects.filter(id=member_id, is_deleted=False, is_active=True)
+            if not member_filter:
+                queryset['errorcode'] = 300046
+                queryset['errormsg'] = "成员ID为:{0},{1}".format(member_id, getMessage("300046"))
+                return JSONResponse(queryset)
+            member = member_filter[0]
+            # check user role
+            members_filter = ProjectMember.objects.filter(project=member.project, is_deleted=False, is_active=True)
+            members = []
+            if members_filter:
+                members = map(lambda x: x.user, members_filter)
+            if user not in members:
+                queryset['success'] = False
+                queryset['errorcode'] = 300052
+                queryset['errormsg'] = getMessage('300052')
+                return JSONResponse(queryset)
+            member_match = filter(lambda x: x.user.id == user.id, members_filter)
+            member_operate = member_match[0]
+            if member_operate.role == 1:  # 普通用户
+                queryset['success'] = False
+                queryset['errorcode'] = 300052
+                queryset['errormsg'] = getMessage('300052')
+                return JSONResponse(queryset)
+            if member.role == 3:  # 超级管理员不能被删除
+                queryset['success'] = False
+                queryset['errorcode'] = 300053
+                queryset['errormsg'] = getMessage('300053')
+                return JSONResponse(queryset)
+            # delete the member
+            member.is_deleted = True
+            member.modifier = user
+            member.save()
+            queryset["errormsg"] = "Delete member_id={0} {1} from project_id={2} {3} success." \
+                .format(member_id, member.user.username, member.project.id, member.project.project_name)
+            return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset['success'] = False
+            queryset['errorcode'] = 300054
+            queryset['errormsg'] = getMessage('300054') + str(ex)
             return JSONResponse(queryset)
     else:
         queryset['errorcode'] = 100002

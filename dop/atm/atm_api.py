@@ -496,8 +496,8 @@ def edit_project(request):
                 project_filter = Project.objects.filter(project_name=project_name)
                 project_filter_by_id = Project.objects.filter(id=int(params.get('project_id')))
                 if project_filter_by_id.count() == 0:
-                    queryset['errorcode'] = 300046
-                    queryset['errormsg'] = errmsg + getMessage('300046')
+                    queryset['errorcode'] = 300051
+                    queryset['errormsg'] = errmsg + getMessage('300051')
                     return JSONResponse(queryset)
                 if project_filter:
                     if project_filter[0].id != int(params.get('project_id')):  # 说明是当前的项目名称没有改变，和之前的保持一致

@@ -1051,23 +1051,33 @@ def qry_edit_history(request):
             history_match = EditHistory.objects.filter(is_deleted=False)
             if "record_id" in request.GET and request.GET["record_id"] != '':
                 rcd_id = request.GET["record_id"]
+                if re.search(r',$', rcd_id):
+                    rcd_id = rcd_id[:-1]
                 record_id = []
-                try:
-                    rcd_list = eval(rcd_id)
-                    record_id = map(lambda x: int(x), rcd_list)
-                except BaseException, ex:
-                    except_info(ex)
-                    err_msg += "record_id throw exception: " + str(ex) + ";"
+                if re.match(r'\d', rcd_id):
+                    record_id.append(int(rcd_id))
+                else:
+                    try:
+                        rcd_list = eval(rcd_id)
+                        record_id = map(lambda x: int(x), rcd_list)
+                    except BaseException, ex:
+                        except_info(ex)
+                        err_msg += "record_id throw exception: " + str(ex) + ";"
                 history_match = history_match.filter(pk__in=record_id)
             if "api_id" in request.GET and request.GET["api_id"] != '':
                 api_id = request.GET["api_id"]
+                if re.search(r',$', api_id):
+                    api_id = api_id[:-1]
                 interface_id = []
-                try:
-                    api_list = eval(api_id)
-                    interface_id = map(lambda x: int(x), api_list)
-                except BaseException, ex:
-                    except_info(ex)
-                    err_msg += "api_id throw exception: " + str(ex) + ";"
+                if re.match(r'\d', api_id):
+                    interface_id.append(int(api_id))
+                else:
+                    try:
+                        api_list = eval(api_id)
+                        interface_id = map(lambda x: int(x), api_list)
+                    except BaseException, ex:
+                        except_info(ex)
+                        err_msg += "api_id throw exception: " + str(ex) + ";"
                 itfs = Interface.objects.filter(pk__in=interface_id)
                 history_match = history_match.filter(interface__in=itfs)
 
@@ -1080,7 +1090,6 @@ def qry_edit_history(request):
                 else:
                     err_msg += "user: " + req_user + "用户不存在;"
                 history_match = history_match.filter(modifier=user)
-
             if "time" in request.GET and request.GET["time"] != '':
                 timestr = '1900-01-01'
                 req_time = request.GET["time"]

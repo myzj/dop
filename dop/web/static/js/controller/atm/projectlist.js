@@ -284,11 +284,11 @@ require(['lib/common'],
                     });
                 };
 
-                $scope.edit_member = function (project_id, team_id) {
+                $scope.edit_member = function (project_id, team_id, role) {
                     $scope.memberDialogShow = true;
                     $scope.member_project_id = project_id;
                     $scope.member_team_id = team_id;
-
+                    $scope.member_role = role;
                     //调取用户列表
                     $http({
                         method: 'get',

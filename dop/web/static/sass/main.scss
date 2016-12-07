@@ -358,6 +358,7 @@ img {
     border-bottom: 1px solid #cccccc;
     margin-bottom: 8px;
   }
+  z-index: 2;
   position: fixed;
   left:0;
   top:0;
@@ -412,7 +413,7 @@ width:460px!important;
   }
   .dsc{
     width:120px;
-    display: inline-block;
+    float: left;
   }
   .addBtn{
     text-align: right;

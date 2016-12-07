@@ -327,8 +327,8 @@ def req_project(request):
             if len(project_match) > 0:
                 project_page = project_pages.page(queryset['result']['pageIndex'])
                 for project in project_page.object_list:
-                    result = {'project_name': project.project_name, 'project_id': project.id,
-                              'ctime': project.ctime.strftime('%Y-%m-%d %H:%M:%S'), \
+                    result = {'project_name': project.project_name, 'project_id': project.id,"team": project.team.id, \
+                              'ctime': project.ctime.strftime('%Y-%m-%d %H:%M:%S'), 'host':project.host, 'description':project.description, \
                               'project_pic_url': project.pic_url, 'role': role_dict.get(int(project.id), 'NULL')}
                     queryset['result']['projectList'].append(result)
                 return JSONResponse(queryset)
@@ -432,12 +432,13 @@ def add_project(request):
                         new_project.pic_url = params.get('pic_url')
                         new_project.author = user
                         new_project.save()
-
+                        # 新增成功后需要把ProjectMember表添加一条超级管理员信息
                         project_member = ProjectMember()
                         project_member.project = new_project
                         project_member.role = 3
-
-
+                        project_member.author = user
+                        project_member.user = user
+                        project_member.save()
 
                         queryset['success'] = True
                         queryset['errormsg'] = "新增项目成功"
@@ -500,7 +501,7 @@ def edit_project(request):
                     queryset['errormsg'] = errmsg + getMessage('300051')
                     return JSONResponse(queryset)
                 if project_filter:
-                    if project_filter[0].id != int(params.get('project_id')):  # 说明是当前的项目名称没有改变，和之前的保持一致
+                    if project_filter[0].id != int(params.get('project_id')):  # 当前的项目名称没有改变，和之前的保持一致
                         queryset['errorcode'] = 300022
                         queryset['errormsg'] = errmsg + getMessage('300022')
                         return JSONResponse(queryset)
@@ -508,16 +509,15 @@ def edit_project(request):
                 team_filter = Team.objects.filter(is_active=True, is_deleted=False, id=int(team_id))
                 if team_filter:
                     user = user_filter[0]
-                    new_project = Project()
-                    new_project.team = team_filter[0]
-                    new_project.project_name = project_name
-                    new_project.host = params.get('host')
-                    new_project.description = params.get('description')
-                    new_project.pic_url = params.get('pic_url')
-                    new_project.author = user
-                    new_project.modifier = user
-                    new_project.id = int(params.get('project_id'))
-                    new_project.save()
+                    update_project = project_filter_by_id[0]
+                    update_project.team = team_filter[0]
+                    update_project.project_name = project_name
+                    update_project.host = params.get('host')
+                    update_project.description = params.get('description')
+                    update_project.pic_url = params.get('pic_url')
+                    update_project.modifier = user
+                    update_project.id = int(params.get('project_id'))
+                    update_project.save()
                     queryset['success'] = True
                     queryset['errormsg'] = "项目修改成功"
                     return JSONResponse(queryset)

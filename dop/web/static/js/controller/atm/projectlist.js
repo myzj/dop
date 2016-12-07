@@ -20,39 +20,38 @@ require(['lib/common'],
                     var winScroll = $('body').scrollTop();  //窗口卷起的高度
                     var loadTipsSH = $('.loadTips').offset().top - winScroll;  //提示条距离窗口顶部的高度
                     var isLoad = loadTipsSH - $(window).height() <= 20 ? true : false;   //是否加载下一页
-                    if(isLoad){
+                    if (isLoad) {
                         isAutoLoad = autoLoad;                 //列表没有
-                    }else{
+                    } else {
                         isAutoLoad = false;
                     }
-                    console.log(isLoad)
                     if (isLoad && onloading && isLoadOut) {
                         onloading = false;
-                        getTeamDate(curIndex,isAutoLoad);
+                        getTeamDate(curIndex, isAutoLoad);
                     }
                 };
                 window.onscroll = function () {
                     loadDate();
                 }
-                function getTeamDate(index,isAutoLoad) {
+                function getTeamDate(index, isAutoLoad) {
                     var datainfo = {
                         "pageIndex": index,
                         "pageSize": pageSize,
-                        "team":$.url.getParam("team")
+                        "team": $.url.getParam("team")
                     };
                     var teamStr = "";
                     var keywordStr = "";
                     var keyword = $.url.getParam("keyword");
                     var team = $.url.getParam("team");
-                    if(keyword != null && keyword.length >0){
+                    if (keyword != null && keyword.length > 0) {
                         datainfo.keyword = keyword;
                         keywordStr = "&keyword=" + keyword;
                     }
-                    if(team != null && team.length >0){
+                    if (team != null && team.length > 0) {
                         datainfo.team = team;
                         teamStr = "&team_id=" + team;
                     }
-                    $http.get('/api/req_project_list?pageIndex=' + datainfo.pageIndex + '&pageSize=' + datainfo.pageSize+ teamStr + keywordStr)
+                    $http.get('/api/req_project_list?pageIndex=' + datainfo.pageIndex + '&pageSize=' + datainfo.pageSize + teamStr + keywordStr)
                         .success(function (data) {
                             onloading = true;
                             curIndex++;
@@ -62,11 +61,13 @@ require(['lib/common'],
                                     isLoadOut = false;
                                     $scope.isLast = false;
                                 }
+
                                 for (i = 0; i < getdata.length; i++) {
-                                    dataArr.push(getdata[i])
+                                    dataArr.push(getdata[i]);
                                 }
+
                                 $scope.projectArr = dataArr;
-                                if(isAutoLoad){
+                                if (isAutoLoad) {
                                     loadDate(true);
                                 }
                             } else if (data.errorcode == 300021) {      //300021 列表页码已超出实际页数
@@ -77,93 +78,122 @@ require(['lib/common'],
                 };
                 //添加team
                 $scope.addTeam = function () {
+
+                    $scope.detail_title = "Project Add";
+                    $scope.EditOrAdd = "add";
+                    $scope.itemData = [];
                     $scope.isDialogShow = true;
-                    $scope.closeDialog = function () {
-                        $scope.isDialogShow = false;
-                    };
-                    $scope.saveProject = function () {
+                    $http({
+                        method: 'get',
+                        url: '/api/req_team_list?pageSize=100&pageIndex=1',
+                    }).success(function (res) {
+                        $scope.team_list = res.result.teamList;
+                        var selectObject = {};
+                        var team = $.url.getParam("team");
+                        if (team != null) {
+                            $.each(res.result.teamList, function (i, list) {
+                                if (list.team_id == team) {
+                                    selectObject = list;
+                                }
+                            })
+                        } else {
+                            selectObject = res.result.teamList[0];
+                        }
+
+                        $scope.team_list_selected = selectObject;
+                    });
+
+                };
+                $scope.closeDialog = function () {
+                    $scope.isDialogShow = false;
+                };
+                $scope.edit_project = function (project_id, team_id) {
+                    $scope.EditOrAdd = "edit";
+                    $scope.isDialogShow = true;
+                    $http({
+                        method: 'get',
+                        url: '/api/req_team_list?pageSize=100&pageIndex=1',
+                    }).success(function (res) {
+                        $scope.team_list = res.result.teamList;
+                        var selectObject = {};
+                        $.each(res.result.teamList, function (i, list) {
+                            if (list.team_id == team_id) {
+                                selectObject = list;
+                            }
+                        })
+                        $scope.team_list_selected = selectObject;
+                    });
+
+                    // find project item
+                    $.each($scope.projectArr, function (i, item) {
+
+                        if (item.project_id == project_id) {
+                            $scope.itemData = item;
+                            return;
+                        }
+
+                    });
+                    $scope.detail_title = "Project Edit : " + $scope.itemData.project_name;
+                };
+
+                $scope.saveProject = function () {
+                    if($scope.itemData.project_name == null){
+                        alert("项目名不能为空");
+                        return;
+                    }
+                    if($scope.itemData.description == null){
+                        alert("项目描述不能为空");
+                        return;
+                    }
+                    if($scope.itemData.host == null){
+                        alert("项目路劲不能为空");
+                        return;
+                    }
+                    if($scope.itemData.project_pic_url == null){
+                        alert("项目封面图不能为空");
+                        return;
+                    }
+                    if ($scope.EditOrAdd == "edit") {
                         var datainfo = {
-                            "pName": $('.pName').val(),
-                            "team_id": $.url.getParam("team"),
-                            "tdec": $('.tDec').val(),
-                            "thost":$('.thost').val()
+                            "project_name": $scope.itemData.project_name,
+                            "host": $scope.itemData.host,
+                            "team_id": $scope.team_list_selected.team_id,
+                            "description": $scope.itemData.description,
+                            "pic_url": $scope.itemData.project_pic_url,
+                            "project_id": $scope.itemData.project_id
                         };
                         $http({
                             method: 'post',
-                            url: '/api/add_project?team_name',
-                            data: {
-                                project_name: datainfo.pName,
-                                host: datainfo.thost,
-                                team_id: datainfo.team_id,
-                                description: datainfo.tdec
-                            }
+                            url: '/api/edit_project',
+                            data: datainfo,
                         }).success(function (data) {
                             if (data.errorcode == 0) {
-
+                                $scope.isDialogShow = false;
+                            } else {
+                                alert(data.errormsg);
+                            }
+                        });
+                    } else {
+                        var datainfo = {
+                            "project_name": $scope.itemData.project_name,
+                            "host": $scope.itemData.host,
+                            "team_id": $scope.team_list_selected.team_id,
+                            "description": $scope.itemData.description,
+                            "pic_url": $scope.itemData.project_pic_url,
+                        };
+                        $http({
+                            method: 'post',
+                            url: '/api/add_project',
+                            data: datainfo,
+                        }).success(function (data) {
+                            if (data.errorcode == 0) {
+                                window.location.href = window.location.href;
+                            } else {
+                                alert(data.errormsg);
                             }
                         });
                     }
-
-
-
-
                 }
-
-                $scope.edit_project = function(project_id){
-                    alert(project_id);
-                };
-
-
-                var add_edit_project = function(options){
-                    var defaults = {
-                        type: 1,  // 1表示编辑，2表示新增
-                        title: options.title,
-                        projectId: options.projectId,
-                        projectName: options.projectName
-                    };
-                    var options = $.extend(defaults, options);
-
-                    if(options.type == 1){
-                        $.ajax({
-
-                        });
-                    }else{
-                        var html = [];
-                        html.push('<div class="dialog"><div class="dialogBox addTeam">');
-                        html.push('<h3>Project Add</h3>');
-                    }
-
-
-
-
-
-
-                    /*
-
-                        <div class="addTeam-main">
-                            <p><span class="dsc">TeamName</span><input class="pName" value="{{team_name}}" placeholder="关联团队" type="text">
-                            </p>
-
-                            <p><span class="dsc">ProjectName</span><input class="pName" placeholder="项目名称" type="text"></p>
-                            <p><span class="dsc">HOST</span><input class="thost" placeholder="目录/端口" type="text"></p>
-                            <p><span class="dsc">pic_url</span><input class="pic_url" placeholder="封面大图" type="text"></p>
-                            <p><span class="dsc">Description</span><textarea class="tDec" placeholder="请输入描述"></textarea></p>
-
-                            <div class="addBtn">
-                                <span ng-click="saveProject()" class="active">save</span>
-                                <span ng-click="closeDialog()">close</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                     */
-
-                };
-
-
-
-
             });
             angular.bootstrap(document, ['app']);
         });

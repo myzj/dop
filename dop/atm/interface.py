@@ -434,6 +434,10 @@ def qry_interface_detail(request):
                 queryset['errorcode'] = 200003
                 queryset['errormsg'] = getMessage('200003')
                 return JSONResponse(queryset)
+            lock_qry = LockInfo.objects.filter(interface=interface, is_locked=True, is_deleted=False)
+            if lock_qry and user:
+                if lock_qry[0].lock_user.id == user.id:
+                    queryset["is_lock_user"] = True
             if 'is_modify' in request.GET and request.GET['is_modify'] == 'true':
                 members_filter = ProjectMember.objects.filter(project=interface.project, is_deleted=False,
                                                               is_active=True)

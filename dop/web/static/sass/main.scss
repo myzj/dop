@@ -441,3 +441,54 @@ width:460px!important;
 .taTitle{
   font-size:12px!important;
 }
+.member-dialog{
+  .dialogBox {
+    overflow: inherit !important;
+    max-width: 700px;
+  }
+}
+.member-list{
+  margin: 15px;
+  border:1px solid #ccc;
+  border-radius: 3px;
+  .row{
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    &:last-of-type{
+      border-bottom: none;
+    }
+  }
+}
+
+.member-close{
+  text-align: right;
+  a{
+    margin: 0 20px 15px;
+  }
+}
+
+.username_tip{
+    position: absolute;
+  top: 31px;
+  left: 16px;
+    z-index: 3;
+    background: #fff;
+    border: 1px solid #ccc;
+  p{
+    cursor: pointer;
+    padding: 3px 5px;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+    &:last-of-type{
+      border: none;
+    }
+    &:hover{
+      background: #428bca;
+      color: #fff;
+    }
+  }
+}
+
+.input-tip-div{
+  position: relative;
+}

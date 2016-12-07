@@ -624,7 +624,7 @@ def get_user_by_name(request):
                 queryset['errorcode'] = 100001
                 queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
                 return JSONResponse(queryset)
-            user_match = User.objects.filter(is_active=True, username__icontains=request.GET['username']).order_by('id')
+            user_match = User.objects.filter(is_active=True, username__icontains=request.GET['username']).order_by('username')
             queryset['result']['pageIndex'] = 1
             queryset['result']['pageSize'] = 10
             queryset['result']['totalCount'] = user_match.count()

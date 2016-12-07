@@ -23,7 +23,7 @@
                         </a>
                         <div class="action-btn" ng-if="List.role==3 || List.role==2">
                             <span class="edit" ng-click="edit_project(List.project_id, List.team)">Edit</span>
-                            <span class="Members">Members</span>
+                            <span class="Members" ng-click="edit_member(List.project_id, List.team)">Members</span>
                         </div>
                     </li>
                 </ul>
@@ -65,14 +65,71 @@
 
 
                 <!--member编辑-->
-                <div class="dialog ng-hide" ng-show="memberDialogShow">
-
-
+                <div class="dialog member-dialog" ng-show="memberDialogShow">
+                    <div class="dialogBox addMember">
+                        <h3>Project Member Edit</h3>
+                        <div class="member-box">
+                        <div class="row">
+                            <div class="col-xs-1">
+                            </div>
+                            <div class="col-xs-2">UserName:</div>
+                            <div class="col-xs-3 input-tip-div">
+                                <input type="text" ng-model="userName" id="username" ng-change="watch_value()" class="form-control" placeholder="Search for username...">
+                                    <div class="username_tip ng-hide" id="userNameTipDialog" ng-show="userNameTipDialog">
+                                        <p ng-repeat="user in userList" ng-click="select_username(user.username)">
+                                            @{user.username}@
+                                        </p>
+                                    </div>
+                            </div>
+                            <div class="col-xs-3">
+                                <select name="" id="" class="form-control" ng-model="roleSelect">
+                                    <option value="1">General</option>
+                                    <option value="2">Admin</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-2">
+                                <a href="javascript:;" ng-click="save_member()" class="btn btn-primary">+Add</a>
+                            </div>
+                        </div>
+                        <div class="member-list" ng-show="memberListBox">
+                            <h3>Panel heading</h3>
+                            <div class="member-list-box">
+                                <div class="row">
+                                    <div class="col-xs-1">#</div>
+                                    <div class="col-xs-3">UserName</div>
+                                    <div class="col-xs-5">Permissions</div>
+                                    <div class="col-xs-3">Operation</div>
+                                </div>
+                                <div class="row" ng-repeat="member in memberList">
+                                    <div class="col-xs-1" ng-bind="$index+1">1</div>
+                                    <div class="col-xs-3">@{member.user}@</div>
+                                    <div class="col-xs-5">
+                                        <div class="member-super" ng-if="member.role <= 2">
+                                            <label>
+                                                <input type="radio" id="@{member.id}@" name="role_@{member.id}@" ng-change="change_radio(member.id)" ng-model="member.role" ng-true-value="1" ng-false-value="2" value="1" />General
+                                            </label>
+                                            <label>
+                                                <input type="radio" id="@{member.id}@" name="role_@{member.id}@" ng-change="change_radio(member.id)" ng-model="member.role" ng-true-value="2" ng-false-value="1" value="2"/>Admin
+                                            </label>
+                                        </div>
+                                        <div class="member-super" ng-if="member.role == 3">已经是超管了</div>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <a href="javascript:;" class="btn" ng-click="delect_member(member.id)" ng-if="member.role <= 2">Delete</a></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="member-close">
+                            <a href="javascript:;" ng-click="close_member_dialog()" class="btn btn-warning">Close</a>
+                        </div>
+                    </div>
+                    </div>
                 </div>
-
             </div>
         </div>
     </div>
+
+
 
     <script type="text/javascript">
         require(['{% static "js/config.js" %}?v={{config.v}}'], function () {

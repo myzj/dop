@@ -137,19 +137,19 @@ require(['lib/common'],
                 };
 
                 $scope.saveProject = function () {
-                    if($scope.itemData.project_name == null){
+                    if ($scope.itemData.project_name == null) {
                         alert("项目名不能为空");
                         return;
                     }
-                    if($scope.itemData.description == null){
+                    if ($scope.itemData.description == null) {
                         alert("项目描述不能为空");
                         return;
                     }
-                    if($scope.itemData.host == null){
+                    if ($scope.itemData.host == null) {
                         alert("项目路劲不能为空");
                         return;
                     }
-                    if($scope.itemData.project_pic_url == null){
+                    if ($scope.itemData.project_pic_url == null) {
                         alert("项目封面图不能为空");
                         return;
                     }
@@ -193,7 +193,147 @@ require(['lib/common'],
                             }
                         });
                     }
-                }
+                };
+                $scope.watch_value = function () {
+                    var userName = $scope.userName;
+                    if (userName != null && userName.length > 2) {
+                        var obj = $("#username");
+                        $http({
+                            method: 'get',
+                            url: '/api/get_user_by_name?pageIndex=1&pageSize=20&username=' + userName,
+                        }).success(function (data) {
+                            if (data.errorcode == 0) {
+                                if (data.result != null && data.result.userList != null && data.result.userList.length > 0) {
+                                    $scope.userList = data.result.userList;
+                                    var position = {};
+                                    position.width = obj.width() + 12;
+                                    position.height = obj.height() + 6;
+                                    $("#userNameTipDialog").css({
+                                        "width": position.width
+                                    });
+                                    $scope.userNameTipDialog = true;
+                                } else {
+                                    $scope.userList = [];
+                                    $scope.userNameTipDialog = false;
+                                }
+                            } else {
+                                $scope.userList = [];
+                                $scope.userNameTipDialog = false;
+                            }
+                        });
+                    } else {
+                        $scope.userList = [];
+                        $scope.userNameTipDialog = false;
+                    }
+                };
+                $scope.select_username = function (username) {
+                    $scope.userName = username;
+                    $scope.userNameTipDialog = false;
+                };
+                $scope.hideMemberTips = function(){
+                    $scope.userNameTipDialog = false
+                };
+                // 添加成员
+                $scope.save_member = function () {
+                    var role = $scope.roleSelect;
+                    if($scope.userName == null || $scope.userName == ""){
+                        alert("请填写用户名");
+                        return;
+                    }
+                    if(role == null){
+                        alert("请选择用户角色");
+                        return;
+                    }
+                    var data = {
+                        "project_id": $scope.member_project_id,
+                        "username": [$scope.userName],
+                        "role": parseInt(role)
+                    };
+                    $http({
+                        method: 'POST',
+                        url: '/api/add/member/',
+                        data: data
+                    }).success(function (res) {
+                        if (res.errorcode == 0) {
+                            if (res.errormsg.indexOf("已经成功添加") > -1) {
+                                $scope.edit_member($scope.member_project_id, $scope.member_team_id);
+                            } else {
+                                alert(res.errormsg);
+                            }
+                        } else {
+                            alert(res.errormsg)
+                        }
+                    });
+                };
+
+                //删除成员
+                $scope.delect_member = function(member_id){
+                    var data = {
+                        "member_id": member_id
+                    }
+                    $http({
+                        method: 'DELETE',
+                        url: 'api/del/member/',
+                        data: data
+                    }).success(function (res) {
+                        if(res.errorcode == 0){
+                            $scope.edit_member($scope.member_project_id, $scope.member_team_id);
+                        }else{
+                            alert(res.errormsg);
+                        }
+                    });
+                };
+
+                $scope.edit_member = function (project_id, team_id) {
+                    $scope.memberDialogShow = true;
+                    $scope.member_project_id = project_id;
+                    $scope.member_team_id = team_id;
+
+                    //调取用户列表
+                    $http({
+                        method: 'get',
+                        url: '/api/qry/member?project_id=' + $scope.member_project_id,
+                    }).success(function (data) {
+                        if (data.errorcode == 0) {
+                            if (data.result != null && data.result.length > 0) {
+                                $scope.memberListBox = true;
+                                $scope.memberList = data.result;
+                            } else {
+                                $scope.memberListBox = false;
+                            }
+                        } else {
+                            $scope.memberListBox = false;
+                        }
+                    });
+
+
+                };
+
+                $scope.close_member_dialog = function () {
+                    $scope.memberDialogShow = false;
+                };
+
+                $scope.change_radio = function(member_id){
+                    var role = parseInt($('input[name=role_'+ member_id +']:checked').val());
+                    var data = {
+                        "member_id": member_id,
+                        "role": role
+                    };
+                    $http({
+                        method: 'PATCH',
+                        url: 'api/mdf/member/',
+                        data:data
+                    }).success(function (res) {
+                        if(res.errorcode == 0){
+                            $scope.edit_member($scope.member_project_id, $scope.member_team_id);
+                        }else{
+                            alert(res.errormsg);
+                            $scope.edit_member($scope.member_project_id, $scope.member_team_id);
+                        }
+                    });
+                };
+
+
             });
             angular.bootstrap(document, ['app']);
         });

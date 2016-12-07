@@ -256,7 +256,7 @@ require(['lib/common'],
                     }).success(function (res) {
                         if (res.errorcode == 0) {
                             if (res.errormsg.indexOf("已经成功添加") > -1) {
-                                $scope.edit_member($scope.member_project_id, $scope.member_team_id);
+                                $scope.edit_member($scope.member_project_id, $scope.member_team_id,  $scope.member_role);
                             } else {
                                 alert(res.errormsg);
                             }
@@ -277,7 +277,7 @@ require(['lib/common'],
                         data: data
                     }).success(function (res) {
                         if(res.errorcode == 0){
-                            $scope.edit_member($scope.member_project_id, $scope.member_team_id);
+                            $scope.edit_member($scope.member_project_id, $scope.member_team_id, $scope.member_role);
                         }else{
                             alert(res.errormsg);
                         }
@@ -314,6 +314,10 @@ require(['lib/common'],
                 };
 
                 $scope.change_radio = function(member_id){
+                    if($scope.member_role == 1){
+                        alert("您不是管理员，无权修改");
+                        return;
+                    }
                     var role = parseInt($('input[name=role_'+ member_id +']:checked').val());
                     var data = {
                         "member_id": member_id,
@@ -325,10 +329,10 @@ require(['lib/common'],
                         data:data
                     }).success(function (res) {
                         if(res.errorcode == 0){
-                            $scope.edit_member($scope.member_project_id, $scope.member_team_id);
+                            $scope.edit_member($scope.member_project_id, $scope.member_team_id, $scope.member_role);
                         }else{
                             alert(res.errormsg);
-                            $scope.edit_member($scope.member_project_id, $scope.member_team_id);
+                            $scope.edit_member($scope.member_project_id, $scope.member_team_id, $scope.member_role);
                         }
                     });
                 };

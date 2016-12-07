@@ -69,7 +69,7 @@
                     <div class="dialogBox addMember">
                         <h3>Project Member Edit</h3>
                         <div class="member-box">
-                        <div class="row" ng-if="member_role > 1">
+                        <div class="row" ng-hide="member_role <= 1">
                             <div class="col-xs-1">
                             </div>
                             <div class="col-xs-2">UserName:</div>
@@ -105,12 +105,22 @@
                                     <div class="col-xs-3">@{member.user}@</div>
                                     <div class="col-xs-5">
                                         <div class="member-super" ng-if="member.role <= 2">
-                                            <label>
-                                                <input type="radio" id="@{member.id}@" name="role_@{member.id}@" ng-change="change_radio(member.id)" ng-model="member.role" ng-true-value="1" ng-false-value="2" value="1" />General
-                                            </label>
-                                            <label>
-                                                <input type="radio" id="@{member.id}@" name="role_@{member.id}@" ng-change="change_radio(member.id)" ng-model="member.role" ng-true-value="2" ng-false-value="1" value="2"/>Admin
-                                            </label>
+                                            <div ng-if="member_role == 2 || member_role == 3">
+                                                <label>
+                                                    <input type="radio" id="@{member.id}@" name="role_@{member.id}@" ng-change="change_radio(member.id)" ng-model="member.role" ng-true-value="1" ng-false-value="2" value="1" />General
+                                                </label>
+                                                <label>
+                                                    <input type="radio" id="@{member.id}@" name="role_@{member.id}@" ng-change="change_radio(member.id)" ng-model="member.role" ng-true-value="2" ng-false-value="1" value="2"/>Admin
+                                                </label>
+                                            </div>
+                                            <div ng-if="member_role == 1">
+                                                <label>
+                                                    <input type="radio" id="@{member.id}@" name="role_@{member.id}@" disabled ng-change="change_radio(member.id)" ng-model="member.role" ng-true-value="1" ng-false-value="2" value="1" />General
+                                                </label>
+                                                <label>
+                                                    <input type="radio" id="@{member.id}@" name="role_@{member.id}@" disabled ng-change="change_radio(member.id)" ng-model="member.role" ng-true-value="2" ng-false-value="1" value="2"/>Admin
+                                                </label>
+                                            </div>
                                         </div>
                                         <div class="member-super" ng-if="member.role == 3">已经是超管了</div>
                                     </div>

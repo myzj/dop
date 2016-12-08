@@ -17,9 +17,9 @@
     <div class="api-top">
         <div class="row">
             <div class="col-xs-1">APIS</div>
-            <div class="col-xs-10"></div>
-            <div class="col-xs-1"><button class="btn btn-default" id="import-action" ng-click="show_importDialo()">+Add</button></div>
-            <!--<div class="col-xs-1">
+            <div class="col-xs-9"></div>
+            <div class="col-xs-1"><a role="menuitem" tabindex="-1" href="/api_edit">+Add</a></div>
+            <div class="col-xs-1">
                 <div class="dropdown">
                     <button type="button" class="btn dropdown-toggle" id="dropdownMenu1"
                             data-toggle="dropdown">
@@ -28,14 +28,11 @@
                     </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
                         <li role="presentation">
-                            <a role="menuitem" tabindex="-1" href="#">Import</a>
-                        </li>
-                        <li role="presentation">
-                            <a role="menuitem" tabindex="-1" href="#">Export</a>
+                            <a id="import-action" href="javascript:;" ng-click="show_importDialo()">+Import</a>
                         </li>
                     </ul>
                 </div>
-            </div>-->
+            </div>
         </div>
     </div>
     <div class="api-body">
@@ -55,7 +52,7 @@
             <tr ng-repeat="List in apiArr">
                 <td>@{List.id}@</td>
                 <td>
-                    <a href="/api_edit?apiid=@{List.id}@&project=@{project}@">View</a>|
+                    <a href="/api_edit?apiid=@{List.id}@&project=@{List.project_id}@">View</a>|
                     <a href="javascript:;">Mock</a>|
                     <a href="javascript:;">Test</a>
                 </td>

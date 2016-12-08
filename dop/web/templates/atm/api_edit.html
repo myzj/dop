@@ -11,8 +11,20 @@
     <div class="container">
         <div class="edit-top">
             <ol class="breadcrumb">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">2013</a></li>
+                <li>
+                    {% if team == null %}
+                    <a href="/projectlist">project</a>
+                    {% else %}
+                    <a href="/projectlist?team={{team}}">project</a>
+                    {% endif %}
+                </li>
+                <li>
+                    {% if project == null %}
+                    <a href="/apilist">api</a>
+                    {% else %}
+                    <a href="/apilist?project={{project}}">api</a>
+                    {% endif %}
+                </li>
                 <li class="active">十一月</li>
             </ol>
             <div class="edit-btns">

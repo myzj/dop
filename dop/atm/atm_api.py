@@ -584,7 +584,7 @@ def req_api_list(request):
                 for api in api_page.object_list:
 
                     result = {'id': api.id, 'interface_name': api.interface_name, 'description': api.description, 'url': api.url, 'method': api.method, \
-                              'content_type': api.content_type, 'remark': api.remark,  \
+                              'content_type': api.content_type, 'remark': api.remark, 'project_id': api.project.id,  \
                               'update_time': api.utime.strftime('%Y-%m-%d %H:%M:%S')}
                     try:
                         result["tags"] = eval(api.tags)

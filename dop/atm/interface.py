@@ -264,7 +264,7 @@ def is_valid_date(timestr):
         return False
 
 
-# 检查url格式
+# 格式化url
 def format_url(url):
     try:
         if not re.match(r'/.+', url):  # url不是以"/"开始,在开始添加"/"
@@ -274,7 +274,7 @@ def format_url(url):
         return url
     except BaseException, ex:
         except_info(ex)
-        return False, url
+        return url
 
 
 # 添加API修改记录

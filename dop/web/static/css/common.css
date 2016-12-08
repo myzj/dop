@@ -1,3 +1,4 @@
+/* line 3, ../sass/common.scss */
 a, a:hover, a:focus {
   color: #4aaf51;
   text-decoration: none;
@@ -8,13 +9,16 @@ a, a:hover, a:focus {
   transition: all .3s;
 }
 
+/* line 13, ../sass/common.scss */
 .container {
-  border: 1px solid #cccccc;
-  border-radius: 5px;
-  margin: 20px auto;
+  border-bottom: 1px solid #cccccc;
+  margin: 0 auto 20px;
+  width: 100%;
   background: #f1f1f1;
   padding: 0px !important;
 }
+/* line 19, ../sass/common.scss */
 .container .navbar {
   margin-bottom: 0;
+  border-radius: 0;
 }

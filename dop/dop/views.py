@@ -39,8 +39,11 @@ def projectlist(request):
 
 @login_check
 def apilist(request):
+
+    projectId = request.GET.get('project',0)
     params = {}
     params['title'] = 'API列表'
+    params['projectId'] = projectId
     return render(request, 'atm/apilist.html', params)
 
 

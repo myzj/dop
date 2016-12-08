@@ -3,7 +3,14 @@ require(['lib/common'],
         angular.element(document).ready(function () {
             var app = $.getApp();
             app.controller('myDoc', function ($scope, $http) {
-                $scope.isEdit = true;
+                if($.url.getParam("project") != null && $.url.getParam("project").length > 0){
+                    $scope.isEdit = true;
+                    $scope.isProjectEdit = true;
+                    ReloadDate();      //初始化数据
+                }else{
+                    $scope.isEdit = false;
+                    $scope.isProjectEdit = false;
+                }
                 $scope.head_visible = false;
                 $scope.Response_visible = false;
                 $scope.query_string_visible = false;
@@ -13,19 +20,18 @@ require(['lib/common'],
                     $scope.isEdit = false;
                     ReloadDate(true);
                     /*var boxId = $('.tab').find('li.active').attr('id');
-                    $('#' + boxId + '_Main').find('input,textarea,select').removeAttr('disabled')*/
+                     $('#' + boxId + '_Main').find('input,textarea,select').removeAttr('disabled')*/
                 };
-                ReloadDate();      //初始化数据
                 function ReloadDate(boolean) {
                     var datainfo = {
                         "api_id": $.url.getParam("apiid"),
-                        "is_modify":false
+                        "is_modify": false
                     };
-                    if(boolean){
+                    if (boolean) {
                         datainfo.is_modify = true;
                         console.log(111)
                     }
-                    $http.get('/api/qry/api_detail?api_id=' + datainfo.api_id +'&is_modify='+datainfo.is_modify)
+                    $http.get('/api/qry/api_detail?api_id=' + datainfo.api_id + '&is_modify=' + datainfo.is_modify)
                         .success(function (data) {
                             if (data.errorcode == 0) {
                                 var ApiDate = data.result;
@@ -71,7 +77,7 @@ require(['lib/common'],
                                             $scope.ErrorCodes_visible = !$scope.ErrorCodes_visible;
                                             JSbeautify()
                                         }
-                                        function JSbeautify(){
+                                        function JSbeautify() {
                                             var opts = {
                                                 "indent_size": "3",
                                                 "indent_char": " ",
@@ -87,19 +93,19 @@ require(['lib/common'],
                                                 "end_with_newline": false,
                                                 "wrap_line_length": "0"
                                             };
-                                            if(EditId == 'Rq_headers'){
+                                            if (EditId == 'Rq_headers') {
                                                 var source = JSON.stringify($scope.Request.headers);
                                                 $scope.Request.headersBulk = js_beautify(source, opts)
-                                            }else if(EditId == 'Rq_query_string'){
+                                            } else if (EditId == 'Rq_query_string') {
                                                 var source = JSON.stringify($scope.Request.query_string);
                                                 $scope.Request.query_stringBulk = js_beautify(source, opts)
-                                            }else if(EditId == 'Rq_body'){
+                                            } else if (EditId == 'Rq_body') {
                                                 var source = JSON.stringify($scope.Request.body.data);
                                                 $scope.Request.BodyBulk = js_beautify(source, opts)
-                                            }else if(EditId == 'Response'){
+                                            } else if (EditId == 'Response') {
                                                 var source = JSON.stringify($scope.Response.body);
                                                 $scope.ResponseBulk = js_beautify(source, opts)
-                                            }else if(EditId == 'ErrorCodes'){
+                                            } else if (EditId == 'ErrorCodes') {
                                                 var source = JSON.stringify($scope.errorCodes);
                                                 $scope.ErrorCodesBulk = js_beautify(source, opts)
                                             }
@@ -171,10 +177,31 @@ require(['lib/common'],
                                 $scope.Del_ErrorCodeDate = function (index) {
                                     $scope.errorCodes.splice(index, 1)
                                 }
-
                             }
                         });
                 }
+
+                $scope.getProject = function () {
+                    $http.get('/api/req_project_list?pageIndex=1&pageSize=150').success(function (res) {
+                        $scope.projectList = res.result.projectList;
+                        var project_id = $.url.getParam("project");
+                        var selectObject = {};
+                        if(project_id != null && project_id.length > 0){
+                            $.each(res.result.projectList, function (i, list) {
+                                if (list.project_id == project_id) {
+                                    selectObject = list;
+                                }else{
+                                    selectObject = res.result.projectList[0];
+                                }
+                            })
+                        }else{
+                            selectObject = res.result.projectList[0];
+                        }
+                        $scope.project_list_selected = selectObject;
+                    });
+                };
+                $scope.getProject();
+
                 //取消编辑
                 $scope.cancelEdit = function () {
                     $scope.isEdit = true;

@@ -60,6 +60,7 @@ CONSTANT = {
     "300052": ["You have no right to delete a member", u"您不是项目组管理员无权删除成员角色"],
     "300053": ["Super admin can't be deleted", u"项目的超级管理员不能被删除"],
     "300054": ["Delete project member throw exception", u"删除项目成员出现异常"],
+    "300055": ["Mock request throw exception", u"mock请求出现异常"],
 
 
 }

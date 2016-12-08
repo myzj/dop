@@ -48,6 +48,7 @@ urlpatterns = [
     url(r'(?i)^api/del/member/?$', itf.delete_project_member),  # 删除项目成员
 
 
+    url(r'^mockdata/.', itf.mock_data),  # mock 请求处理
     url(r'^test/?$', views.test),
     url(r'^login/?$', views.login),
     url(r'^index/?$', views.index),

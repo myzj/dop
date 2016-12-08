@@ -2,6 +2,7 @@
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
+from django.http import HttpResponse
 from models import Interface, MetaData, ErrorCode, Project, LockInfo, ProjectMember, EditHistory
 from django.contrib.auth.models import User
 from common import except_info
@@ -1507,6 +1508,71 @@ def delete_project_member(request):
             queryset['errorcode'] = 300054
             queryset['errormsg'] = getMessage('300054') + str(ex)
             return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)
+
+
+# mock请求处理
+@csrf_exempt
+def mock_data(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+    if request.method == 'GET':
+        try:
+            callback = ''
+            if 'callback' in request.GET and request.GET['callback'] != '':
+                callback = request.GET['callback'].strip()
+            # print 'request.path:', request.path
+            full_path = request.path
+            if not re.match(r'/mockdata/\d+/\w', full_path):
+                errmsg = u"mock 请求格式错误，请修改后重新提交请求！"
+                return HttpResponse(errmsg)
+            params = full_path.split('/mockdata')
+            if len(params) < 2:
+                errmsg = u"mock 请求格式错误，请修改后重新提交请求！"
+                return HttpResponse(errmsg)
+            real_param = params[1][1:]
+            first = real_param.find('/')
+            project_id = real_param[:first]
+            url = real_param[first:]
+            if re.search(r'/$', url):
+                url = url[:-1]
+            project_filter = Project.objects.filter(id=project_id, is_deleted=False)
+            if not project_filter:
+                errmsg = u"project_id={0} {1}".format(project_id, getMessage("300051"))
+                return HttpResponse(errmsg)
+            interface_filter = Interface.objects.filter(project=project_filter[0], url=url, is_deleted=False)
+            if not interface_filter:
+                errmsg = u"project_id={0} url={1} {2}".format(project_id, url, getMessage("300029"))
+                return HttpResponse(errmsg)
+            interface = interface_filter[0]
+            if not interface.project.is_active:
+                errmsg = u"project_id={0}  项目未被启用.".format(project_id)
+                return HttpResponse(errmsg)
+            if not interface.is_active:
+                errmsg = u"project_id={0}  api_id={1} api未被启用.".format(project_id, interface.id)
+                return HttpResponse(errmsg)
+            if not interface.mockdata:
+                errmsg = u"api_id={0} mockdata未设置,请设置mockdata后重新提交请求.".format(interface.id, url)
+                return HttpResponse(errmsg)
+            else:
+                content_type = ""
+                for key, value in content_dict.iteritems():
+                    if value == interface.content_type:
+                        content_type = key
+                        break
+                mock = interface.mockdata
+                if callback:
+                    mock = callback + '(' + str(mock) + ');'
+                    # print 'mock:', mock
+                return HttpResponse(mock, content_type=content_type)
+        except BaseException, ex:
+            except_info(ex)  # getMessage("300055"),
+            errmsg = u"{0}:{1}".format(getMessage("300055"), str(ex))
+            return HttpResponse(errmsg)
     else:
         queryset['errorcode'] = 100002
         queryset['errormsg'] = getMessage('100002')

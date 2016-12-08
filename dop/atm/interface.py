@@ -314,18 +314,14 @@ def check_interface(project=None, url=""):
 
 
 # precheck interface data
-def precheck_interface_data(data=None, common_data=None):
+def precheck_interface_data(data=None):
     if not data:
         data = []
-    if not common_data:
-        common_data = {"user": None, "project": None}
     check_info = {}
     try:
         if data:
             rec_num = 1
             for itf_rec in data:
-                # data["user"] = common_data.get("user")
-                # data["project"] = common_data.get("project")
                 rec_key = "record_number:{0}".format(rec_num)
                 if "request" not in itf_rec:
                     err_msg = "request " + getMessage('100001')
@@ -407,7 +403,7 @@ def precheck_interface_data(data=None, common_data=None):
             return check_info
     except BaseException, ex:
         except_info(ex)
-        check_info["errmsg"] = " Call precheck_interface_data throw exception: \n" + str(ex)
+        check_info["errmsg"] = "Call precheck_interface_data throw exception: " + str(ex)
         return check_info
 
 
@@ -739,20 +735,10 @@ def update_interface(request):
                 queryset['errorcode'] = 100007
                 queryset['errormsg'] = 'info ' + getMessage('100007')
                 return JSONResponse(queryset)
-            # if "project" not in info or not info.get("project"):
-            #     queryset['errorcode'] = 100001
-            #     queryset['errormsg'] = 'info属性值的project为必填属性 ' + getMessage('100001')
-            #     return JSONResponse(queryset)
             if "api_id" not in info or not info.get("api_id"):
                 queryset['errorcode'] = 100001
                 queryset['errormsg'] = 'info属性值的api_id为必填属性 ' + getMessage('100001')
                 return JSONResponse(queryset)
-            # project_id = int(info.get("project"))
-            # project_filter = Project.objects.filter(id=project_id, is_deleted=False, is_active=True)
-            # if not project_filter:
-            #     queryset['errorcode'] = 300025
-            #     queryset['errormsg'] = "项目ID为:{0},{1}".format(project_id, getMessage("300025"))
-            #     return JSONResponse(queryset)
             api_id = int(info.get("api_id"))
             api_filter = Interface.objects.filter(id=api_id, is_deleted=False)
             if not api_filter:
@@ -859,9 +845,6 @@ def update_interface(request):
             itf = InterFace(data=data)
             flag, msg = itf.modify_interface
             print 'flag:', flag, " msg:", msg, " interface:", up_interface
-            view_data = data
-            view_data.pop("user")
-            # queryset["result"] = view_data
             if flag:
                 error_msg = "Update interface id={0} success !".format(api_id)
                 lock_filter.update(is_locked=False)  # 解锁
@@ -1543,11 +1526,8 @@ def mock_data(request):
             if not re.match(r'/mockdata/\d+/\w', full_path):
                 errmsg = u"mock 请求格式错误，请修改后重新提交请求！"
                 return HttpResponse(errmsg)
-            params = full_path.split('/mockdata')
-            if len(params) < 2:
-                errmsg = u"mock 请求格式错误，请修改后重新提交请求！"
-                return HttpResponse(errmsg)
-            real_param = params[1][1:]
+            params = full_path.split('/mockdata/')
+            real_param = params[1]
             first = real_param.find('/')
             project_id = real_param[:first]
             url = real_param[first:]
@@ -1583,7 +1563,7 @@ def mock_data(request):
                     # print 'mock:', mock
                 return HttpResponse(mock, content_type=content_type)
         except BaseException, ex:
-            except_info(ex)  # getMessage("300055"),
+            except_info(ex)
             errmsg = u"{0}:{1}".format(getMessage("300055"), str(ex))
             return HttpResponse(errmsg)
     else:

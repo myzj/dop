@@ -93,7 +93,7 @@ class InterFace(object):
                 new_interface.author = self.data.get("user")
                 new_interface.project = self.data.get("project")
                 new_interface.interface_name = self.data.get("name")
-                new_interface.url = self.data.get("url")
+                new_interface.url = format_url(self.data.get("url"))
                 new_interface.method = method_dict.get(self.data.get("method"))
                 new_interface.content_type = content_dict.get(self.data.get("content_type"))
                 new_interface.is_active = self.data.get("state")
@@ -146,7 +146,7 @@ class InterFace(object):
                 mdf_interface = Interface.objects.get(id=self.data.get("api_id"))
                 mdf_interface.modifier = self.data.get("user")
                 mdf_interface.interface_name = self.data.get("name")
-                mdf_interface.url = self.data.get("url")
+                mdf_interface.url = format_url(self.data.get("url"))
                 mdf_interface.method = method_dict.get(self.data.get("method"))
                 mdf_interface.content_type = content_dict.get(self.data.get("content_type"))
                 mdf_interface.is_active = self.data.get("state")
@@ -253,7 +253,7 @@ class InterFace(object):
             except_info(ex)
             return False, getMessage("300033") + ": " + str(ex)
 
-#
+# 判断是否是一个有效的日期字符串
 def is_valid_date(timestr):
     """判断是否是一个有效的日期字符串"""
     try:
@@ -262,6 +262,19 @@ def is_valid_date(timestr):
     except BaseException, ex:
         except_info(ex)
         return False
+
+
+# 检查url格式
+def format_url(url):
+    try:
+        if not re.match(r'/.+', url):  # url不是以"/"开始,在开始添加"/"
+            url = '/' + url
+        if url[-1] == '/':  # url 以"/"结尾，去掉结尾的"/"
+            url = url[:-1]
+        return url
+    except BaseException, ex:
+        except_info(ex)
+        return False, url
 
 
 # 添加API修改记录

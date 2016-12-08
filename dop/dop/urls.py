@@ -46,6 +46,7 @@ urlpatterns = [
     url(r'(?i)^api/add/member/?$', itf.add_project_member),  # 新增项目成员
     url(r'(?i)^api/mdf/member/?$', itf.update_project_member),  # 修改项目成员
     url(r'(?i)^api/del/member/?$', itf.delete_project_member),  # 删除项目成员
+    url(r'(?i)^api/qry/api_data/?$', itf.qry_api_data),  # 查询API接口数据
 
 
     url(r'^mockdata/.', itf.mock_data),  # mock 请求处理

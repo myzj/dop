@@ -1055,7 +1055,7 @@ def qry_edit_history(request):
                 if re.search(r',$', rcd_id):
                     rcd_id = rcd_id[:-1]
                 record_id = []
-                if re.match(r'\d', rcd_id):
+                if re.match(r'\d+$', rcd_id):
                     record_id.append(int(rcd_id))
                 else:
                     try:
@@ -1070,7 +1070,7 @@ def qry_edit_history(request):
                 if re.search(r',$', api_id):
                     api_id = api_id[:-1]
                 interface_id = []
-                if re.match(r'\d', api_id):
+                if re.match(r'\d+$', api_id):
                     interface_id.append(int(api_id))
                 else:
                     try:
@@ -1566,6 +1566,43 @@ def mock_data(request):
             except_info(ex)
             errmsg = u"{0}:{1}".format(getMessage("300055"), str(ex))
             return HttpResponse(errmsg)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)
+
+
+# 查询API接口数据
+@csrf_exempt
+def qry_api_data(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+    if request.method == 'GET':
+        try:
+            errmsg = ''
+            if 'api_id' in request.GET and request.GET['api_id'] != '':
+                api_id = request.GET['api_id']
+            else:
+                errmsg += 'api_id,'
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
+                return JSONResponse(queryset)
+            api_id = int(api_id)
+            interface_filter = Interface.objects.filter(id=api_id, is_deleted=False)
+            if not interface_filter:
+                queryset['success'] = False
+                queryset['errorcode'] = 300029
+                queryset['errormsg'] = getMessage('300029')
+                return JSONResponse(queryset)
+            interface = InterFace(api_id)
+            # queryset["result"] = interface.get_metadata
+            return JSONResponse(interface.get_metadata)
+        except BaseException, ex:
+            except_info(ex)
+            queryset['errorcode'] = 300056
+            queryset['errormsg'] = getMessage('300056') + ':' + str(ex)
+            return JSONResponse(queryset)
     else:
         queryset['errorcode'] = 100002
         queryset['errormsg'] = getMessage('100002')

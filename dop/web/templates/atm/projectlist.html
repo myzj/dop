@@ -35,7 +35,8 @@
 
                     <p ng-hide="isLast">列表已加载完....</p>
                 </div>
-                <div class="dialog ng-hide" ng-show="isDialogShow">
+                {%if isHideAdd != 1%}
+                <div class="dialog" ng-show="isDialogShow">
                     <div class="dialogBox addTeam">
                         <h3>@{detail_title}@</h3>
                         <div class="addTeam-main">

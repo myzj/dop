@@ -135,9 +135,11 @@
                             <div class="api-top">
                                 <div class="row">
                                     <div class="col-xs-1">Headers</div>
-                                    <div class="col-xs-9"></div>
-                                    <div class="col-xs-1"><a ng-disabled='isEdit' ng-click="toggleBulkEdit($event,'Rq_headers')" class="add-btn">BulkEdit</a></div>
-                                    <div class="col-xs-1"><a ng-disabled='isEdit' ng-click="Add_headerDate()" class="add-btn">+Add</a></div>
+                                    <div class="col-xs-8"></div>
+                                    <div class="col-xs-3" style="text-align: right">
+                                        <a ng-disabled='isEdit' ng-click="toggleBulkEdit($event,'Rq_headers')" class="add-btn">BulkEdit</a>
+                                        <a ng-disabled='isEdit' ng-click="Add_headerDate()" class="add-btn">+Add</a>
+                                    </div>
                                 </div>
                             </div>
                             <div class="api-body">
@@ -168,8 +170,7 @@
                                             </select>
                                         </td>
                                         <td class="tab-must">
-                                            <input ng-disabled='isEdit' ng-init="RequestDate.is_required = 'flase'"
-                                                   ng-model="RequestDate.is_required" type="checkbox" name="is_requrie">
+                                            <input ng-disabled='isEdit' ng-model="RequestDate.is_required" type="checkbox" name="is_requrie">
                                         </td>
                                         <td class="tab-def">
                                             <input ng-disabled='isEdit' ng-init="RequestDate.default = ''" ng-model="RequestDate.default"
@@ -180,7 +181,7 @@
                                                    type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-dec">
-                                            <input ng-disabled='isEdit' ng-change="a()" ng-model="RequestDate.description" type="text"
+                                            <input required="required" ng-disabled='isEdit' ng-change="a()" ng-model="RequestDate.description" type="text"
                                                    class="form-control"/>
                                         </td>
                                         <td class="tab-oper">
@@ -198,9 +199,10 @@
                             <div class="api-top">
                                 <div class="row">
                                     <div class="col-xs-1">QueryString</div>
-                                    <div class="col-xs-9"></div>
-                                    <div class="col-xs-1"><a ng-click="toggleBulkEdit($event,'Rq_query_string')" class="add-btn">BulkEdit</a></div>
-                                    <div class="col-xs-1"><a ng-click="Add_QueryStringDate()" class="add-btn">+Add</a>
+                                    <div class="col-xs-8"></div>
+                                    <div class="col-xs-3" style="text-align: right">
+                                        <a ng-click="toggleBulkEdit($event,'Rq_query_string')" class="add-btn">BulkEdit</a>
+                                        <a ng-click="Add_QueryStringDate()" class="add-btn">+Add</a>
                                     </div>
                                 </div>
                             </div>
@@ -220,10 +222,10 @@
                                     <tbody>
                                     <tr ng-repeat="RequestDate in Request.query_string track by $index">
                                         <td class="tab-name">
-                                            <input ng-disabled='isEdit' ng-model="RequestDate.field_name" type="text" class="form-control"/>
+                                            <input ng-disabled='isEdit' ng-init="RequestDate.field_name = ''"  ng-model="RequestDate.field_name" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-type">
-                                            <select ng-disabled='isEdit' ng-model="RequestDate.field_type" class="form-control select-width">
+                                            <select ng-disabled='isEdit' ng-init="RequestDate.field_type = ''" ng-model="RequestDate.field_type" class="form-control select-width">
                                                 <option>number</option>
                                                 <option>boolean</option>
                                                 <option>string</option>
@@ -234,13 +236,13 @@
                                             <input ng-disabled='isEdit' ng-model="RequestDate.is_required" type="checkbox" name="is_requrie">
                                         </td>
                                         <td class="tab-def">
-                                            <input ng-disabled='isEdit' ng-model="RequestDate.default" type="text" class="form-control"/>
+                                            <input ng-disabled='isEdit' ng-init="RequestDate.default = ''" ng-model="RequestDate.default" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-exmple">
-                                            <input ng-disabled='isEdit' ng-model="RequestDate.example" type="text" class="form-control"/>
+                                            <input ng-disabled='isEdit' ng-init="RequestDate.example = ''" ng-model="RequestDate.example" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-dec">
-                                            <input ng-disabled='isEdit' ng-model="RequestDate.description" type="text" class="form-control"/>
+                                            <input ng-disabled='isEdit' ng-init="RequestDate.description = ''" ng-model="RequestDate.description" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-oper">
                                             <a ng-click="Del_QueryStringDate($index)" href="javascript:;">移除</a>
@@ -249,7 +251,7 @@
                                     </tbody>
                                 </table>
                                 <div ng-show="query_string_visible" class="query_string-bulkEdit bulkEdit">
-                                    <textarea ng-disabled='isEdit' ng-model="Request.query_stringBulk"></textarea>
+                                    <textarea ng-init="Request.query_stringBulk = ''" ng-disabled='isEdit' ng-model="Request.query_stringBulk"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -258,16 +260,15 @@
                                 <div class="row">
                                     <div class="col-xs-1">Body</div>
                                     <div class="col-xs-6"></div>
-                                    <div class="col-xs-3" style="text-align: right">
-                                        <select ng-disabled='isEdit' style="float:right;height:30px;width:100px;padding:4px 3px; display: inherit"
-                                                ng-model="Request.body.mode" class="form-control select-width">
+                                    <div class="col-xs-5" style="text-align: right">
+                                        <span style="padding-right:5px;">mode</span>
+                                        <select ng-disabled='isEdit' style="height:30px;margin-right:10px;width:100px;padding:4px 3px; display: inline-block" ng-init="Request.body.mode = ''" ng-model="Request.body.mode" class="form-control select-width">
                                             <option>urlencoded</option>
                                             <option>raw</option>
                                         </select>
-                                        <span style="float: right;padding-right:10px;">mode</span>
+                                        <a ng-click="toggleBulkEdit($event,'Rq_body')" class="add-btn">BulkEdit</a>
+                                        <a ng-click="Add_bodyDate()" class="add-btn">+Add</a>
                                     </div>
-                                    <div class="col-xs-1"><a ng-click="toggleBulkEdit($event,'Rq_body')" class="add-btn">BulkEdit</a></div>
-                                    <div class="col-xs-1"><a ng-click="Add_bodyDate()" class="add-btn">+Add</a></div>
                                 </div>
                             </div>
                             <div class="api-body">
@@ -287,10 +288,10 @@
                                     <tbody>
                                     <tr ng-repeat="RequestDate in Request.body.data track by $index">
                                         <td class="tab-name">
-                                            <input ng-disabled='isEdit' ng-model="RequestDate.field_name" type="text" class="form-control"/>
+                                            <input ng-disabled='isEdit' ng-init="RequestDate.field_name = ''" ng-model="RequestDate.field_name" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-type">
-                                            <select ng-disabled='isEdit' ng-model="RequestDate.field_type" class="form-control select-width">
+                                            <select ng-disabled='isEdit' ng-init="RequestDate.field_type = ''" ng-model="RequestDate.field_type" class="form-control select-width">
                                                 <option>number</option>
                                                 <option>boolean</option>
                                                 <option>string</option>
@@ -304,13 +305,13 @@
                                             <input ng-disabled='isEdit' ng-model="RequestDate.is_required" type="checkbox" name="is_requrie">
                                         </td>
                                         <td class="tab-def">
-                                            <input ng-disabled='isEdit' ng-model="RequestDate.default" type="text" class="form-control"/>
+                                            <input ng-disabled='isEdit' ng-init="RequestDate.default = ''" ng-model="RequestDate.default" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-exmple">
-                                            <input ng-disabled='isEdit' ng-model="RequestDate.example" type="text" class="form-control"/>
+                                            <input ng-disabled='isEdit' ng-init="RequestDate.example = ''" ng-model="RequestDate.example" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-dec">
-                                            <input ng-disabled='isEdit' ng-model="RequestDate.description" type="text" class="form-control"/>
+                                            <input ng-disabled='isEdit' ng-init="RequestDate.description = ''" ng-model="RequestDate.description" type="text" class="form-control"/>
                                         </td>
                                         <td class="tab-oper">
                                             <span ng-click="Add_bodyChildDate()"
@@ -322,7 +323,7 @@
                                     </tbody>
                                 </table>
                                 <div ng-show="body_visible" class="body-bulkEdit bulkEdit">
-                                    <textarea ng-disabled='isEdit' ng-model="Request.BodyBulk"></textarea>
+                                    <textarea ng-init="Request.BodyBulk = ''" ng-disabled='isEdit' ng-model="Request.BodyBulk"></textarea>
                                 </div>
 
                             </div>
@@ -334,9 +335,11 @@
                         <div class="api-top">
                             <div class="row">
                                 <div class="col-xs-1">Body</div>
-                                <div class="col-xs-9"></div>
-                                <div class="col-xs-1"><a ng-click="toggleBulkEdit($event,'Response')" class="add-btn">BulkEdit</a></div>
-                                <div class="col-xs-1"><a ng-click="Add_ResponseDate()" class="add-btn">+Add</a></div>
+                                <div class="col-xs-8"></div>
+                                <div class="col-xs-3" style="text-align: right">
+                                    <a ng-click="toggleBulkEdit($event,'Response')" class="add-btn">BulkEdit</a>
+                                    <a ng-click="Add_ResponseDate()" class="add-btn">+Add</a>
+                                </div>
                             </div>
                         </div>
                         <div class="api-body">
@@ -356,10 +359,10 @@
                                 <tbody>
                                 <tr ng-repeat="RequestDate in Response.body track by $index">
                                     <td class="tab-name">
-                                        <input ng-disabled='isEdit' ng-model="RequestDate.field_name" type="text" class="form-control"/>
+                                        <input ng-disabled='isEdit' ng-init="RequestDate.field_name = ''" ng-model="RequestDate.field_name" type="text" class="form-control"/>
                                     </td>
                                     <td class="tab-type">
-                                        <select ng-disabled='isEdit' ng-model="RequestDate.field_type" class="form-control select-width">
+                                        <select ng-disabled='isEdit' ng-init="RequestDate.field_type = ''" ng-model="RequestDate.field_type" class="form-control select-width">
                                             <option>number</option>
                                             <option>boolean</option>
                                             <option>string</option>
@@ -373,13 +376,13 @@
                                         <input ng-disabled='isEdit' ng-model="RequestDate.is_required" type="checkbox" name="is_requrie">
                                     </td>
                                     <td class="tab-def">
-                                        <input ng-disabled='isEdit' ng-model="RequestDate.default" type="text" class="form-control"/>
+                                        <input ng-disabled='isEdit' ng-init="RequestDate.default = ''" ng-model="RequestDate.default" type="text" class="form-control"/>
                                     </td>
                                     <td class="tab-exmple">
-                                        <input ng-disabled='isEdit' ng-model="RequestDate.example" type="text" class="form-control"/>
+                                        <input ng-disabled='isEdit' ng-init="RequestDate.example = ''" ng-model="RequestDate.example" type="text" class="form-control"/>
                                     </td>
                                     <td class="tab-dec">
-                                        <input ng-disabled='isEdit' ng-model="RequestDate.description" type="text" class="form-control"/>
+                                        <input ng-disabled='isEdit' ng-init="RequestDate.description = ''" ng-model="RequestDate.description" type="text" class="form-control"/>
                                     </td>
                                     <td class="tab-oper">
                                             <span ng-click="Add_ResponseChildDate()"
@@ -401,9 +404,11 @@
                         <div class="api-top">
                             <div class="row">
                                 <div class="col-xs-1">ErrorCodes</div>
-                                <div class="col-xs-9"></div>
-                                <div class="col-xs-1"><a ng-click="toggleBulkEdit($event,'ErrorCodes')" class="add-btn">BulkEdit</a></div>
-                                <div class="col-xs-1"><a ng-click="Add_ErrorCodeDate()" class="add-btn">+Add</a></div>
+                                <div class="col-xs-8"></div>
+                                <div class="col-xs-3" style="text-align: right">
+                                    <a ng-click="toggleBulkEdit($event,'ErrorCodes')" class="add-btn">BulkEdit</a>
+                                    <a ng-click="Add_ErrorCodeDate()" class="add-btn">+Add</a>
+                                </div>
                             </div>
                         </div>
                         <div class="api-body">
@@ -419,13 +424,13 @@
                                 <tbody>
                                 <tr ng-repeat="RequestDate in errorCodes track by $index">
                                     <td>
-                                        <input ng-disabled='isEdit' ng-model="RequestDate.error_code" type="text" class="form-control"/>
+                                        <input ng-disabled='isEdit' ng-init="RequestDate.error_code = ''" ng-model="RequestDate.error_code" type="text" class="form-control"/>
                                     </td>
                                     <td>
-                                        <input ng-disabled='isEdit' ng-model="RequestDate.display_message" type="text" class="form-control"/>
+                                        <input ng-disabled='isEdit' ng-init="RequestDate.display_message = ''" ng-model="RequestDate.display_message" type="text" class="form-control"/>
                                     </td>
                                     <td>
-                                        <input ng-disabled='isEdit' ng-model="RequestDate.description" type="text" class="form-control"/>
+                                        <input ng-disabled='isEdit' ng-init="RequestDate.description = ''" ng-model="RequestDate.description" type="text" class="form-control"/>
                                     </td>
                                     <td>
                                         <a ng-click="Del_ErrorCodeDate($index)" href="javascript:;">移除</a>
@@ -434,7 +439,7 @@
                                 </tbody>
                             </table>
                             <div ng-show="ErrorCodes_visible" class="ErrorCodes-bulkEdit bulkEdit">
-                                    <textarea ng-disabled='isEdit' ng-model="ErrorCodesBulk"></textarea>
+                                    <textarea ng-disabled='isEdit' ng-init="ErrorCodesBulk = ''" ng-model="ErrorCodesBulk"></textarea>
                                 </div>
                         </div>
                     </div>

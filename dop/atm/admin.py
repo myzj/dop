@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 from django.contrib import admin
-from models import Team, Project, ProjectMember, Interface, MetaData, ErrorCode, LockInfo, EditHistory
+from models import Team, Project, ProjectMember, Interface, MetaData, ErrorCode, LockInfo, EditHistory, CodeModel
 from common import except_info
 
 
@@ -154,6 +154,11 @@ class EditHistoryAdmin(admin.ModelAdmin):
         return queryset, use_distinct
 
 
+class CodeModelAdmin(admin.ModelAdmin):
+    search_fields = ('id', 'code_name')
+    list_display = ('id', 'code_name', 'description', 'parent', 'author', 'modifier', 'is_active', 'is_deleted', 'ctime', 'utime',)
+
+
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(ProjectMember, ProjectMemberAdmin)
@@ -162,3 +167,4 @@ admin.site.register(MetaData, MetaDataAdmin)
 admin.site.register(ErrorCode, ErrorCodeAdmin)
 admin.site.register(LockInfo, LockInfoAdmin)
 admin.site.register(EditHistory, EditHistoryAdmin)
+admin.site.register(CodeModel, CodeModelAdmin)

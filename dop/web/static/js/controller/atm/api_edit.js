@@ -25,8 +25,6 @@ require(['lib/common'],
                 $scope.doEdit = function () {
                     $scope.isEdit = false;
                     ReloadDate(true);
-                    /*var boxId = $('.tab').find('li.active').attr('id');
-                     $('#' + boxId + '_Main').find('input,textarea,select').removeAttr('disabled')*/
                 };
                 function ReloadDate(boolean) {
                     var datainfo = {
@@ -35,7 +33,6 @@ require(['lib/common'],
                     };
                     if (boolean) {
                         datainfo.is_modify = true;
-                        console.log(111)
                     }
                     if (datainfo.api_id > 0) {
                         $http.get('/api/qry/api_detail?api_id=' + datainfo.api_id + '&is_modify=' + datainfo.is_modify)

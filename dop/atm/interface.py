@@ -1554,11 +1554,7 @@ def mock_data(request):
                 errmsg = u"api_id={0} mockdata未设置,请设置mockdata后重新提交请求.".format(interface.id, url)
                 return HttpResponse(errmsg)
             else:
-                content_type = ""
-                for key, value in content_dict.iteritems():
-                    if value == interface.content_type:
-                        content_type = key
-                        break
+                content_type = interface.get_content_type_display()
                 mock = interface.mockdata
                 if callback:
                     mock = callback + '(' + str(mock) + ');'

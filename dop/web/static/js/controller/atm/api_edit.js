@@ -12,8 +12,6 @@ require(['lib/common'],
                 $scope.doEdit = function () {
                     $scope.isEdit = false;
                     ReloadDate(true);
-                    /*var boxId = $('.tab').find('li.active').attr('id');
-                    $('#' + boxId + '_Main').find('input,textarea,select').removeAttr('disabled')*/
                 };
                 ReloadDate();      //初始化数据
                 function ReloadDate(boolean) {
@@ -23,7 +21,6 @@ require(['lib/common'],
                     };
                     if(boolean){
                         datainfo.is_modify = true;
-                        console.log(111)
                     }
                     $http.get('/api/qry/api_detail?api_id=' + datainfo.api_id +'&is_modify='+datainfo.is_modify)
                         .success(function (data) {

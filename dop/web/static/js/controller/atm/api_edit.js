@@ -4,6 +4,8 @@ require(['lib/common'],
             var app = $.getApp();
             app.controller('myDoc', function ($scope, $http) {
 
+                $scope.apiName = "add...";
+
                 $scope.Base = {};
                 $scope.Request = {};
                 $scope.Response = {};
@@ -41,9 +43,9 @@ require(['lib/common'],
 
                                 if (data.errorcode == 0) {
 
-                                    if(data.is_lock_user){
+                                    if (data.is_lock_user) {
                                         $scope.isEdit = false;
-                                    }else{
+                                    } else {
                                         $scope.isEdit = true;
                                     }
 
@@ -149,6 +151,8 @@ require(['lib/common'],
                                         }
                                     }
 
+                                    $scope.apiName = ApiDate.base.name;
+
                                     //header 删除/添加数据
                                     $scope.Add_headerDate = function () {
                                         ApiDate.request.headers.push({});
@@ -194,7 +198,7 @@ require(['lib/common'],
                                 }
                             });
                     }
-                    else{
+                    else {
                         $scope.Base.state = true;
                     }
                 }
@@ -231,22 +235,20 @@ require(['lib/common'],
                     if (keycode == 13 || keycode == 186) {
 
                         if (tipsText != '' && tipsText != ';' && tipsText != '；') {
-                            if(!$scope.Base){
+                            if (!$scope.Base) {
                                 $scope.Base = {};
                             }
-                            if(!$scope.Base.tags)
-                            {
+                            if (!$scope.Base.tags) {
                                 $scope.Base.tags = [];
                             }
 
-                            if(!$scope.tagsObj){
-                                $scope.tagsObj={};
+                            if (!$scope.tagsObj) {
+                                $scope.tagsObj = {};
                             }
 
                             var tagItem = e.target.value.replace(/;/g, '').replace(/；/g, '');
 
-                            if(!$scope.tagsObj[tagItem])
-                            {
+                            if (!$scope.tagsObj[tagItem]) {
                                 $scope.tagsObj[tagItem] = true;
                                 $scope.Base.tags.push(tagItem);
                             }
@@ -289,6 +291,32 @@ require(['lib/common'],
                         }
 
                     });
+                };
+
+                $scope.formatMock = function () {
+
+                    var val = $scope.Base.mock;
+                    if (val) {
+                        var opts = {
+                            "indent_size": "3",
+                            "indent_char": " ",
+                            "max_preserve_newlines": "1",
+                            "preserve_newlines": true,
+                            "keep_array_indentation": false,
+                            "break_chained_methods": false,
+                            "indent_scripts": "normal",
+                            "brace_style": "expand",
+                            "space_before_conditional": true,
+                            "unescape_strings": false,
+                            "jslint_happy": false,
+                            "end_with_newline": false,
+                            "wrap_line_length": "0"
+                        };
+
+                        var newVal = js_beautify(val, opts);
+                        $scope.Base.mock = newVal;
+                    }
+
                 };
 
             });

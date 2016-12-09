@@ -509,3 +509,25 @@ img {
     font-size: 18px;
     text-align: left;
 }
+
+.content-box{
+  margin: 0 50px 0;
+}
+
+
+.container-content{
+  margin: 0 50px 0;
+  background: #f1f1f1;
+  .api-top{
+    border:1px solid #ccc;
+    border-bottom:none;
+    border-radius: 5px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .api-body{
+    border:1px solid #ccc;
+    border-top:none
+  }
+}
+

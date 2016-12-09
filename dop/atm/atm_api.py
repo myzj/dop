@@ -582,9 +582,9 @@ def req_api_list(request):
             if api_match.count() > 0:
                 api_page = api_pages.page(queryset['result']['pageIndex'])
                 for api in api_page.object_list:
-
-                    result = {'id': api.id, 'interface_name': api.interface_name, 'description': api.description, 'url': api.url, 'method': api.method, \
-                              'content_type': api.content_type, 'remark': api.remark, 'project_id': api.project.id,  \
+                    result = {'id': api.id, 'interface_name': api.interface_name, 'description': api.description, \
+                              'url': api.url, 'method': api.get_method_display(), 'remark': api.remark, \
+                              'content_type': api.get_content_type_display(),  'project_id': api.project.id, \
                               'update_time': api.utime.strftime('%Y-%m-%d %H:%M:%S')}
                     try:
                         result["tags"] = eval(api.tags)

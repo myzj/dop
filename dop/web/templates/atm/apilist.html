@@ -13,13 +13,13 @@
 {%endblock%}
 {% block container %}
 {% include "shared/headerBar.html" %}
-<div class="container">
+<div class="container-content">
     <div class="api-top">
         <div class="row">
             <div class="col-xs-1">APIS</div>
-            <div class="col-xs-10"></div>
-            <div class="col-xs-1"><button class="btn btn-default" id="import-action" ng-click="show_importDialo()">+Add</button></div>
-            <!--<div class="col-xs-1">
+            <div class="col-xs-9"></div>
+            <div class="col-xs-1"><a role="menuitem" tabindex="-1" href="/api_edit?project={{ projectId }}">+Add</a></div>
+            <div class="col-xs-1">
                 <div class="dropdown">
                     <button type="button" class="btn dropdown-toggle" id="dropdownMenu1"
                             data-toggle="dropdown">
@@ -28,14 +28,11 @@
                     </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
                         <li role="presentation">
-                            <a role="menuitem" tabindex="-1" href="#">Import</a>
-                        </li>
-                        <li role="presentation">
-                            <a role="menuitem" tabindex="-1" href="#">Export</a>
+                            <a id="import-action" href="javascript:;" ng-click="show_importDialo()">+Import</a>
                         </li>
                     </ul>
                 </div>
-            </div>-->
+            </div>
         </div>
     </div>
     <div class="api-body">
@@ -55,7 +52,7 @@
             <tr ng-repeat="List in apiArr">
                 <td>@{List.id}@</td>
                 <td>
-                    <a href="/api_edit?apiid=@{List.id}@&project=@{project}@">View</a>|
+                    <a href="/api_edit?apiid=@{List.id}@&project=@{List.project_id}@">View</a>|
                     <a href="javascript:;">Mock</a>|
                     <a href="javascript:;">Test</a>
                 </td>
@@ -70,8 +67,9 @@
                 </td>
                 <td>
                     <div class="tags">
-                        <span ng-repeat="tag in List.tags">
-                            @{tag}@
+                        <span ng-repeat="(key, tag) in List.tags" >
+                           @{tag}@
+                            <br ng-if="key%2==0"/>
                         </span>
                     </div>
                 </td>
@@ -92,19 +90,19 @@
     <div class="import-content">
         <div class="row">
             <div class="col-xs-2">IsReplace:</div>
-            <div class="col-xs-10 IsReplace">
+            <div class="col-xs-10 IsReplace"> &nbsp;
                 <label for="">
-                    <input type="radio" name="is_replace" checked>yes
+                    <input type="radio" value="false" name="is_replace" checked> no
                 </label>
                 <label for="">
-                    <input type="radio" name="is_replace"> no
+                    <input type="radio" value="true" name="is_replace" >yes
                 </label>
             </div>
         </div>
 
         <div class="row">
             <div class="col-xs-2">Date:</div>
-            <div class="col-xs-9">
+            <div class="col-xs-10">
                 <div class="edit-content">
                     <textarea class="textarea" ng-model="text" id="code_data" cols="30" rows="10"></textarea>
                 </div>
@@ -113,13 +111,9 @@
         <div class="row">
             <div class="col-xs-6">
             </div>
-            <div class="col-xs-2">
-                <a class="btn btn-default"  ng-click="format()">Format</a>
-            </div>
-            <div class="col-xs-2">
-                <a class="btn btn-default" id="import-btn" ng-click="import_action()">Import</a>
-            </div>
-            <div class="col-xs-2">
+            <div class="col-xs-6 text-right">
+                <a class="btn btn-default"  ng-click="format()">Format</a>&nbsp;
+                <a class="btn btn-default" id="import-btn" ng-click="import_action()">Import</a>&nbsp;
                 <a class="btn btn-default" id="cancel-btn" ng-click="hide_importDialog()">Close</a>
             </div>
         </div>

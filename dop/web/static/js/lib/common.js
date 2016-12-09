@@ -10,6 +10,12 @@
         //重置angular 模板
         $.getApp = function () {
             if(!window.app) {
+
+                var container = $('.container');
+                if(container.hasClass('hide')){
+                    container.removeClass('hide');
+                }
+
                 var app = angular.module('app', []);
                 app.config(function ($interpolateProvider) {
                     $interpolateProvider.startSymbol('@{');

@@ -11,13 +11,14 @@ a, a:hover, a:focus {
 
 }
 .container{
-  border: 1px solid #cccccc;
-  border-radius: 5px;
-  margin: 20px auto;
+  border-bottom: 1px solid #cccccc;
+  margin: 0 auto 20px;
+  width: 100%;
   background: #f1f1f1;
   padding: 0px!important;
   .navbar{
     margin-bottom: 0;
+    border-radius: 0;
   }
 
 }

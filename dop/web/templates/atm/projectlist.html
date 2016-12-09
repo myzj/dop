@@ -6,22 +6,29 @@
 {% block container %}
     {% include "shared/headerBar.html" %}
     <div class="content-box teamListyle">
-        <div class="container">
-            <h3>Projects</h3>
-
+        <div class="container hide">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                Project
+              </div>
+            </div>
             <p>{{ msg }}</p>
 
             {#projectlist?team=123#}
             <div class="edit-main team-list">
                 <ul>
-                    <li class="listLi" ng-repeat="List in projectArr">
-                        <a href="/apilist?project=@{List.project_id}@">
-                            <p class="team-pic"><img ng-src="@{List.project_pic_url}@"/></p>
 
+                    {%if isHideAdd != 1%}<li ng-click="addTeam()" class="addBtn">添加</li>{% endif  %}
+                    <li class="listLi" ng-repeat="List in projectArr" data-project="@{List.project_id}@">
+                        <a href="/apilist?project=@{List.project_id}@">
+                            <p class="team-pic"><img ng-src="@{List.project_pic_url}@" onerror="this.src='{% static "images/errorImg.jpg" %}?v={{ config.v }}'"/></p>
                             <p class="team-name">@{List.project_name}@</p>
                         </a>
+                        <div class="action-btn">
+                            <span class="edit" ng-if="List.role==3 || List.role==2" ng-click="edit_project(List.project_id, List.team)">Edit</span>
+                            <span class="Members" ng-click="edit_member(List.project_id, List.team, List.role)">Members</span>
+                        </div>
                     </li>
-                    {%if isHideAdd != 1%}<li ng-click="addTeam()" class="">添加</li>{% endif  %}
                 </ul>
                 <div class="loadTips">
                     <p ng-show="isLast">下拉加载下一页....</p>
@@ -31,16 +38,26 @@
                 {%if isHideAdd != 1%}
                 <div class="dialog" ng-show="isDialogShow">
                     <div class="dialogBox addTeam">
-                        <h3>Team Edit</h3>
-
+                        <h3>@{detail_title}@</h3>
                         <div class="addTeam-main">
-                            <p><span class="dsc">TeamName</span>{{team_name}}
+                            <p>
+                                <span class="dsc">TeamName</span>
+                                <select class="form-control" style="width: 160px" ng-options="team.team_name for team in team_list"  ng-model="team_list_selected"></select>
                             </p>
-
-                            <p><span class="dsc">ProjectName</span><input class="pName" placeholder="项目名称" type="text"></p>
-                            <p><span class="dsc">HOST</span><input class="thost" placeholder="目录/端口" type="text"></p>
-
-                            <p><span class="dsc">Description</span><textarea class="tDec" placeholder="请输入描述"></textarea></p>
+                            <p>
+                                <span class="dsc">ProjectName</span>
+                                <input class="pName" placeholder="项目名称" ng-model="itemData.project_name" value="" type="text">
+                            </p>
+                            <p><span class="dsc">HOST</span>
+                                <input class="thost"  ng-model="itemData.host" placeholder="目录/端口" type="text">
+                            </p>
+                            <p><span class="dsc">pic_url</span>
+                                <input class="pic_url" ng-model="itemData.project_pic_url" placeholder="封面大图" type="text">
+                            </p>
+                            <p>
+                                <span class="dsc">Description</span>
+                                <textarea class="tDec" ng-model="itemData.description" placeholder="请输入描述"></textarea>
+                            </p>
 
                             <div class="addBtn">
                                 <span ng-click="saveProject()" class="active">save</span>
@@ -49,10 +66,84 @@
                         </div>
                     </div>
                 </div>
-                {% endif  %}
+
+
+                <!--member编辑-->
+                <div class="dialog member-dialog" ng-show="memberDialogShow">
+                    <div class="dialogBox addMember">
+                        <h3>Project Member Edit</h3>
+                        <div class="member-box">
+                        <div class="row" ng-hide="member_role <= 1">
+                            <div class="col-xs-1">
+                            </div>
+                            <div class="col-xs-2">UserName:</div>
+                            <div class="col-xs-3 input-tip-div">
+                                <input type="text" ng-model="userName" id="username" ng-change="watch_value()" class="form-control" placeholder="Search for username...">
+                                    <div class="username_tip ng-hide" id="userNameTipDialog" ng-show="userNameTipDialog">
+                                        <p ng-repeat="user in userList" ng-click="select_username(user.username)">
+                                            @{user.username}@
+                                        </p>
+                                    </div>
+                            </div>
+                            <div class="col-xs-3">
+                                <select name="" id="" class="form-control" ng-model="roleSelect">
+                                    <option value="1">General</option>
+                                    <option value="2">Admin</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-2">
+                                <a href="javascript:;" ng-click="save_member()" class="btn btn-primary">+Add</a>
+                            </div>
+                        </div>
+                        <div class="member-list" ng-show="memberListBox">
+                            <h3>Panel heading</h3>
+                            <div class="member-list-box">
+                                <div class="row">
+                                    <div class="col-xs-1">#</div>
+                                    <div class="col-xs-3">UserName</div>
+                                    <div class="col-xs-5">Permissions</div>
+                                    <div class="col-xs-3">Operation</div>
+                                </div>
+                                <div class="row" ng-repeat="member in memberList">
+                                    <div class="col-xs-1" ng-bind="$index+1">1</div>
+                                    <div class="col-xs-3">@{member.user}@</div>
+                                    <div class="col-xs-5">
+                                        <div class="member-super" ng-if="member.role <= 2">
+                                            <div ng-if="member_role == 2 || member_role == 3">
+                                                <label>
+                                                    <input type="radio" id="@{member.id}@" name="role_@{member.id}@" ng-change="change_radio(member.id)" ng-model="member.role" ng-true-value="1" ng-false-value="2" value="1" />General
+                                                </label>
+                                                <label>
+                                                    <input type="radio" id="@{member.id}@" name="role_@{member.id}@" ng-change="change_radio(member.id)" ng-model="member.role" ng-true-value="2" ng-false-value="1" value="2"/>Admin
+                                                </label>
+                                            </div>
+                                            <div ng-if="member_role == 1">
+                                                <label>
+                                                    <input type="radio" id="@{member.id}@" name="role_@{member.id}@" disabled ng-change="change_radio(member.id)" ng-model="member.role" ng-true-value="1" ng-false-value="2" value="1" />General
+                                                </label>
+                                                <label>
+                                                    <input type="radio" id="@{member.id}@" name="role_@{member.id}@" disabled ng-change="change_radio(member.id)" ng-model="member.role" ng-true-value="2" ng-false-value="1" value="2"/>Admin
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="member-super" ng-if="member.role == 3">已经是超管了</div>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <a href="javascript:;" class="btn" ng-click="delect_member(member.id)" ng-if="member_role > 1 && member.role !=3">Delete</a></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="member-close">
+                            <a href="javascript:;" ng-click="close_member_dialog()" class="btn btn-warning">Close</a>
+                        </div>
+                    </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+
 
     <script type="text/javascript">
         require(['{% static "js/config.js" %}?v={{config.v}}'], function () {

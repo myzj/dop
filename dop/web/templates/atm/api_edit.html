@@ -11,8 +11,20 @@
     <div class="container">
         <div class="edit-top">
             <ol class="breadcrumb">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">2013</a></li>
+                <li>
+                    {% if team == null %}
+                    <a href="/projectlist">project</a>
+                    {% else %}
+                    <a href="/projectlist?team={{team}}">project</a>
+                    {% endif %}
+                </li>
+                <li>
+                    {% if project == null %}
+                    <a href="/apilist">api</a>
+                    {% else %}
+                    <a href="/apilist?project={{project}}">api</a>
+                    {% endif %}
+                </li>
                 <li class="active">十一月</li>
             </ol>
             <div class="edit-btns">
@@ -32,6 +44,12 @@
             </div>
             <div class="edit-content">
                 <div id="Base_Main" class="content-list">
+                    <div class="row">
+                        <div class="col-xs-2">Project:</div>
+                        <div class="col-xs-2">
+                            <select ng-disabled='isProjectEdit' class="form-control" ng-options="project.project_name for project in projectList" ng-model="project_list_selected"></select>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-xs-2">Name:</div>
                         <div class="col-xs-10">
@@ -66,7 +84,7 @@
                     <div class="row">
                         <div class="col-xs-2">State:</div>
                         <div class="col-xs-10">
-                            <label><input ng-click="setState(true)" ng- ng-checked="Base.state" ng-disabled='@{isEdit}@' type="radio" name="state"/>Enable</label>
+                            <label><input ng-click="setState(true)" ng-checked="Base.state" ng-disabled='@{isEdit}@' type="radio" name="state"/>Enable</label>
                             <label><input ng-click="setState(false)" ng-checked="!Base.state" ng-disabled='@{isEdit}@' type="radio" name="state"/>Disable</label>
                         </div>
                     </div>
@@ -84,7 +102,7 @@
                         <div class="col-xs-3">
                             <select style="width:90%;" ng-disabled='isEdit' ng-model="Request.method"
                                     class="form-control select-width">
-                                <option>POST</option>
+                                <option checked="checkec">POST</option>
                                 <option>GET</option>
                                 <option>PUT</option>
                                 <option>DELETE</option>

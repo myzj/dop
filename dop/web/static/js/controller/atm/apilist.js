@@ -3,7 +3,7 @@ require(['lib/common', 'lib/jquery.twbsPagination.min'],
         angular.element(document).ready(function () {
             var app = $.getApp();
             app.controller('myDoc', function ($scope, $http) {
-                var pageSize = 10;
+                var pageSize = 50;
                 getTeamDate(1, true);
                 function getTeamDate(index, isInit) {
                     var datainfo = {
@@ -67,9 +67,29 @@ require(['lib/common', 'lib/jquery.twbsPagination.min'],
                     $(".import-dialog").show();
                 };
                 $scope.import_action = function () {
-                    var a = $scope.text;
-                    var json = eval("(" + a + ")");
-                    console.log(json);
+
+                    var a = $.trim($scope.text);
+                    if(a.length <= 0){
+                        return;
+                    }
+
+                    try{
+                        var json = eval("(" + a + ")");
+                    }catch (e){
+                        alert("数据格式不正确");
+                    }
+
+                    json.is_replace = $("input[name='is_replace']:checked").val() === "true";
+                    $http({
+                        method: 'POST',
+                        url: '/api/add/new_api/',
+                        data: json,
+                    }).success(function (data) {
+                        alert(data.errormsg);
+                        if(data.errorcode == 0){
+                            getTeamDate(1, true);  //重新刷新
+                        }
+                    });
                 };
 
                 $scope.hide_importDialog = function () {

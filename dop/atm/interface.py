@@ -2,6 +2,7 @@
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
+from django.http import HttpResponse
 from models import Interface, MetaData, ErrorCode, Project, LockInfo, ProjectMember, EditHistory
 from django.contrib.auth.models import User
 from common import except_info
@@ -92,7 +93,7 @@ class InterFace(object):
                 new_interface.author = self.data.get("user")
                 new_interface.project = self.data.get("project")
                 new_interface.interface_name = self.data.get("name")
-                new_interface.url = self.data.get("url")
+                new_interface.url = format_url(self.data.get("url"))
                 new_interface.method = method_dict.get(self.data.get("method"))
                 new_interface.content_type = content_dict.get(self.data.get("content_type"))
                 new_interface.is_active = self.data.get("state")
@@ -145,7 +146,7 @@ class InterFace(object):
                 mdf_interface = Interface.objects.get(id=self.data.get("api_id"))
                 mdf_interface.modifier = self.data.get("user")
                 mdf_interface.interface_name = self.data.get("name")
-                mdf_interface.url = self.data.get("url")
+                mdf_interface.url = format_url(self.data.get("url"))
                 mdf_interface.method = method_dict.get(self.data.get("method"))
                 mdf_interface.content_type = content_dict.get(self.data.get("content_type"))
                 mdf_interface.is_active = self.data.get("state")
@@ -252,6 +253,29 @@ class InterFace(object):
             except_info(ex)
             return False, getMessage("300033") + ": " + str(ex)
 
+# 判断是否是一个有效的日期字符串
+def is_valid_date(timestr):
+    """判断是否是一个有效的日期字符串"""
+    try:
+        time.strptime(timestr, "%Y-%m-%d")
+        return True
+    except BaseException, ex:
+        except_info(ex)
+        return False
+
+
+# 格式化url
+def format_url(url):
+    try:
+        if not re.match(r'/.+', url):  # url不是以"/"开始,在开始添加"/"
+            url = '/' + url
+        if url[-1] == '/':  # url 以"/"结尾，去掉结尾的"/"
+            url = url[:-1]
+        return url
+    except BaseException, ex:
+        except_info(ex)
+        return url
+
 
 # 添加API修改记录
 def add_modify_record(user=None, interface=None, data=""):
@@ -290,18 +314,14 @@ def check_interface(project=None, url=""):
 
 
 # precheck interface data
-def precheck_interface_data(data=None, common_data=None):
+def precheck_interface_data(data=None):
     if not data:
         data = []
-    if not common_data:
-        common_data = {"user": None, "project": None}
     check_info = {}
     try:
         if data:
             rec_num = 1
             for itf_rec in data:
-                # data["user"] = common_data.get("user")
-                # data["project"] = common_data.get("project")
                 rec_key = "record_number:{0}".format(rec_num)
                 if "request" not in itf_rec:
                     err_msg = "request " + getMessage('100001')
@@ -383,7 +403,7 @@ def precheck_interface_data(data=None, common_data=None):
             return check_info
     except BaseException, ex:
         except_info(ex)
-        check_info["errmsg"] = " Call precheck_interface_data throw exception: \n" + str(ex)
+        check_info["errmsg"] = "Call precheck_interface_data throw exception: " + str(ex)
         return check_info
 
 
@@ -395,7 +415,6 @@ def qry_interface_detail(request):
         'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
     if request.method == 'GET':
         try:
-            now = datetime.datetime.now()
             errmsg = ''
             if 'api_id' in request.GET and request.GET['api_id'] != '':
                 api_id = request.GET['api_id']
@@ -425,6 +444,10 @@ def qry_interface_detail(request):
                 queryset['errorcode'] = 200003
                 queryset['errormsg'] = getMessage('200003')
                 return JSONResponse(queryset)
+            lock_qry = LockInfo.objects.filter(interface=interface, is_locked=True, is_deleted=False)
+            if lock_qry and user:
+                if lock_qry[0].lock_user.id == user.id:
+                    queryset["is_lock_user"] = True
             if 'is_modify' in request.GET and request.GET['is_modify'] == 'true':
                 members_filter = ProjectMember.objects.filter(project=interface.project, is_deleted=False,
                                                               is_active=True)
@@ -440,7 +463,7 @@ def qry_interface_detail(request):
                 lock_filter = LockInfo.objects.filter(interface=interface, is_locked=True, is_deleted=False)
                 if lock_filter and lock_filter[0].lock_user.id != user.id:
                     queryset['errorcode'] = 300030
-                    queryset['errormsg'] = getMessage('300030')
+                    queryset['errormsg'] = getMessage('300030') + ',请联系 ' + lock_filter[0].lock_user.username + ' 解锁.'
                     return JSONResponse(queryset)
                 if not lock_filter:  # Add lock info
                     print 'Lock the interface id={0}'.format(api_id)
@@ -632,6 +655,8 @@ def add_interface(request):
                     else:  # unlock
                         if is_replace:  # need replace
                             # call modify interface
+                            api_id = check_info['api'].id
+                            data["api_id"] = api_id
                             itf = InterFace(data=data)
                             flag, msg = itf.modify_interface
                             if flag:  # modify success
@@ -712,20 +737,10 @@ def update_interface(request):
                 queryset['errorcode'] = 100007
                 queryset['errormsg'] = 'info ' + getMessage('100007')
                 return JSONResponse(queryset)
-            # if "project" not in info or not info.get("project"):
-            #     queryset['errorcode'] = 100001
-            #     queryset['errormsg'] = 'info属性值的project为必填属性 ' + getMessage('100001')
-            #     return JSONResponse(queryset)
             if "api_id" not in info or not info.get("api_id"):
                 queryset['errorcode'] = 100001
                 queryset['errormsg'] = 'info属性值的api_id为必填属性 ' + getMessage('100001')
                 return JSONResponse(queryset)
-            # project_id = int(info.get("project"))
-            # project_filter = Project.objects.filter(id=project_id, is_deleted=False, is_active=True)
-            # if not project_filter:
-            #     queryset['errorcode'] = 300025
-            #     queryset['errormsg'] = "项目ID为:{0},{1}".format(project_id, getMessage("300025"))
-            #     return JSONResponse(queryset)
             api_id = int(info.get("api_id"))
             api_filter = Interface.objects.filter(id=api_id, is_deleted=False)
             if not api_filter:
@@ -737,7 +752,7 @@ def update_interface(request):
             lock_filter = LockInfo.objects.filter(interface=up_interface, is_locked=True, is_deleted=False)
             if lock_filter and lock_filter[0].lock_user.id != user.id:
                 queryset['errorcode'] = 300030
-                queryset['errormsg'] = getMessage('300030')
+                queryset['errormsg'] = getMessage('300030') + ',请联系 ' + lock_filter[0].lock_user.username + ' 解锁.'
                 return JSONResponse(queryset)
             item = params.get("item")
             if not isinstance(item, list):
@@ -832,9 +847,6 @@ def update_interface(request):
             itf = InterFace(data=data)
             flag, msg = itf.modify_interface
             print 'flag:', flag, " msg:", msg, " interface:", up_interface
-            view_data = data
-            view_data.pop("user")
-            # queryset["result"] = view_data
             if flag:
                 error_msg = "Update interface id={0} success !".format(api_id)
                 lock_filter.update(is_locked=False)  # 解锁
@@ -980,7 +992,7 @@ def cancel_lock(request):
                 return JSONResponse(queryset)
             if lock_filter[0].lock_user.id != user.id:
                 queryset['errorcode'] = 300035
-                queryset['errormsg'] = getMessage('300035')
+                queryset['errormsg'] = getMessage('300035') + ',请联系 ' + lock_filter[0].lock_user.username + ' 解锁.'
                 return JSONResponse(queryset)
             lock_filter.update(is_locked=False, utime=now)  # 解锁
             queryset["errormsg"] = 'Unlock the api_id={0} success.'.format(api_id)
@@ -1023,6 +1035,575 @@ def check_data(request):
             queryset["success"] = False
             queryset['errorcode'] = 300037
             queryset['errormsg'] = "Precheck interface data fail." + str(ex)
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)
+
+
+# 查询API接口修改记录
+@csrf_exempt
+def qry_edit_history(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': []}
+    if request.method == 'GET':
+        try:
+            err_msg = ''
+            history_match = EditHistory.objects.filter(is_deleted=False)
+            if "record_id" in request.GET and request.GET["record_id"] != '':
+                rcd_id = request.GET["record_id"]
+                if re.search(r',$', rcd_id):
+                    rcd_id = rcd_id[:-1]
+                record_id = []
+                if re.match(r'\d+$', rcd_id):
+                    record_id.append(int(rcd_id))
+                else:
+                    try:
+                        rcd_list = eval(rcd_id)
+                        record_id = map(lambda x: int(x), rcd_list)
+                    except BaseException, ex:
+                        except_info(ex)
+                        err_msg += "record_id throw exception: " + str(ex) + ";"
+                history_match = history_match.filter(pk__in=record_id)
+            if "api_id" in request.GET and request.GET["api_id"] != '':
+                api_id = request.GET["api_id"]
+                if re.search(r',$', api_id):
+                    api_id = api_id[:-1]
+                interface_id = []
+                if re.match(r'\d+$', api_id):
+                    interface_id.append(int(api_id))
+                else:
+                    try:
+                        api_list = eval(api_id)
+                        interface_id = map(lambda x: int(x), api_list)
+                    except BaseException, ex:
+                        except_info(ex)
+                        err_msg += "api_id throw exception: " + str(ex) + ";"
+                itfs = Interface.objects.filter(pk__in=interface_id)
+                history_match = history_match.filter(interface__in=itfs)
+
+            if "user" in request.GET and request.GET["user"] != '':
+                user = None
+                req_user = request.GET["user"]
+                user_filter = User.objects.filter(username=req_user)
+                if user_filter:
+                    user = user_filter[0]
+                else:
+                    err_msg += "user: " + req_user + "用户不存在;"
+                history_match = history_match.filter(modifier=user)
+            if "time" in request.GET and request.GET["time"] != '':
+                timestr = '1900-01-01'
+                req_time = request.GET["time"]
+                try:
+                    time.strptime(req_time, "%Y-%m-%d")
+                    timestr = req_time
+                except BaseException, ex:
+                    except_info(ex)
+                    err_msg += "time throw exception: " + str(ex) + ";"
+                times = timestr.split('-')
+                year = times[0]
+                month = times[1]
+                day = times[2]
+                history_match = history_match.filter(ctime__year=year, ctime__month=month, ctime__day=day)
+            if history_match:
+                print 'history_match_count:', history_match.count()
+                history_match = history_match.order_by('-ctime')
+                for rec in history_match:
+                    try:
+                        content = eval(rec.content)
+                    except BaseException, ex:
+                        except_info(ex)
+                        content = rec.content
+                    temp = {"id": rec.id, "user": rec.modifier.username,
+                            "ctime": rec.ctime.strftime('%Y-%m-%d %H:%M:%S'), "api_id": rec.interface.id,
+                            "content": content}
+                    queryset["result"].append(temp)
+            queryset["errormsg"] = err_msg
+            return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset["success"] = False
+            queryset['errorcode'] = 300039
+            queryset['errormsg'] = getMessage('300039') + str(ex)
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)
+
+
+# 查询项目成员
+@csrf_exempt
+def qry_project_member(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': []}
+    if request.method == 'GET':
+        try:
+            errmsg = ''
+            if 'project_id' in request.GET and request.GET['project_id'] != '':
+                project_id = request.GET['project_id'].strip()
+            else:
+                errmsg += 'project_id,'
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
+                return JSONResponse(queryset)
+            match1 = re.match(r"\d", project_id)
+            if not match1:
+                queryset['errorcode'] = 100007
+                queryset['errormsg'] = 'project_id ' + getMessage('100007')
+                return JSONResponse(queryset)
+            project_id = int(project_id)
+            project_filter = Project.objects.filter(id=project_id, is_deleted=False)
+            if not project_filter:
+                queryset['success'] = False
+                queryset['errorcode'] = 300025
+                queryset['errormsg'] = getMessage('300025')
+                return JSONResponse(queryset)
+            project = project_filter[0]
+            members_filter = ProjectMember.objects.filter(project=project, is_deleted=False, is_active=True)
+            if 'role' in request.GET and request.GET['role'] != '':
+                role_str = request.GET['role'].strip()
+                role = 0
+                if re.match(r'\d', role_str):
+                    role_int = int(role_str)
+                    if role_int in [1, 2, 3]:
+                        role = role_int
+                members_filter = members_filter.filter(role=role)
+            if 'username' in request.GET and request.GET['username'] != '':
+                user_match = []
+                username = request.GET['username'].strip()
+                users_filter = User.objects.filter(username__icontains=username)
+                if users_filter:
+                    user_match = list(users_filter)
+                members_filter = members_filter.filter(user__in=user_match)
+
+            if members_filter:
+                for item in members_filter:
+                    temp = {"id": item.id, "role": item.role, "user": item.user.username}
+                    queryset["result"].append(temp)
+            return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset["success"] = False
+            queryset['errorcode'] = 300040
+            queryset['errormsg'] = getMessage('300040') + str(ex)
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)
+
+
+# 新增项目成员
+@csrf_exempt
+@interface_check_login
+def add_project_member(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+    role_dict = {1: "普通用户", 2: "管理员", 3: "超级管理员"}
+    if request.method == 'POST':
+        try:
+            params = json.loads(request.read())
+            user_info = request.session.get("user", default=None)
+            user = None
+            if user_info:
+                user_id = int(user_info.get("id"))
+                user_filter = User.objects.filter(id=user_id)
+                if user_filter:
+                    user = user_filter[0]
+            if user is None:
+                queryset['success'] = False
+                queryset['errorcode'] = 200003
+                queryset['errormsg'] = getMessage('200003')
+                return JSONResponse(queryset)
+            required_fields = ['project_id', 'username', 'role']
+            errmsg = ''
+            for field in required_fields:
+                if field not in params:
+                    errmsg += field + ', '
+            if errmsg:
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
+                return JSONResponse(queryset)
+            if not isinstance(params.get("role"), int):
+                queryset['errorcode'] = 100007
+                queryset['errormsg'] = 'role ' + getMessage('100007')
+                return JSONResponse(queryset)
+            role = params.get("role")
+            if role not in [1, 2]:
+                queryset['errorcode'] = 100008
+                queryset['errormsg'] = 'role ' + getMessage('100008')
+                return JSONResponse(queryset)
+            if not isinstance(params.get("project_id"), int):
+                queryset['errorcode'] = 100007
+                queryset['errormsg'] = 'project_id ' + getMessage('100007')
+                return JSONResponse(queryset)
+            project_id = params.get("project_id")
+            project_filter = Project.objects.filter(id=project_id, is_deleted=False, is_active=True)
+            if not project_filter:
+                queryset['errorcode'] = 300025
+                queryset['errormsg'] = "项目ID为:{0},{1}".format(project_id, getMessage("300025"))
+                return JSONResponse(queryset)
+            project = project_filter[0]
+            username = params.get("username")
+            if not isinstance(username, list):
+                queryset['errorcode'] = 100007
+                queryset['errormsg'] = 'username ' + getMessage('100007')
+                return JSONResponse(queryset)
+            # check user role
+            members_filter = ProjectMember.objects.filter(project=project, is_deleted=False, is_active=True)
+            members = []
+            if members_filter:
+                members = map(lambda x: x.user, members_filter)
+            if user not in members:
+                queryset['success'] = False
+                queryset['errorcode'] = 300042
+                queryset['errormsg'] = getMessage('300042')
+                return JSONResponse(queryset)
+            member_match = filter(lambda x: x.user.id == user.id, members_filter)
+            member = member_match[0]
+            if member.role == 1:  # 普通用户
+                queryset['success'] = False
+                queryset['errorcode'] = 300042
+                queryset['errormsg'] = getMessage('300042')
+                return JSONResponse(queryset)
+            users_filter = User.objects.filter(username__in=username)
+            if not users_filter:
+                queryset['success'] = False
+                queryset['errorcode'] = 300043
+                queryset['errormsg'] = getMessage('300043')
+                return JSONResponse(queryset)
+            invalid_user = ''
+            if users_filter.count() != len(username):  # check input user is valid
+                valid_users = map(lambda x: x.username, users_filter)
+                for input_user in username:
+                    if input_user not in valid_users:
+                        invalid_user += input_user + ','
+            suc_msg = ''
+            err_msg = ''
+            for i_user in users_filter:
+                if i_user in members:
+                    msg = u"{0} {1} ".format(i_user.username, getMessage("300045"))
+                    print msg
+                    err_msg += i_user.username + ','
+                else:
+                    new_member = ProjectMember()
+                    new_member.project = project
+                    new_member.user = i_user
+                    new_member.role = role
+                    new_member.author = user
+                    new_member.save()
+                    suc_msg += i_user.username + ', '
+            message = ''
+            if suc_msg:
+                message = u"已经成功添加:{0}作为项目:id={1} {2}的{3};".format(suc_msg[:-1], project_id, \
+                                                                   project.project_name, role_dict.get(role))
+            if err_msg:
+                queryset["errormsg"] = message + err_msg[:-1] + getMessage("300045")
+                if invalid_user:
+                    queryset["errormsg"] = message + err_msg[:-1] + getMessage("300045") + ';' + invalid_user[:-1] + getMessage("300043")
+            else:
+                queryset["errormsg"] = message
+                if invalid_user:
+                    queryset["errormsg"] = message + ';' + invalid_user[:-1] + getMessage("300043")
+            return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset['success'] = False
+            queryset['errorcode'] = 300044
+            queryset['errormsg'] = getMessage('300044') + str(ex)
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)
+
+
+# 修改项目成员
+@csrf_exempt
+@interface_check_login
+def update_project_member(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+    role_dict = {1: "普通用户", 2: "管理员", 3: "超级管理员"}
+    if request.method == 'PATCH':
+        try:
+            now = datetime.datetime.now()
+            params = json.loads(request.read())
+            user_info = request.session.get("user", default=None)
+            user = None
+            if user_info:
+                user_id = int(user_info.get("id"))
+                user_filter = User.objects.filter(id=user_id)
+                if user_filter:
+                    user = user_filter[0]
+            if user is None:
+                queryset['success'] = False
+                queryset['errorcode'] = 200003
+                queryset['errormsg'] = getMessage('200003')
+                return JSONResponse(queryset)
+            required_fields = ['member_id', 'role']
+            errmsg = ''
+            for field in required_fields:
+                if field not in params:
+                    errmsg += field + ', '
+            if errmsg:
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
+                return JSONResponse(queryset)
+            if not isinstance(params.get("role"), int):
+                queryset['errorcode'] = 100007
+                queryset['errormsg'] = 'role ' + getMessage('100007')
+                return JSONResponse(queryset)
+            role = params.get("role")
+            if role not in [1, 2]:
+                queryset['errorcode'] = 100008
+                queryset['errormsg'] = 'role ' + getMessage('100008')
+                return JSONResponse(queryset)
+            if not isinstance(params.get("member_id"), int):
+                queryset['errorcode'] = 100007
+                queryset['errormsg'] = 'member_id ' + getMessage('100007')
+                return JSONResponse(queryset)
+            member_id = params.get("member_id")
+            member_filter = ProjectMember.objects.filter(id=member_id, is_deleted=False, is_active=True)
+            if not member_filter:
+                queryset['errorcode'] = 300046
+                queryset['errormsg'] = "成员ID为:{0},{1}".format(member_id, getMessage("300046"))
+                return JSONResponse(queryset)
+            member = member_filter[0]
+            # check user role
+            members_filter = ProjectMember.objects.filter(project=member.project, is_deleted=False, is_active=True)
+            members = []
+            if members_filter:
+                members = map(lambda x: x.user, members_filter)
+            if user not in members:
+                queryset['success'] = False
+                queryset['errorcode'] = 300047
+                queryset['errormsg'] = getMessage('300047')
+                return JSONResponse(queryset)
+            member_match = filter(lambda x: x.user.id == user.id, members_filter)
+            member_operate = member_match[0]
+            if member_operate.role == 1:  # 普通用户
+                queryset['success'] = False
+                queryset['errorcode'] = 300047
+                queryset['errormsg'] = getMessage('300047')
+                return JSONResponse(queryset)
+            if user.id == member.user.id:
+                queryset['success'] = False
+                queryset['errorcode'] = 300048
+                queryset['errormsg'] = getMessage('300048')
+                return JSONResponse(queryset)
+
+            origin_role = member.role
+            if origin_role == role:
+                queryset['success'] = False
+                queryset['errorcode'] = 300050
+                msg = u'member_id={0} {1} 已经是{2},'.format(member_id, member.user.username, role_dict.get(role))
+                queryset['errormsg'] = msg + getMessage('300050')
+                return JSONResponse(queryset)
+            # update member role
+            member.role = role
+            member.modifier = user
+            member.utime = now
+            member.save()
+            queryset["errormsg"] = "Update member_id={0} {3} role {1}-->{2} success." \
+                .format(member_id, role_dict.get(origin_role), role_dict.get(role), member.user.username)
+            return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset['success'] = False
+            queryset['errorcode'] = 300049
+            queryset['errormsg'] = getMessage('300049') + str(ex)
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)
+
+
+# 删除项目成员
+@csrf_exempt
+@interface_check_login
+def delete_project_member(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+    if request.method == 'DELETE':
+        try:
+            now = datetime.datetime.now()
+            params = json.loads(request.read())
+            user_info = request.session.get("user", default=None)
+            user = None
+            if user_info:
+                user_id = int(user_info.get("id"))
+                user_filter = User.objects.filter(id=user_id)
+                if user_filter:
+                    user = user_filter[0]
+            if user is None:
+                queryset['success'] = False
+                queryset['errorcode'] = 200003
+                queryset['errormsg'] = getMessage('200003')
+                return JSONResponse(queryset)
+            required_fields = ['member_id']
+            errmsg = ''
+            for field in required_fields:
+                if field not in params:
+                    errmsg += field + ', '
+            if errmsg:
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
+                return JSONResponse(queryset)
+
+            if not isinstance(params.get("member_id"), int):
+                queryset['errorcode'] = 100007
+                queryset['errormsg'] = 'member_id ' + getMessage('100007')
+                return JSONResponse(queryset)
+            member_id = params.get("member_id")
+            member_filter = ProjectMember.objects.filter(id=member_id, is_deleted=False, is_active=True)
+            if not member_filter:
+                queryset['errorcode'] = 300046
+                queryset['errormsg'] = "成员ID为:{0},{1}".format(member_id, getMessage("300046"))
+                return JSONResponse(queryset)
+            member = member_filter[0]
+            # check user role
+            members_filter = ProjectMember.objects.filter(project=member.project, is_deleted=False, is_active=True)
+            members = []
+            if members_filter:
+                members = map(lambda x: x.user, members_filter)
+            if user not in members:
+                queryset['success'] = False
+                queryset['errorcode'] = 300052
+                queryset['errormsg'] = getMessage('300052')
+                return JSONResponse(queryset)
+            member_match = filter(lambda x: x.user.id == user.id, members_filter)
+            member_operate = member_match[0]
+            if member_operate.role == 1:  # 普通用户
+                queryset['success'] = False
+                queryset['errorcode'] = 300052
+                queryset['errormsg'] = getMessage('300052')
+                return JSONResponse(queryset)
+            if member.role == 3:  # 超级管理员不能被删除
+                queryset['success'] = False
+                queryset['errorcode'] = 300053
+                queryset['errormsg'] = getMessage('300053')
+                return JSONResponse(queryset)
+            # delete the member
+            member.is_deleted = True
+            member.modifier = user
+            member.utime = now
+            member.save()
+            queryset["errormsg"] = "Delete member_id={0} {1} from project_id={2} {3} success." \
+                .format(member_id, member.user.username, member.project.id, member.project.project_name)
+            return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset['success'] = False
+            queryset['errorcode'] = 300054
+            queryset['errormsg'] = getMessage('300054') + str(ex)
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)
+
+
+# mock请求处理
+@csrf_exempt
+def mock_data(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+    if request.method == 'GET':
+        try:
+            callback = ''
+            if 'callback' in request.GET and request.GET['callback'] != '':
+                callback = request.GET['callback'].strip()
+            # print 'request.path:', request.path
+            full_path = request.path
+            if not re.match(r'/mockdata/\d+/\w', full_path):
+                errmsg = u"mock 请求格式错误，请修改后重新提交请求！"
+                return HttpResponse(errmsg)
+            params = full_path.split('/mockdata/')
+            real_param = params[1]
+            first = real_param.find('/')
+            project_id = real_param[:first]
+            url = real_param[first:]
+            if re.search(r'/$', url):
+                url = url[:-1]
+            project_filter = Project.objects.filter(id=project_id, is_deleted=False)
+            if not project_filter:
+                errmsg = u"project_id={0} {1}".format(project_id, getMessage("300051"))
+                return HttpResponse(errmsg)
+            interface_filter = Interface.objects.filter(project=project_filter[0], url=url, is_deleted=False)
+            if not interface_filter:
+                errmsg = u"project_id={0} url={1} {2}".format(project_id, url, getMessage("300029"))
+                return HttpResponse(errmsg)
+            interface = interface_filter[0]
+            if not interface.project.is_active:
+                errmsg = u"project_id={0}  项目未被启用.".format(project_id)
+                return HttpResponse(errmsg)
+            if not interface.is_active:
+                errmsg = u"project_id={0}  api_id={1} api未被启用.".format(project_id, interface.id)
+                return HttpResponse(errmsg)
+            if not interface.mockdata:
+                errmsg = u"api_id={0} mockdata未设置,请设置mockdata后重新提交请求.".format(interface.id, url)
+                return HttpResponse(errmsg)
+            else:
+                content_type = ""
+                for key, value in content_dict.iteritems():
+                    if value == interface.content_type:
+                        content_type = key
+                        break
+                mock = interface.mockdata
+                if callback:
+                    mock = callback + '(' + str(mock) + ');'
+                    # print 'mock:', mock
+                return HttpResponse(mock, content_type=content_type)
+        except BaseException, ex:
+            except_info(ex)
+            errmsg = u"{0}:{1}".format(getMessage("300055"), str(ex))
+            return HttpResponse(errmsg)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)
+
+
+# 查询API接口数据
+@csrf_exempt
+def qry_api_data(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+    if request.method == 'GET':
+        try:
+            errmsg = ''
+            if 'api_id' in request.GET and request.GET['api_id'] != '':
+                api_id = request.GET['api_id']
+            else:
+                errmsg += 'api_id,'
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
+                return JSONResponse(queryset)
+            api_id = int(api_id)
+            interface_filter = Interface.objects.filter(id=api_id, is_deleted=False)
+            if not interface_filter:
+                queryset['success'] = False
+                queryset['errorcode'] = 300029
+                queryset['errormsg'] = getMessage('300029')
+                return JSONResponse(queryset)
+            interface = InterFace(api_id)
+            # queryset["result"] = interface.get_metadata
+            return JSONResponse(interface.get_metadata)
+        except BaseException, ex:
+            except_info(ex)
+            queryset['errorcode'] = 300056
+            queryset['errormsg'] = getMessage('300056') + ':' + str(ex)
             return JSONResponse(queryset)
     else:
         queryset['errorcode'] = 100002

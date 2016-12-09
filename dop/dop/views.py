@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
 from atm.atm_api import login_check
-from atm.models import Team
-from atm.common import except_info
+from atm.models import Project, Team
 
 
 def test(request):
@@ -40,8 +39,11 @@ def projectlist(request):
 
 @login_check
 def apilist(request):
+
+    projectId = request.GET.get('project',0)
     params = {}
     params['title'] = 'API列表'
+    params['projectId'] = projectId
     return render(request, 'atm/apilist.html', params)
 
 
@@ -55,6 +57,14 @@ def index(request):
 @login_check
 def api_edit(request):
     params = {}
+    if 'project' in request.GET:
+        params['project'] = request.GET['project']
+        try:
+            project = Project.objects.filter(id=int(request.GET['project']), is_deleted=False, is_active=True)
+            if project:
+                params['team'] = project[0].team.id
+        except BaseException:
+            params['team'] = None
     params['title'] = 'api编辑'
     return render(request, 'atm/api_edit.html', params)
 

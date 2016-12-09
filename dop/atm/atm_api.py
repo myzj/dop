@@ -10,7 +10,7 @@ from common import except_info
 from dop.errorcode import getMessage
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
-from atm.models import Team, Project, Interface
+from atm.models import Team, Project, Interface, ProjectMember
 
 
 # 用户登录
@@ -278,6 +278,7 @@ def team_name_check(request):
 
 
 # 获取工程列表
+@interface_check_login
 def req_project(request):
     queryset = {'timestamp': int(time.mktime(
         time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
@@ -286,25 +287,36 @@ def req_project(request):
         try:
             team_filter = None
             project_match = None
+            role_dict = {}
+            user_info = request.session.get("user", default=None)
+            user_id = int(user_info.get("id"))
+            user_filter = User.objects.filter(id=user_id)
+            project_member = ProjectMember.objects.filter(is_deleted=False, is_active=True, user=user_filter[0])
+            if not project_member:  # 返回的数据为空，说明没有加入任何项目，因此无法查询自己参与的项目列表
+                queryset['success'] = False
+                queryset['errorcode'] = 300041
+                queryset['errormsg'] = getMessage('300041')
+                return JSONResponse(queryset)
+            for item in project_member:
+                role_dict[item.project.id] = item.role
+            project_match = map(lambda x: x.project, project_member)  # 获取参与的所有的项目对象列表
             if 'team_id' in request.GET and request.GET['team_id'] != '':
                 team_filter = Team.objects.filter(is_deleted=False, is_active=True, id=int(request.GET['team_id']))
                 if team_filter:
-                    project_match = Project.objects.filter(is_deleted=False, is_active=True, team=team_filter[0]).order_by(
-                        '-utime')
+                    project_match = filter(lambda x: x.team.id == team_filter[0].id, project_match)
                 else:
                     queryset['errorcode'] = 300019  # 找不到匹配team id的工程列表
                     queryset['errormsg'] = getMessage('300019')
                     return JSONResponse(queryset)
             # 输入关键词查询
-            else:
-                if 'keyword' in request.GET and request.GET['keyword'] != '':
-                    project_match = Project.objects.filter(is_deleted=False, is_active=True, project_name__icontains=request.GET['keyword']) \
-                        .order_by('-utime')
-                else:
-                    project_match = Project.objects.filter(is_deleted=False, is_active=True).order_by('-utime')
+            if 'keyword' in request.GET and request.GET['keyword'] != '':
+                if project_match:
+                    project_ids = map(lambda x: int(x.id), project_match)
+                    project_match = Project.objects.filter(pk__in=project_ids, is_deleted=False, is_active=True, \
+                                                           project_name__icontains=request.GET['keyword']).order_by('-utime')
             queryset['result']['pageIndex'] = 1
             queryset['result']['pageSize'] = 10
-            queryset['result']['totalCount'] = project_match.count()
+            queryset['result']['totalCount'] = len(project_match)
             queryset['result']['projectList'] = []
             if 'pageSize' in request.GET:
                 queryset['result']['pageSize'] = request.GET['pageSize']
@@ -312,12 +324,12 @@ def req_project(request):
                 queryset['result']['pageIndex'] = request.GET['pageIndex']
             project_pages = paginator.Paginator(project_match, queryset['result']['pageSize'])
             queryset['result']['pageCount'] = project_pages.num_pages
-            if project_match.count() > 0:
+            if len(project_match) > 0:
                 project_page = project_pages.page(queryset['result']['pageIndex'])
                 for project in project_page.object_list:
-                    result = {'project_name': project.project_name, 'project_id': project.id,
-                              'ctime': project.ctime.strftime('%Y-%m-%d %H:%M:%S'), \
-                              'project_pic_url': project.pic_url}
+                    result = {'project_name': project.project_name, 'project_id': project.id,"team": project.team.id, \
+                              'ctime': project.ctime.strftime('%Y-%m-%d %H:%M:%S'), 'host':project.host, 'description':project.description, \
+                              'project_pic_url': project.pic_url, 'role': role_dict.get(int(project.id), 'NULL')}
                     queryset['result']['projectList'].append(result)
                 return JSONResponse(queryset)
             else:
@@ -335,6 +347,7 @@ def req_project(request):
 
 
 # 查询Project名称是否重复
+@interface_check_login
 def project_name_check(request):
     queryset = {'timestamp': int(time.mktime(
         time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
@@ -419,6 +432,14 @@ def add_project(request):
                         new_project.pic_url = params.get('pic_url')
                         new_project.author = user
                         new_project.save()
+                        # 新增成功后需要把ProjectMember表添加一条超级管理员信息
+                        project_member = ProjectMember()
+                        project_member.project = new_project
+                        project_member.role = 3
+                        project_member.author = user
+                        project_member.user = user
+                        project_member.save()
+
                         queryset['success'] = True
                         queryset['errormsg'] = "新增项目成功"
                         return JSONResponse(queryset)
@@ -426,6 +447,84 @@ def add_project(request):
                         queryset['errorcode'] = 300024
                         queryset['errormsg'] = errmsg + getMessage('300024')
                         return JSONResponse(queryset)
+            else:
+                queryset['success'] = False
+                queryset['errorcode'] = 300015
+                queryset['errormsg'] = errmsg + getMessage('300015')
+                return JSONResponse(queryset)
+        except Exception, ex:
+            except_info(ex)
+            queryset['success'] = False
+            queryset['errorcode'] = 300023
+            queryset['errormsg'] = getMessage('300023')
+            return JSONResponse(queryset)
+    else:
+        queryset['success'] = False
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)
+
+
+# 修改项目
+@csrf_exempt
+@interface_check_login
+def edit_project(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+    if request.method == 'POST':
+        try:
+            params = json.loads(request.read())
+            errmsg = ''
+            for field in ['project_name', 'host', 'description', 'team_id', 'project_id']:
+                if field not in params or not params[field]:
+                    errmsg += field + ' '
+            if errmsg:
+                queryset['success'] = False
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + getMessage('100001')
+                return JSONResponse(queryset)
+
+            # 检查当前用户是否已经登录
+            user_info = request.session.get("user", default=None)
+            user_id = int(user_info.get("id"))
+            user_filter = User.objects.filter(id=user_id)
+            user = None
+            if user_filter:
+                project_name = params.get('project_name')
+                team_id = params.get('team_id')
+                # 检查项目名称是否已存在
+                project_filter = Project.objects.filter(project_name=project_name)
+                project_filter_by_id = Project.objects.filter(id=int(params.get('project_id')))
+                if project_filter_by_id.count() == 0:
+                    queryset['errorcode'] = 300051
+                    queryset['errormsg'] = errmsg + getMessage('300051')
+                    return JSONResponse(queryset)
+                if project_filter:
+                    if project_filter[0].id != int(params.get('project_id')):  # 当前的项目名称没有改变，和之前的保持一致
+                        queryset['errorcode'] = 300022
+                        queryset['errormsg'] = errmsg + getMessage('300022')
+                        return JSONResponse(queryset)
+                # 检查相关联的Team是否存在
+                team_filter = Team.objects.filter(is_active=True, is_deleted=False, id=int(team_id))
+                if team_filter:
+                    user = user_filter[0]
+                    update_project = project_filter_by_id[0]
+                    update_project.team = team_filter[0]
+                    update_project.project_name = project_name
+                    update_project.host = params.get('host')
+                    update_project.description = params.get('description')
+                    update_project.pic_url = params.get('pic_url')
+                    update_project.modifier = user
+                    update_project.id = int(params.get('project_id'))
+                    update_project.save()
+                    queryset['success'] = True
+                    queryset['errormsg'] = "项目修改成功"
+                    return JSONResponse(queryset)
+                else:
+                    queryset['errorcode'] = 300024
+                    queryset['errormsg'] = errmsg + getMessage('300024')
+                    return JSONResponse(queryset)
             else:
                 queryset['success'] = False
                 queryset['errorcode'] = 300015
@@ -483,9 +582,9 @@ def req_api_list(request):
             if api_match.count() > 0:
                 api_page = api_pages.page(queryset['result']['pageIndex'])
                 for api in api_page.object_list:
-
-                    result = {'id': api.id, 'interface_name': api.interface_name, 'description': api.description, 'url': api.url, 'method': api.method, \
-                              'content_type': api.content_type, 'remark': api.remark,  \
+                    result = {'id': api.id, 'interface_name': api.interface_name, 'description': api.description, \
+                              'url': api.url, 'method': api.get_method_display(), 'remark': api.remark, \
+                              'content_type': api.get_content_type_display(),  'project_id': api.project.id, \
                               'update_time': api.utime.strftime('%Y-%m-%d %H:%M:%S')}
                     try:
                         result["tags"] = eval(api.tags)
@@ -505,3 +604,53 @@ def req_api_list(request):
         queryset['errorcode'] = 100002
         queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)
+
+
+# 根据字符模糊匹配用户名
+@interface_check_login
+def get_user_by_name(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
+    if request.method == 'GET':
+        try:
+            params = request.GET.dict()
+            required_fields = ["username"]
+            errmsg = ''
+            for field in required_fields:
+                if field not in params or not params[field]:
+                    errmsg += field + ', '
+            if errmsg:
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
+                return JSONResponse(queryset)
+            user_match = User.objects.filter(is_active=True, username__icontains=request.GET['username']).order_by('username')
+            queryset['result']['pageIndex'] = 1
+            queryset['result']['pageSize'] = 10
+            queryset['result']['totalCount'] = user_match.count()
+            queryset['result']['userList'] = []
+            if 'pageSize' in request.GET:
+                queryset['result']['pageSize'] = request.GET['pageSize']
+            if 'pageIndex' in request.GET:
+                queryset['result']['pageIndex'] = request.GET['pageIndex']
+            user_pages = paginator.Paginator(user_match, queryset['result']['pageSize'])
+            if user_match.count() > 0:
+                user_page = user_pages.page(queryset['result']['pageIndex'])
+                for user in user_page.object_list:
+                    result = {'id': user.id, "username": user.username}
+                    queryset['result']['userList'].append(result)
+                return JSONResponse(queryset)
+            else:
+                return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset['errorcode'] = 300021
+            queryset['errormsg'] = getMessage('300021')
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)
+
+
+

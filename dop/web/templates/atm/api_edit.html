@@ -8,21 +8,22 @@
 {% endblock %}
 {% block container %}
     {% include "shared/headerBar.html" %}
+
     <div class="container">
         <div class="edit-top">
             <ol class="breadcrumb">
                 <li>
                     {% if team == null %}
-                        <a href="/projectlist">project</a>
+                        <a href="/projectlist">Project</a>
                     {% else %}
-                        <a href="/projectlist?team={{ team }}">project</a>
+                        <a href="/projectlist?team={{ team }}">Project</a>
                     {% endif %}
                 </li>
                 <li>
                     {% if project == null %}
                         <a href="/apilist">api</a>
                     {% else %}
-                        <a href="/apilist?project={{ project }}">api</a>
+                        <a href="/apilist?project={{ project }}">Api</a>
                     {% endif %}
                 </li>
                 <li class="active" ng-bind="apiName"></li>
@@ -78,7 +79,8 @@
                     <div class="row">
                         <div class="col-xs-2">Description:</div>
                         <div class="col-xs-10">
-                            <textarea style="height:100px !important;" ng-disabled='isEdit' ng-model="ApiData.base.description"
+                            <textarea style="height:100px !important;" ng-disabled='isEdit'
+                                      ng-model="ApiData.base.description"
                                       class="form-control textarea description-text" cols="30" rows="4"></textarea>
                         </div>
                     </div>
@@ -97,10 +99,14 @@
                     <div class="row">
                         <div class="col-xs-2">State:</div>
                         <div class="col-xs-10">
-                            <label><input ng-click="setState(true)" ng-checked="ApiData.base.state" ng-disabled='isEdit'
-                                          type="radio" name="state"/>Enable</label>
-                            <label><input ng-click="setState(false)" ng-checked="!ApiData.base.state" ng-disabled='isEdit'
-                                          type="radio" name="state"/>Disable</label>
+                            <label class="radio-inline">
+                                <input ng-click="setState(true)" ng-checked="ApiData.base.state"
+                                       ng-disabled='isEdit'
+                                       type="radio" name="state"/>&nbsp;Enable</label>
+                            <label class="radio-inline">
+                                <input ng-click="setState(false)"
+                                       ng-checked="!ApiData.base.state" ng-disabled='isEdit'
+                                       type="radio" name="state"/>Disable</label>
                         </div>
                     </div>
                 </div>
@@ -108,7 +114,8 @@
                     <div class="row">
                         <div class="col-xs-2">URL:</div>
                         <div class="col-xs-10">
-                            <input ng-disabled='isEdit' type="text" ng-model="ApiData.request.url" placeholder="请输入路径..."
+                            <input ng-disabled='isEdit' type="text" ng-model="ApiData.request.url"
+                                   placeholder="请输入路径..."
                                    class="form-control text-input">
                         </div>
                     </div>

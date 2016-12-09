@@ -84,6 +84,8 @@ require(['lib/common'],
                                     }
 
                                     $scope.apiName = data.result.base.name;
+                                } else {
+                                    alert(data.errormsg);
                                 }
                             });
                     }

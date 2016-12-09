@@ -96,7 +96,6 @@
 }
 
 .edit-content {
-  padding: 20px 0;
   .row {
     margin-bottom: 10px;
   }
@@ -109,7 +108,7 @@
   .text-input {
     outline: none;
     display: block;
-    width: 98%;
+    width: 99%;
     padding: 5px;
     border-radius: 4px;
     -moz-box-shadow: none;
@@ -125,7 +124,7 @@
   .textarea {
     display: block;
     width: 98%;
-    height: 150px !important;
+    height: 450px !important;
     resize: none;
     outline: none;
   }
@@ -192,7 +191,7 @@
   left: 50%;
   margin: -200px 0 0 -320px;
   border: 1px solid #ccc;
-  width: 650px;
+  width: 850px;
   background: #fff;
 
   .import-box-header {

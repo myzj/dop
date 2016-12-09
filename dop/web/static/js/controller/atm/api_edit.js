@@ -8,13 +8,12 @@ require(['lib/common'],
                 $scope.Request = {};
                 $scope.Response = {};
 
+                $scope.isProjectEdit = false;
 
                 ReloadDate();
                 if ($.url.getParam("project") != null && $.url.getParam("project").length > 0) {
-                    $scope.isProjectEdit = true;
+                    // $scope.isProjectEdit = true;
                     //初始化数据
-                } else {
-                    $scope.isProjectEdit = false;
                 }
                 $scope.head_visible = false;
                 $scope.Response_visible = false;
@@ -281,7 +280,9 @@ require(['lib/common'],
 
                         }
                     });
-                }
+                };
+
+                window.scopeObj = $scope;
             });
             angular.bootstrap(document, ['app']);
         });

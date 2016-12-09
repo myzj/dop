@@ -3,7 +3,7 @@ require(['lib/common', 'lib/jquery.twbsPagination.min'],
         angular.element(document).ready(function () {
             var app = $.getApp();
             app.controller('myDoc', function ($scope, $http) {
-                var pageSize = 10;
+                var pageSize = 50;
                 getTeamDate(1, true);
                 function getTeamDate(index, isInit) {
                     var datainfo = {
@@ -75,12 +75,11 @@ require(['lib/common', 'lib/jquery.twbsPagination.min'],
 
                     try{
                         var json = eval("(" + a + ")");
-                        alert(2);
                     }catch (e){
                         alert("数据格式不正确");
                     }
-                    console.log(json);
-                    json.is_replace = false;
+
+                    json.is_replace = $("input[name='is_replace']:checked").val() === "true";
                     $http({
                         method: 'POST',
                         url: '/api/add/new_api/',

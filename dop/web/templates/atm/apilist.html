@@ -90,19 +90,19 @@
     <div class="import-content">
         <div class="row">
             <div class="col-xs-2">IsReplace:</div>
-            <div class="col-xs-10 IsReplace">
+            <div class="col-xs-10 IsReplace"> &nbsp;
                 <label for="">
-                    <input type="radio" name="is_replace" checked>yes
+                    <input type="radio" value="false" name="is_replace" checked> no
                 </label>
                 <label for="">
-                    <input type="radio" name="is_replace"> no
+                    <input type="radio" value="true" name="is_replace" >yes
                 </label>
             </div>
         </div>
 
         <div class="row">
             <div class="col-xs-2">Date:</div>
-            <div class="col-xs-9">
+            <div class="col-xs-10">
                 <div class="edit-content">
                     <textarea class="textarea" ng-model="text" id="code_data" cols="30" rows="10"></textarea>
                 </div>
@@ -111,13 +111,9 @@
         <div class="row">
             <div class="col-xs-6">
             </div>
-            <div class="col-xs-2">
-                <a class="btn btn-default"  ng-click="format()">Format</a>
-            </div>
-            <div class="col-xs-2">
-                <a class="btn btn-default" id="import-btn" ng-click="import_action()">Import</a>
-            </div>
-            <div class="col-xs-2">
+            <div class="col-xs-6 text-right">
+                <a class="btn btn-default"  ng-click="format()">Format</a>&nbsp;
+                <a class="btn btn-default" id="import-btn" ng-click="import_action()">Import</a>&nbsp;
                 <a class="btn btn-default" id="cancel-btn" ng-click="hide_importDialog()">Close</a>
             </div>
         </div>

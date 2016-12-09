@@ -655,6 +655,8 @@ def add_interface(request):
                     else:  # unlock
                         if is_replace:  # need replace
                             # call modify interface
+                            api_id = check_info['api'].id
+                            data["api_id"] = api_id
                             itf = InterFace(data=data)
                             flag, msg = itf.modify_interface
                             if flag:  # modify success

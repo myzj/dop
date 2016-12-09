@@ -3,7 +3,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 from django.http import HttpResponse
-from models import Interface, MetaData, ErrorCode, Project, LockInfo, ProjectMember, EditHistory
+from models import Interface, MetaData, ErrorCode, Project, LockInfo, ProjectMember, EditHistory, CodeModel
 from django.contrib.auth.models import User
 from common import except_info
 import time
@@ -1600,6 +1600,37 @@ def qry_api_data(request):
             except_info(ex)
             queryset['errorcode'] = 300056
             queryset['errormsg'] = getMessage('300056') + ':' + str(ex)
+            return JSONResponse(queryset)
+    else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)
+
+
+# 查询代码模板
+@csrf_exempt
+def qry_code_model(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': []}
+    if request.method == 'GET':
+        try:
+            code_md_filter = CodeModel.objects.filter(is_deleted=False, is_active=True, parent=None)
+            result = []
+            if code_md_filter:
+                for p_model in code_md_filter:
+                    p_dict = {'id': p_model.id, 'name': p_model.code_name, 'child': []}
+                    child_model_filter = CodeModel.objects.filter(is_deleted=False, is_active=True, parent=p_model)
+                    for child in child_model_filter:
+                        child_dict = {'id': child.id, 'name': child.code_name, 'child': []}
+                        p_dict['child'].append(child_dict)
+                    result.append(p_dict)
+                queryset['result'] = result
+            return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset['errorcode'] = 300057
+            queryset['errormsg'] = getMessage('300057') + ':' + str(ex)
             return JSONResponse(queryset)
     else:
         queryset['errorcode'] = 100002

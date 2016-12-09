@@ -62,6 +62,7 @@ CONSTANT = {
     "300054": ["Delete project member throw exception", u"删除项目成员出现异常"],
     "300055": ["Mock request throw exception", u"mock请求出现异常"],
     "300056": ["Query interface data throw exception", u"查询API接口数据出现异常"],
+    "300057": ["Query code model throw exception", u"查询代码模板出现异常"],
 
 
 }

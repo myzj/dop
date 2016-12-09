@@ -8,7 +8,7 @@ require(['lib/common'],
                 $scope.Request = {};
                 $scope.Response = {};
 
-                $scope.isProjectEdit = false;
+                $scope.isProjectEdit = true;
 
                 ReloadDate();
                 if ($.url.getParam("project") != null && $.url.getParam("project").length > 0) {
@@ -36,10 +36,15 @@ require(['lib/common'],
                         $http.get('/api/qry/api_detail?api_id=' + datainfo.api_id + '&is_modify=' + datainfo.is_modify)
                             .success(function (data) {
 
-
-                                $scope.isEdit = true;
-
                                 if (data.errorcode == 0) {
+
+                                    if(data.is_lock_user){
+                                        $scope.isEdit = false;
+                                    }else{
+                                        $scope.isEdit = true;
+                                    }
+
+
                                     var ApiDate = data.result;
                                     $scope.ApiDate = data.result
                                     if (!ApiDate.base) {
@@ -214,7 +219,7 @@ require(['lib/common'],
 
                 //取消编辑
                 $scope.cancelEdit = function () {
-                    $scope.isEdit = true;
+                    ReloadDate(false);
                 };
 
                 $scope.enterTag = function (e) {
@@ -273,13 +278,16 @@ require(['lib/common'],
                             item: [upData.Arryitem]
                         }
                     }).success(function (data) {
-                        if (data.errorcode == 0) {
 
+                        alert(data.errormsg);
+
+                        if (data.errorcode == 0) {
+                            ReloadDate(false);
                         }
+
                     });
                 };
 
-                window.scopeObj = $scope;
             });
             angular.bootstrap(document, ['app']);
         });

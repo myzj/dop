@@ -95,7 +95,12 @@
   }
 }
 
+.api-edit-content{
+  margin-top:10px;
+}
+
 .edit-content {
+
   .row {
     margin-bottom: 10px;
   }
@@ -108,7 +113,7 @@
   .text-input {
     outline: none;
     display: block;
-    width: 99%;
+    width: 98%;
     padding: 5px;
     border-radius: 4px;
     -moz-box-shadow: none;
@@ -134,8 +139,12 @@
   }
 }
 
+.input-search{
+  width:250px;
+}
+
 .req-content {
-  width: 90%;
+  width: 94%;
   border: 1px solid #cccccc;
   border-radius: 5px;
   margin: 20px auto;

@@ -191,3 +191,24 @@ class EditHistory(models.Model):
         verbose_name = u"修改记录"
         verbose_name_plural = verbose_name
         db_table = "edithistory"
+
+
+# 代码模板
+class CodeModel(models.Model):
+    code_name = models.CharField(verbose_name=u"模板名称", max_length=200, null=True, blank=True)
+    description = models.TextField(verbose_name=u"模板描述", null=True, blank=True)
+    parent = models.ForeignKey('self', verbose_name=u"父模板", related_name=u"codemodel_parent", null=True, blank=True)
+    author = models.ForeignKey(User, verbose_name=u"创建人", related_name=u"codemodel_author", null=True, blank=True)
+    modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"codemodel_modifier", null=True, blank=True)
+    is_active = models.BooleanField(verbose_name=u"是否启用", default=True)
+    is_deleted = models.BooleanField(verbose_name=u"是否已删除", default=False)
+    ctime = models.DateTimeField(verbose_name=u"创建时间", auto_now_add=True)
+    utime = models.DateTimeField(verbose_name=u"更新时间", auto_now=True)
+
+    def __unicode__(self):
+        return u'id={0}  {1}'.format(self.id, self.code_name)
+
+    class Meta:
+        verbose_name = u"代码模板"
+        verbose_name_plural = verbose_name
+        db_table = "codemodel"

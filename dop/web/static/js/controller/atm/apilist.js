@@ -62,7 +62,7 @@ require(['lib/common', 'lib/jquery.twbsPagination.min'],
 
                         });
                 };
-
+                $scope.copy_dialog = false;
                 $scope.show_importDialo = function () {
                     $(".import-dialog").show();
                 };
@@ -124,6 +124,22 @@ require(['lib/common', 'lib/jquery.twbsPagination.min'],
 
                 }
 
+                $scope.close_dialog = function(){
+                    $("#copy_success").hide();
+                    $scope.copy_dialog = false;
+                };
+
+                $scope.open_copy_dialog = function(id, url){
+                    $scope.copy_success = false;
+                    $scope.copy_url = "http://" + window.location.host + "/mockdata/" +  id + url;
+                    $scope.copy_dialog = true;
+                    var client = new ZeroClipboard(document.getElementById("copy_btn"));
+                    client.on( "ready", function() {
+                        client.on("aftercopy", function () {
+                            $("#copy_success").html("复制成功").show();
+                        });
+                    });
+                };
             });
             angular.bootstrap(document, ['app']);
         });

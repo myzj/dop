@@ -511,12 +511,12 @@ img {
 }
 
 .content-box{
-  margin: 0 50px 0;
+  margin: 0 15px 0;
 }
 
 
 .container-content{
-  margin: 0 50px 0;
+  margin: 0 15px 0;
   background: #f1f1f1;
   .api-top{
     border:1px solid #ccc;
@@ -534,6 +534,7 @@ img {
 .url-box{
   width: 410px;
   background: #fff;
+  position: relative;
   h3{
     background: #e9e9e9;
     padding: 5px 0 5px 10px;
@@ -541,7 +542,7 @@ img {
     border-bottom: 1px solid #ccc;
   }
   .input-group{
-    padding:20px 10px;
+    padding:30px 10px;
     border-bottom: 1px solid #ccc;
   }
   .close-btns{
@@ -564,5 +565,20 @@ img {
     border-radius: 4px;
     float: right;
     margin: 0 10px 10px 0;
+  }
+}
+
+
+#copy_success{
+  color: rgb(255, 185, 69);
+  display: none;
+  position: absolute;
+  top: 100px;
+  right: 20px;
+}
+
+.url-copy{
+  h3{
+    margin-bottom: 0;
   }
 }

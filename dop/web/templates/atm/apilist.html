@@ -13,15 +13,11 @@
 <div class="container-content">
     <div class="api-top">
         <div class="row">
-            <div class="col-xs-8 text-left">APIS</div>
+            <div class="col-xs-9 text-left">APIS</div>
             <div class="col-xs-1"><a role="menuitem" class="btn btn-primary" tabindex="-1" href="/api_edit?project={{ projectId }}">+Add</a></div>
             <div class="col-xs-2">
                 <div class="dropdown">
-                    <button type="button" class="btn dropdown-toggle" id="dropdownMenu1"
-                            data-toggle="dropdown">
-                        More
-                        <span class="caret"></span>
-                    </button>
+                    <button type="button" class="btn dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">More<span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
                         <li role="presentation">
                             <a id="import-action" href="javascript:;" ng-click="show_importDialo()">+Import</a>
@@ -36,6 +32,20 @@
             <thead>
             <tr>
                 <th>#</th>
+                <th>
+                    <div class="dropdown">
+                      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                        Dropdown
+                        <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Another action</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
+                      </ul>
+                    </div>
+                </th>
                 <th>Operation</th>
                 <th>Name</th>
                 <th>Path</th>
@@ -47,6 +57,9 @@
             <tbody>
             <tr ng-repeat="List in apiArr">
                 <td ng-bind="$index+1">1</td>
+                <td>
+
+                </td>
                 <td>
                     <a href="/api_edit?apiid=@{List.id}@&project=@{List.project_id}@">View</a>|
                     <a href="javascript:;"  ng-click="open_copy_dialog(List.id, List.url)">Mock</a>|
@@ -78,45 +91,44 @@
         <div id="pages"><ul id="pagination" class="pagination-sm"></ul></div>
     </div>
 </div>
-<div class="import-box-lay import-dialog"></div>
-<div class="import-box import-dialog">
-    <div class="import-box-header">
-        <span>Import</span>
-    </div>
-    <div class="import-content">
-        <div class="row">
-            <div class="col-xs-2">IsReplace:</div>
-            <div class="col-xs-10 IsReplace"> &nbsp;
-                <label for="">
-                    <input type="radio" value="false" name="is_replace" checked> no
-                </label>
-                <label for="">
-                    <input type="radio" value="true" name="is_replace" >yes
-                </label>
-            </div>
+<div class="dialog ng-hide" ng-show="import_box">
+    <div class="import-box import-dialog">
+        <div class="import-box-header">
+            <span>Import</span>
         </div>
+        <div class="import-content">
+            <div class="row">
+                <div class="col-xs-2">IsReplace:</div>
+                <div class="col-xs-10 IsReplace"> &nbsp;
+                    <label for="">
+                        <input type="radio" value="false" name="is_replace" checked> no
+                    </label>
+                    <label for="">
+                        <input type="radio" value="true" name="is_replace" >yes
+                    </label>
+                </div>
+            </div>
 
-        <div class="row">
-            <div class="col-xs-2">Date:</div>
-            <div class="col-xs-10">
-                <div class="edit-content">
-                    <textarea class="textarea" ng-model="text" id="code_data" cols="30" rows="10"></textarea>
+            <div class="row">
+                <div class="col-xs-2">Date:</div>
+                <div class="col-xs-10">
+                    <div class="edit-content">
+                        <textarea class="textarea" ng-model="text" id="code_data" cols="30" rows="10"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                </div>
+                <div class="col-xs-6 text-right">
+                    <a class="btn btn-default"  ng-click="format()">Format</a>&nbsp;
+                    <a class="btn btn-default" id="import-btn" ng-click="import_action()">Import</a>&nbsp;
+                    <a class="btn btn-default" id="cancel-btn" ng-click="hide_importDialog()">Close</a>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-xs-6">
-            </div>
-            <div class="col-xs-6 text-right">
-                <a class="btn btn-default"  ng-click="format()">Format</a>&nbsp;
-                <a class="btn btn-default" id="import-btn" ng-click="import_action()">Import</a>&nbsp;
-                <a class="btn btn-default" id="cancel-btn" ng-click="hide_importDialog()">Close</a>
-            </div>
-        </div>
-
     </div>
 </div>
-
 <div class="dialog url-copy ng-hide"  ng-show="copy_dialog">
     <div class="url-box">
         <h3>Mock</h3>

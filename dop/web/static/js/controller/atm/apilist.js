@@ -3,7 +3,7 @@ require(['lib/common', 'lib/jquery.twbsPagination.min'],
         angular.element(document).ready(function () {
             var app = $.getApp();
             app.controller('myDoc', function ($scope, $http) {
-                var pageSize = 50;
+                var pageSize = 10;
                 getTeamDate(1, true);
                 function getTeamDate(index, isInit) {
                     var datainfo = {
@@ -64,7 +64,7 @@ require(['lib/common', 'lib/jquery.twbsPagination.min'],
                 };
                 $scope.copy_dialog = false;
                 $scope.show_importDialo = function () {
-                    $(".import-dialog").show();
+                    $scope.import_box = true
                 };
                 $scope.import_action = function () {
 
@@ -94,7 +94,7 @@ require(['lib/common', 'lib/jquery.twbsPagination.min'],
 
                 $scope.hide_importDialog = function () {
                     $scope.text = "";
-                    $(".import-dialog").hide();
+                    $scope.import_box = false;
                 };
                 $scope.format = function () {
                     beautify();

@@ -35,8 +35,8 @@
         <table class="table">
             <thead>
             <tr>
-                <th>序号</th>
-                <th>操作</th>
+                <th>#</th>
+                <th>Operation</th>
                 <th>Name</th>
                 <th>Path</th>
                 <th>Method</th>
@@ -46,7 +46,7 @@
             </thead>
             <tbody>
             <tr ng-repeat="List in apiArr">
-                <td>@{List.id}@</td>
+                <td ng-bind="$index+1">1</td>
                 <td>
                     <a href="/api_edit?apiid=@{List.id}@&project=@{List.project_id}@">View</a>|
                     <a href="javascript:;"  ng-click="open_copy_dialog(List.id, List.url)">Mock</a>|

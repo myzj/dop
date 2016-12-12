@@ -119,6 +119,23 @@
     </div>
 </div>
 
+<div class="dialog url-copy" >
+    <div class="url-box">
+        <h3>Mock</h3>
+        <div class="input-group">
+          <span class="input-group-addon">URL</span>
+          <input type="text" class="form-control" ng-model="copy-url">
+          <span class="input-group-addon">Copy</span>
+        </div>
+        <div class="close-btns">
+            <a href="javascript:;" class="close-addon" ng-click="close-dialog()">Close</a>
+        </div>
+    </div>
+</div>
+
+
+
+
 
 <script type="text/javascript">
     require(['{% static "js/config.js" %}?v={{config.v}}'], function () {

@@ -6,17 +6,17 @@
 
 {% block container %}
     {% include "shared/headerBar.html" %}
-    <div class="content-box teamListyle">
+    <div class="container-content teamListyle">
         <div class="container">
-            <div class="panel panel-default">
-              <div class="panel-body">
-                Team
-              </div>
+            <div class="api-top">
+                <div class="row text-left">
+                    <div class="col-xs-9">Team</div>
+                </div>
             </div>
             <p>{{ msg }}</p>
 
             {#projectlist?team=123#}
-            <div class="edit-main team-list">
+            <div class="edit-main api-body team-list">
                 <ul>
 
                     {%if isHideAdd != 1%}
@@ -34,7 +34,7 @@
                 <div class="loadTips">
                     <p ng-show="isLast">下拉加载下一页....</p>
 
-                    <p ng-hide="isLast">列表已加载完....</p>
+                    <p ng-hide="isLast">列表已加载完</p>
                 </div>
                 {%if isHideAdd != 1%}
                 <div class="dialog ng-hide" ng-show="isDialogShow">

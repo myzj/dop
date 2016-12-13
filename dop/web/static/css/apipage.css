@@ -1,91 +1,45 @@
 /* line 2, ../sass/apipage.scss */
 .dropdown {
+  display: inline-block;
   position: relative;
+  margin: 0 80px 0 10px;
 }
 
-/* line 6, ../sass/apipage.scss */
-.api-top {
-  padding: 5px 0;
-}
-
-/* line 11, ../sass/apipage.scss */
-.row {
-  margin: 0;
-}
-
-/* line 15, ../sass/apipage.scss */
-.api-body {
-  background: #fff;
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
-}
-/* line 20, ../sass/apipage.scss */
-.api-body .tags span {
-  margin: 0 3px;
-  background-color: #f0ad4e;
-  display: inline;
-  padding: .2em .6em .3em;
-  font-size: 75%;
-  font-weight: 700;
-  line-height: 1;
-  color: #fff;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: baseline;
-  border-radius: .25em;
-}
-/* line 35, ../sass/apipage.scss */
-.api-body .table {
-  margin-bottom: 0;
-}
-/* line 38, ../sass/apipage.scss */
-.api-body .table tr th {
-  text-align: center;
-}
-/* line 43, ../sass/apipage.scss */
-.api-body .page {
-  border-top: 1px solid #ccc;
-}
-/* line 46, ../sass/apipage.scss */
-.api-body .pagination {
-  margin: 5px auto;
-}
-
-/* line 51, ../sass/apipage.scss */
+/* line 9, ../sass/apipage.scss */
 .edit-top {
   overflow: hidden;
 }
-/* line 53, ../sass/apipage.scss */
+/* line 11, ../sass/apipage.scss */
 .edit-top .breadcrumb {
   float: left;
   margin-bottom: 0;
   background: none;
 }
-/* line 58, ../sass/apipage.scss */
+/* line 16, ../sass/apipage.scss */
 .edit-top:after {
   content: " ";
   overflow: hidden;
 }
-/* line 62, ../sass/apipage.scss */
+/* line 20, ../sass/apipage.scss */
 .edit-top .edit-btns {
   padding: 8px 15px;
   float: right;
 }
 
-/* line 68, ../sass/apipage.scss */
+/* line 26, ../sass/apipage.scss */
 .edit-body {
   padding: 15px 0;
   background: #fff;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
 }
-/* line 74, ../sass/apipage.scss */
+/* line 32, ../sass/apipage.scss */
 .edit-body .tab ul {
   overflow: hidden;
   width: 96%;
   margin: 0 auto;
 }
-/* line 79, ../sass/apipage.scss */
+/* line 37, ../sass/apipage.scss */
 .edit-body .tab li {
   cursor: pointer;
   float: left;
@@ -99,29 +53,29 @@
   background: #ccc;
   margin: 0 1%;
 }
-/* line 92, ../sass/apipage.scss */
+/* line 50, ../sass/apipage.scss */
 .edit-body .tab li.active {
   background: #428bca;
 }
 
-/* line 98, ../sass/apipage.scss */
+/* line 56, ../sass/apipage.scss */
 .api-edit-content {
   margin-top: 10px;
 }
 
-/* line 104, ../sass/apipage.scss */
+/* line 62, ../sass/apipage.scss */
 .edit-content .row {
   margin-bottom: 10px;
 }
-/* line 107, ../sass/apipage.scss */
+/* line 65, ../sass/apipage.scss */
 .edit-content .col-xs-2 {
   text-align: right;
 }
-/* line 110, ../sass/apipage.scss */
+/* line 68, ../sass/apipage.scss */
 .edit-content .col-xs-10 {
   text-align: left;
 }
-/* line 113, ../sass/apipage.scss */
+/* line 71, ../sass/apipage.scss */
 .edit-content .text-input {
   outline: none;
   display: block;
@@ -134,11 +88,11 @@
   transition: all 0s;
   -ms-transition: all .0s;
 }
-/* line 126, ../sass/apipage.scss */
+/* line 84, ../sass/apipage.scss */
 .edit-content .text-input:active {
   padding: 5px;
 }
-/* line 129, ../sass/apipage.scss */
+/* line 87, ../sass/apipage.scss */
 .edit-content .textarea {
   display: block;
   width: 98%;
@@ -146,22 +100,22 @@
   resize: none;
   outline: none;
 }
-/* line 137, ../sass/apipage.scss */
+/* line 95, ../sass/apipage.scss */
 .edit-content .select-width {
   width: 150px;
 }
 
-/* line 142, ../sass/apipage.scss */
+/* line 100, ../sass/apipage.scss */
 .input-search {
   width: 250px !important;
 }
 
-/* line 146, ../sass/apipage.scss */
+/* line 104, ../sass/apipage.scss */
 .description-text {
   height: 100px;
 }
 
-/* line 150, ../sass/apipage.scss */
+/* line 108, ../sass/apipage.scss */
 .req-content {
   width: 94%;
   border: 1px solid #cccccc;
@@ -170,7 +124,7 @@
   background: #f1f1f1;
   padding: 0;
 }
-/* line 157, ../sass/apipage.scss */
+/* line 115, ../sass/apipage.scss */
 .req-content .add-btn {
   background: #428bca;
   padding: 4px 10px;
@@ -178,12 +132,12 @@
   border-radius: 5px;
   cursor: pointer;
 }
-/* line 164, ../sass/apipage.scss */
+/* line 122, ../sass/apipage.scss */
 .req-content .row {
   margin: 0;
 }
 
-/* line 174, ../sass/apipage.scss */
+/* line 132, ../sass/apipage.scss */
 .tab-type select {
   width: 80px !important;
   padding: 4px 6px !important;
@@ -191,12 +145,12 @@
   height: 30px !important;
 }
 
-/* line 183, ../sass/apipage.scss */
+/* line 141, ../sass/apipage.scss */
 .tab-def input, .tab-exmple input, .tab-dec input {
   width: 100px !important;
 }
 
-/* line 188, ../sass/apipage.scss */
+/* line 146, ../sass/apipage.scss */
 .import-box-lay {
   display: none;
   position: fixed;
@@ -208,50 +162,50 @@
   background: rgba(0, 0, 0, 0.4);
 }
 
-/* line 199, ../sass/apipage.scss */
+/* line 157, ../sass/apipage.scss */
 .import-box {
   width: 850px;
   background: #fff;
 }
-/* line 203, ../sass/apipage.scss */
+/* line 161, ../sass/apipage.scss */
 .import-box .import-box-header {
   text-align: left;
   height: 40px;
   line-height: 40px;
   background: #cccccc;
 }
-/* line 208, ../sass/apipage.scss */
+/* line 166, ../sass/apipage.scss */
 .import-box .import-box-header span {
   margin-left: 30px;
   color: #666;
 }
-/* line 213, ../sass/apipage.scss */
+/* line 171, ../sass/apipage.scss */
 .import-box .IsReplace {
   text-align: left !important;
 }
-/* line 216, ../sass/apipage.scss */
+/* line 174, ../sass/apipage.scss */
 .import-box .row {
   margin-bottom: 10px;
 }
-/* line 219, ../sass/apipage.scss */
+/* line 177, ../sass/apipage.scss */
 .import-box .import-content {
   margin-top: 20px;
 }
-/* line 222, ../sass/apipage.scss */
+/* line 180, ../sass/apipage.scss */
 .import-box .text-input {
   resize: none;
   overflow-y: auto;
   height: 200px !important;
 }
 
-/* line 229, ../sass/apipage.scss */
+/* line 187, ../sass/apipage.scss */
 .bulkEdit textarea {
   width: 96%;
   margin-top: 15px;
   min-height: 200px;
 }
 
-/* line 237, ../sass/apipage.scss */
+/* line 195, ../sass/apipage.scss */
 .TagsTxt span {
   padding: 6px 12px;
   margin: 0 8px 0 0 !important;
@@ -260,12 +214,12 @@
   font-size: 12px;
   font-weight: 100;
 }
-/* line 245, ../sass/apipage.scss */
+/* line 203, ../sass/apipage.scss */
 .TagsTxt input {
   padding: 2px 6px !important;
   height: 24px !important;
 }
-/* line 249, ../sass/apipage.scss */
+/* line 207, ../sass/apipage.scss */
 .TagsTxt em.tips {
   font-style: normal;
   font-size: 12px;

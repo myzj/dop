@@ -214,17 +214,17 @@
 
 .code-box {
   border-radius: 5px;
-  height: 550px;
   overflow: hidden;
   background: #fff;
   position: relative;
+  width: 700px;
   .code-type {
     margin: 10px 20px;
     text-align: left;
   }
   .code-content {
     pre {
-      height: 400px;
+      max-height: 400px;
       margin: 0 20px 20px;
       overflow-y: scroll;
       text-align: left;
@@ -232,6 +232,7 @@
   }
   .code-action {
     text-align: right;
+    margin-bottom: 15px;
     a {
       margin-right: 20px;
     }
@@ -253,10 +254,7 @@
   vertical-align: middle;
   width: 200px;
   position: relative;
-  .code-selected {
-    cursor: pointer;
-    position: relative;
-    i {
+  i {
       position: absolute;
       width: 0;
       height: 0;
@@ -266,6 +264,10 @@
       top: 13px;
       right: 10px;
     }
+  .code-selected {
+    cursor: pointer;
+    position: relative;
+
   }
   .code-select-tips{
     position: absolute;
@@ -289,4 +291,8 @@
         background: #3071a9;
       }
   }
+}
+
+.toolbar-item{
+  display: none !important;
 }

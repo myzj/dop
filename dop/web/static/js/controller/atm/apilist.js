@@ -1,4 +1,4 @@
-require(['lib/common', 'lib/jquery.twbsPagination.min'],
+require(['lib/common', 'lib/jquery.twbsPagination.min', 'lib/prism'],
     function () {
         angular.element(document).ready(function () {
             var app = $.getApp();
@@ -97,11 +97,14 @@ require(['lib/common', 'lib/jquery.twbsPagination.min'],
                     $scope.import_box = false;
                 };
                 $scope.format = function () {
-                    beautify();
-                };
-                function beautify() {
                     var source = $("#code_data").val();
-
+                    beautify(source, function(val){
+                        $("#code_data").val(val);
+                    });
+                };
+                function beautify(txt, callback) {
+                    console.log(1111);
+                    var source = txt;
                     var opts = {
                         "indent_size": "3",
                         "indent_char": " ",
@@ -117,12 +120,9 @@ require(['lib/common', 'lib/jquery.twbsPagination.min'],
                         "end_with_newline": false,
                         "wrap_line_length": "0"
                     };
-
                     var formated = js_beautify(source, opts);
-
-                    $("#code_data").val(formated);
-
-                }
+                    callback(formated)
+                };
 
                 $scope.close_dialog = function () {
                     $("#copy_success").hide();

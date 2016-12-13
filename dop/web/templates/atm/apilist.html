@@ -1,9 +1,13 @@
 {% extends "shared/base.html" %}
 {% load staticfiles %}
+{% block body_attributes %}
+    ng-click="document_click()"
+{% endblock %}
 {% block head %}
 <link rel="stylesheet" href="{% static "css/main.css" %}?v={{ config.v }}">
 <link rel="stylesheet" href="{% static "css/apipage.css" %}?v={{ config.v }}">
 <link rel="stylesheet" href="{% static "css/default.min.css" %}?v={{ config.v }}">
+<link rel="stylesheet" href="{% static "css/prism.css" %}?v={{ config.v }}">
 <link rel="stylesheet" href="{% static "css/monokai-sublime.css" %}?v={{ config.v }}">
 <script src="{% static 'js/lib/beautify.js' %}?v={{ config.v }}"></script>
 <script src="{% static 'js/lib/ZeroClipboard.js' %}?v={{ config.v }}"></script>
@@ -148,65 +152,31 @@
                 </select>-->
                 <div class="code-type-select">
                     <input class="code-selected form-control" ng-model="code_selected.name" ng-click="open_code_tips()"/>
+                    <i></i>
                     <ul class="code-select-tips ng-hide" ng-show="code_select_tips">
                         <li ng-repeat="list in code_type_list" data-id="list.id" ng-click="chose_code_type(list.id)">
                             <span ng-if="list.type==3">&nbsp;&nbsp;@{list.name}@</span>
-                            <span ng-if="list.type<3">@{list.name}@</span>
+                            <span ng-if="list.type<3">&nbsp;@{list.name}@</span>
                         </li>
                     </ul>
                 </div>
             </div>
-            <div class="code-view">
-                <pre id="code-content-area">
-                # 用户登录
-                def req_login(request):
-                    queryset = {'timestamp': int(time.mktime(
-                        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
-                        'success': False, 'errorcode': 0, 'errormsg': ''}
-                    if request.method == "GET":
-                        try:
-                            params = request.GET.dict()
-                            required_fields = ["username", "password"]
-                            errmsg = ''
-                            for field in required_fields:
-                                if field not in params or not params[field]:
-                                    errmsg += field + ', '
-                            if errmsg:
-                                queryset['errorcode'] = 100001
-                                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
-                                return JSONResponse(queryset)
-                            username = params['username']
-                            password = params['password']
-                            user = authenticate(username=username, password=password)
-                            if user is not None:
-                                if user.is_active:
-                                    # 写入session登录到主页
-                                    user_info = {'username': user.username, 'id': user.id}
-                                    request.session["user"] = user_info
-                                    queryset['success'] = True
-                                else:
-                                    queryset['errorcode'] = 200001
-                                    queryset['errormsg'] = getMessage("200001")
-                                return JSONResponse(queryset)
-                            else:
-                                user_filter = User.objects.filter(username=username)
-                                if not user_filter:
-                                    queryset['errorcode'] = 200003
-                                    queryset['errormsg'] = getMessage("200003")
-                                else:
-                                    queryset['errorcode'] = 200002
-                                    queryset['errormsg'] = getMessage("200002")
-                                return JSONResponse(queryset)
-                        except BaseException, ex:
-                            except_info(ex)
-                            queryset['errorcode'] = 100006
-                            queryset['errormsg'] = str(ex) + ' ' + getMessage('100006')
-                            return JSONResponse(queryset)
-                    else:
-                        queryset['errorcode'] = 100002
-                        queryset['errormsg'] = getMessage('100002')
-                        return JSONResponse(queryset)
-
+            <div class="code-view" id="code_view">
+                <pre>
+                    <code id="code-content-area" class="language-python line-numbers code-toolbar">
+                $scope.close_code_dialog = function () {
+                    $("#copy_code_success").hide();
+                    $scope.code_dialog_show = false;
+                };
+                $scope.document_click = function(){
+                    var target = event.target;
+                    if ($(target).isChildAndSelfOf(".code-selected")) {
+                        $scope.code_select_tips = true;
+                    }else{
+                        $scope.code_select_tips = false;
+                    }
+                };
+                    </code>
                 </pre>
             </div>
         </div>

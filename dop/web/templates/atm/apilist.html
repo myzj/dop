@@ -10,6 +10,7 @@
 {%endblock%}
 {% block container %}
 {% include "shared/headerBar.html" %}
+
 <div class="container-content">
     <div class="api-top">
         <div class="row">
@@ -33,18 +34,7 @@
             <tr>
                 <th>#</th>
                 <th>
-                    <div class="dropdown">
-                      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
-                        Dropdown
-                        <span class="caret"></span>
-                      </button>
-                      <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Another action</a></li>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
-                      </ul>
-                    </div>
+                    Code AndroidDTO
                 </th>
                 <th>Operation</th>
                 <th>Name</th>
@@ -58,7 +48,7 @@
             <tr ng-repeat="List in apiArr">
                 <td ng-bind="$index+1">1</td>
                 <td>
-
+                    <a href="javascript:;" ng-click="code_view(List.id)">CodeView</a>
                 </td>
                 <td>
                     <a href="/api_edit?apiid=@{List.id}@&project=@{List.project_id}@">View</a>|
@@ -144,6 +134,89 @@
     </div>
 </div>
 
+
+
+<div class="dialog ng-hide" ng-show="code_dialog_show">
+    <div class="code-box">
+        <h3>
+            View Code
+        </h3>
+        <div class="code-content">
+            <div class="code-type">
+                <span>Template:</span>
+                <!--<select name="" id="" class="form-control" ng-options="list.name for list in code_type_list" ng-model="code_t_list_selected" style="width: 150px; display: inline-block;">
+                </select>-->
+                <div class="code-type-select">
+                    <input class="code-selected form-control" ng-model="code_selected.name" ng-click="open_code_tips()"/>
+                    <ul class="code-select-tips ng-hide" ng-show="code_select_tips">
+                        <li ng-repeat="list in code_type_list" data-id="list.id" ng-click="chose_code_type(list.id)">
+                            <span ng-if="list.type==3">&nbsp;&nbsp;@{list.name}@</span>
+                            <span ng-if="list.type<3">@{list.name}@</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="code-view">
+                <pre id="code-content-area">
+                # 用户登录
+                def req_login(request):
+                    queryset = {'timestamp': int(time.mktime(
+                        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+                        'success': False, 'errorcode': 0, 'errormsg': ''}
+                    if request.method == "GET":
+                        try:
+                            params = request.GET.dict()
+                            required_fields = ["username", "password"]
+                            errmsg = ''
+                            for field in required_fields:
+                                if field not in params or not params[field]:
+                                    errmsg += field + ', '
+                            if errmsg:
+                                queryset['errorcode'] = 100001
+                                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
+                                return JSONResponse(queryset)
+                            username = params['username']
+                            password = params['password']
+                            user = authenticate(username=username, password=password)
+                            if user is not None:
+                                if user.is_active:
+                                    # 写入session登录到主页
+                                    user_info = {'username': user.username, 'id': user.id}
+                                    request.session["user"] = user_info
+                                    queryset['success'] = True
+                                else:
+                                    queryset['errorcode'] = 200001
+                                    queryset['errormsg'] = getMessage("200001")
+                                return JSONResponse(queryset)
+                            else:
+                                user_filter = User.objects.filter(username=username)
+                                if not user_filter:
+                                    queryset['errorcode'] = 200003
+                                    queryset['errormsg'] = getMessage("200003")
+                                else:
+                                    queryset['errorcode'] = 200002
+                                    queryset['errormsg'] = getMessage("200002")
+                                return JSONResponse(queryset)
+                        except BaseException, ex:
+                            except_info(ex)
+                            queryset['errorcode'] = 100006
+                            queryset['errormsg'] = str(ex) + ' ' + getMessage('100006')
+                            return JSONResponse(queryset)
+                    else:
+                        queryset['errorcode'] = 100002
+                        queryset['errormsg'] = getMessage('100002')
+                        return JSONResponse(queryset)
+
+                </pre>
+            </div>
+        </div>
+        <div id="copy_code_success"></div>
+        <div class="code-action">
+            <a href="javascript:;" class="copy-btn btn btn-primary" data-clipboard-action="copy" data-clipboard-target="code-content-area" id="copy_code_btn" >Copy</a>
+            <a href="javascript:;" class="close-btn  btn" ng-click="close_code_dialog()">Close</a>
+        </div>
+    </div>
+</div>
 
 
 <script type="text/javascript">

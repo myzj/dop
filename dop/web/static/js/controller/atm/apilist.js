@@ -103,7 +103,6 @@ require(['lib/common', 'lib/jquery.twbsPagination.min', 'lib/prism'],
                     });
                 };
                 function beautify(txt, callback) {
-                    console.log(1111);
                     var source = txt;
                     var opts = {
                         "indent_size": "3",
@@ -160,11 +159,9 @@ require(['lib/common', 'lib/jquery.twbsPagination.min', 'lib/prism'],
 
                 //查看生成代码
                 $scope.code_view = function (id) {
-                    console.log(id);
                     $scope.code_dialog_show = true;
                     $http.get('/api/qry/code_model')
                         .success(function (data) {
-                            console.log("data=", data);
                             var dataList = [];
                             $scope.code_t_list_selected = data.result[0];
                             if (data.errorcode == 0) {
@@ -196,7 +193,6 @@ require(['lib/common', 'lib/jquery.twbsPagination.min', 'lib/prism'],
                                         );
                                     }
                                 })
-                                console.log("dataList===", dataList);
                                 $scope.code_type_list = dataList;
                                 //判断是否已经选择过语言种类
                                 if(window.localStorage.codeId){
@@ -248,7 +244,6 @@ require(['lib/common', 'lib/jquery.twbsPagination.min', 'lib/prism'],
                     });
 
                     $scope.code_selected = selectObj;
-                    console.log("code_selected===",$scope.code_selected);
                     $scope.code_select_tips = false;
                 };
 

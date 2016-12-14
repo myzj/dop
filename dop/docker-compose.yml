@@ -10,6 +10,6 @@ nginx:
   volumes_from:
     - dop
   ports:
-    - "60050:80"
+    - "38029:80"
   links:
     - dop:dop

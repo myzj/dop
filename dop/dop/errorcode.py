@@ -19,6 +19,9 @@ CONSTANT = {
     "200002": ["", u"密码不正确"],
     "200003": ["", u"用户名不存在"],
     "200004": ["", u"退出失败"],
+    "200005": ["Username has existed,please rename the username.", u"您输入用户名已经存在,请重新输入新的用户名注册。"],
+    "200006": ["User register throw exception.", u"用户注册出现异常"],
+    "200007": ["Check code does not match.", u"验证码不匹配"],
 
     "300015": ["", u"查询列表异常"],
     "300016": ["", u"新增团队异常"],

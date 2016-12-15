@@ -2,7 +2,7 @@
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django import template
 from models import Interface, MetaData, ErrorCode, Project, LockInfo, ProjectMember, EditHistory, CodeModel
 from django.contrib.auth.models import User
@@ -11,6 +11,8 @@ import time
 import json
 import datetime
 import re
+from dop import Checkcode
+import StringIO
 from common import JSONResponse
 from dop.errorcode import getMessage
 from django.views.decorators.csrf import csrf_exempt
@@ -1660,6 +1662,82 @@ def qry_code_model(request):
             queryset['errormsg'] = getMessage('300057') + ':' + str(ex)
             return JSONResponse(queryset)
     else:
+        queryset['errorcode'] = 100002
+        queryset['errormsg'] = getMessage('100002')
+        return JSONResponse(queryset)
+
+
+# 生成验证码
+def create_check_code(request):
+    try:
+        mstream = StringIO.StringIO()
+        validate_code = Checkcode.create_validate_code()
+        img = validate_code[0]
+        img.save(mstream, "GIF")
+
+        #将验证码保存到session
+        request.session["CheckCode"] = validate_code[1]
+        session_code = request.session["CheckCode"]
+        print 'set session_code:', session_code
+
+        return HttpResponse(mstream.getvalue())
+    except BaseException, ex:
+        except_info(ex)
+        msg = "create_check_code throw exception:" + str(ex)
+        Http404(msg)
+
+
+# 用户注册
+@csrf_exempt
+def user_register(request):
+    queryset = {'timestamp': int(time.mktime(
+        time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
+        'success': True, 'errorcode': 0, 'errormsg': '', 'result': []}
+    if request.method == 'POST':
+        try:
+            params = json.loads(request.read())
+            required_fields = ['username', 'password', 'checkcode']
+            errmsg = ''
+            for field in required_fields:
+                if field not in params or not params[field]:
+                    errmsg += field + ', '
+            if errmsg:
+                queryset['success'] = False
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
+                return JSONResponse(queryset)
+            username = params.get('username')
+            password = params.get('password')
+            checkcode = params.get('checkcode')
+            user_filter = User.objects.filter(username=username)
+            if user_filter:
+                queryset['errorcode'] = 200005
+                queryset['errormsg'] = username + ' ' + getMessage('200005')
+                return JSONResponse(queryset)
+
+            # 从session中获取验证码
+            session_code = request.session["CheckCode"]
+            print 'get session_code:', session_code
+            if checkcode.strip().lower() != session_code.lower():
+                queryset['success'] = False
+                queryset['errorcode'] = 200007
+                queryset['errormsg'] = getMessage('200007')
+                return JSONResponse(queryset)
+
+            new_user = User()
+            new_user.username = username
+            new_user.set_password(password)
+            new_user.save()
+            queryset['errormsg'] = u"恭喜您注册成功，用户名为:{0} 用户ID为:{1}".format(username, new_user.id)
+            return JSONResponse(queryset)
+        except BaseException, ex:
+            except_info(ex)
+            queryset['success'] = False
+            queryset['errorcode'] = 200006
+            queryset['errormsg'] = getMessage('200006') + ':' + str(ex)
+            return JSONResponse(queryset)
+    else:
+        queryset['success'] = False
         queryset['errorcode'] = 100002
         queryset['errormsg'] = getMessage('100002')
         return JSONResponse(queryset)

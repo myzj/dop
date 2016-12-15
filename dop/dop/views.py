@@ -88,3 +88,8 @@ def my_project(request):
     params['title'] = '我的项目'
     return render(request, 'atm/my_project.html', params)
 
+
+def register(request):
+    params = {'title': u'用户注册'}
+    return render(request, 'register.html', params)
+

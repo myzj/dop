@@ -1,0 +1,28 @@
+{% extends "shared/base.html" %}
+{% load staticfiles %}
+{% block head %}
+    <link rel="stylesheet" href="{% static "css/login.css" %}?v={{ config.v }}">
+    <link rel="stylesheet" href="{% static "css/global/form-elements.css" %}?v={{ config.v }}">
+{%endblock%}
+{% block container %}
+	<form method='POST' action='/login/'>
+	  <fieldset>
+		    <legend>用户注册</legend>
+		    <p>用户名：<input type="text" name='username' /> </p>
+		    <p>密码：<input type="text" name='pwd'/> </p>
+		    <p>验证码：<input type="text" name='checkcode'/> <img id='imgCode' src='' title='点击更新' /></p>
+        <p><input type="submit" name='rgst'/> </p>
+	  </fieldset>
+	</form>
+	
+	<script type="text/javascript">
+    $(function(){
+      $("#imgCode").click(function(){
+        $("#imgCode").attr("src","/new/check_code?v=" + Math.random())
+      });
+      $("#imgCode").attr("src","/new/check_code?v=" + Math.random())
+    });
+
+
+    </script>
+{%endblock%}

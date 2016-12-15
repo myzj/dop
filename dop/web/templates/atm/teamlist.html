@@ -20,7 +20,15 @@
                 <ul>
 
                     {%if isHideAdd != 1%}
-                    <li ng-click="addTeam()" class="addBtn">添加</li>
+                    <li ng-click="addTeam()" class="listLi addBtn">
+                        <a href="javascript:;">
+                            <p class="team-pic">
+                                &nbsp;
+                            </p>
+                            <p class="team-name">添加</p>
+                        </a>
+
+                    </li>
                     {% endif  %}
                     <li class="listLi" ng-repeat="List in teamArr">
                         <a href="/projectlist?team=@{List.team_id}@">

@@ -22,14 +22,25 @@
                 <ul>
 
                     {% if isHideAdd != 1 %}
-                        <li ng-click="addTeam()" class="addBtn">添加</li>{% endif %}
+                        <li ng-click="addTeam()" class="addBtn">
+                            <a href="javascript:;">
+                                <p class="team-pic">
+                                    &nbsp;
+                                </p>
+
+                                <p class="team-name">添加</p>
+                            </a>
+                        </li>
+                    {% endif %}
                     <li class="listLi" ng-repeat="List in projectArr" data-project="@{List.project_id}@">
                         <a href="/apilist?project=@{List.project_id}@">
                             <p class="team-pic"><img ng-src="@{List.project_pic_url}@"
                                                      onerror="this.src='{% static "images/errorImg.jpg" %}?v={{ config.v }}'"/>
                             </p>
+
                             <p class="team-name">@{List.project_name}@</p>
                         </a>
+
                         <div class="action-btn">
                             <span class="edit" ng-if="List.role==3 || List.role==2"
                                   ng-click="edit_project(List.project_id, List.team)">Edit</span>
@@ -44,46 +55,53 @@
                     <p ng-hide="isLast">列表已加载完</p>
                 </div>
                 {% if isHideAdd != 1 %}
-                <div class="dialog" ng-show="isDialogShow">
-                    <div class="dialogBox addTeam">
-                        <h3>@{detail_title}@</h3>
-                        <div class="addTeam-main">
-                            <p>
-                                <span class="dsc">TeamName</span>
-                                <select class="form-control" style="width: 160px"
-                                        ng-options="team.team_name for team in team_list"
-                                        ng-model="team_list_selected"></select>
-                            </p>
-                            <p>
-                                <span class="dsc">ProjectName</span>
-                                <input class="pName" placeholder="项目名称" ng-model="itemData.project_name" value=""
-                                       type="text">
-                            </p>
-                            <p><span class="dsc">HOST</span>
-                                <input class="thost" ng-model="itemData.host" placeholder="目录/端口" type="text">
-                            </p>
-                            <p><span class="dsc">pic_url</span>
-                                <input class="pic_url" ng-model="itemData.project_pic_url" placeholder="封面大图"
-                                       type="text">
-                            </p>
-                            <p>
-                                <span class="dsc">Description</span>
-                                <textarea class="tDec" ng-model="itemData.description" placeholder="请输入描述"></textarea>
-                            </p>
+                    <div class="dialog" ng-show="isDialogShow">
+                        <div class="dialogBox addTeam">
+                            <h3>@{detail_title}@</h3>
 
-                            <div class="addBtn">
-                                <span ng-click="saveProject()" class="active">save</span>
-                                <span ng-click="closeDialog()">close</span>
+                            <div class="addTeam-main">
+                                <p>
+                                    <span class="dsc">TeamName</span>
+                                    <select class="form-control" style="width: 160px"
+                                            ng-options="team.team_name for team in team_list"
+                                            ng-model="team_list_selected"></select>
+                                </p>
+
+                                <p>
+                                    <span class="dsc">ProjectName</span>
+                                    <input class="pName" placeholder="项目名称" ng-model="itemData.project_name" value=""
+                                           type="text">
+                                </p>
+
+                                <p><span class="dsc">HOST</span>
+                                    <input class="thost" ng-model="itemData.host" placeholder="目录/端口" type="text">
+                                </p>
+
+                                <p><span class="dsc">pic_url</span>
+                                    <input class="pic_url" ng-model="itemData.project_pic_url" placeholder="封面大图"
+                                           type="text">
+                                </p>
+
+                                <p>
+                                    <span class="dsc">Description</span>
+                                    <textarea class="tDec" ng-model="itemData.description"
+                                              placeholder="请输入描述"></textarea>
+                                </p>
+
+                                <div class="addBtn">
+                                    <span ng-click="saveProject()" class="active">save</span>
+                                    <span ng-click="closeDialog()">close</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 {% endif %}
 
                 <!--member编辑-->
                 <div class="dialog member-dialog" ng-show="memberDialogShow">
                     <div class="dialogBox addMember">
                         <h3>Project Member Edit</h3>
+
                         <div class="member-box">
                             <div class="row" ng-hide="member_role <= 1">
                                 <div class="col-xs-1">
@@ -92,6 +110,7 @@
                                 <div class="col-xs-3 input-tip-div">
                                     <input type="text" ng-model="userName" id="username" ng-change="watch_value()"
                                            class="form-control" placeholder="Search for username...">
+
                                     <div class="username_tip ng-hide" id="userNameTipDialog"
                                          ng-show="userNameTipDialog">
                                         <p ng-repeat="user in userList" ng-click="select_username(user.username)">
@@ -111,6 +130,7 @@
                             </div>
                             <div class="member-list" ng-show="memberListBox">
                                 <h3>Panel heading</h3>
+
                                 <div class="member-list-box">
                                     <div class="row">
                                         <div class="col-xs-1">#</div>

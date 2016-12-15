@@ -148,35 +148,23 @@
         <div class="code-content">
             <div class="code-type">
                 <span>Template:</span>
-                <!--<select name="" id="" class="form-control" ng-options="list.name for list in code_type_list" ng-model="code_t_list_selected" style="width: 150px; display: inline-block;">
-                </select>-->
                 <div class="code-type-select">
                     <input class="code-selected form-control" ng-model="code_selected.name" ng-click="open_code_tips()"/>
                     <i></i>
                     <ul class="code-select-tips ng-hide" ng-show="code_select_tips">
                         <li ng-repeat="list in code_type_list" data-id="list.id" ng-click="chose_code_type(list.id)">
-                            <span ng-if="list.type==3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@{list.name}@</span>
-                            <span ng-if="list.type==2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@{list.name}@</span>
-                            <span ng-if="list.type==1">&nbsp;@{list.name}@</span>
+                            <span ng-if="list.html" ng-bind-html="list.html | to_trusted"></span>
+                            <span>@{list.name}@</span>
                         </li>
                     </ul>
                 </div>
+
+                <a href="javascript:;" class=" refresh" ng-click="refresh_code_dialog()">Refresh</a>
             </div>
-            <div class="code-view" id="code_view">
+            <div class="code-view ng-hide" id="code_view" ng-show="code_area">
                 <pre>
-                    <code id="code-content-area" class="language-js line-numbers code-toolbar">
-                $scope.close_code_dialog = function () {
-                    $("#copy_code_success").hide();
-                    $scope.code_dialog_show = false;
-                };
-                $scope.document_click = function(){
-                    var target = event.target;
-                    if ($(target).isChildAndSelfOf(".code-selected")) {
-                        $scope.code_select_tips = true;
-                    }else{
-                        $scope.code_select_tips = false;
-                    }
-                };
+                    <code id="code-content-area">
+                        @{code_res}@
                     </code>
                 </pre>
             </div>

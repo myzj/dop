@@ -211,10 +211,8 @@
     padding-left: 10px;
   }
 }
-
 .code-box {
   border-radius: 5px;
-  overflow: hidden;
   background: #fff;
   position: relative;
   width: 700px;
@@ -276,6 +274,7 @@
     border: 1px solid #ccc;
     border-top: 0;
     top: 34px;
+    z-index: 2;
     li{
       height: 30px;
       line-height: 20px;
@@ -296,3 +295,29 @@
 .toolbar-item{
   display: none !important;
 }
+
+.refresh,.refresh:active{
+    background: #6698c2;
+    color: #fff;
+    margin-left: 305px;
+      display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+

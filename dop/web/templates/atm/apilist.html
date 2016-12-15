@@ -1,15 +1,20 @@
 {% extends "shared/base.html" %}
 {% load staticfiles %}
+{% block body_attributes %}
+    ng-click="document_click()"
+{% endblock %}
 {% block head %}
 <link rel="stylesheet" href="{% static "css/main.css" %}?v={{ config.v }}">
 <link rel="stylesheet" href="{% static "css/apipage.css" %}?v={{ config.v }}">
 <link rel="stylesheet" href="{% static "css/default.min.css" %}?v={{ config.v }}">
+<link rel="stylesheet" href="{% static "css/prism.css" %}?v={{ config.v }}">
 <link rel="stylesheet" href="{% static "css/monokai-sublime.css" %}?v={{ config.v }}">
 <script src="{% static 'js/lib/beautify.js' %}?v={{ config.v }}"></script>
 <script src="{% static 'js/lib/ZeroClipboard.js' %}?v={{ config.v }}"></script>
 {%endblock%}
 {% block container %}
 {% include "shared/headerBar.html" %}
+
 <div class="container-content">
     <div class="api-top">
         <div class="row">
@@ -33,18 +38,7 @@
             <tr>
                 <th>#</th>
                 <th>
-                    <div class="dropdown">
-                      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
-                        Dropdown
-                        <span class="caret"></span>
-                      </button>
-                      <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Another action</a></li>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
-                      </ul>
-                    </div>
+                    Code AndroidDTO
                 </th>
                 <th>Operation</th>
                 <th>Name</th>
@@ -58,7 +52,7 @@
             <tr ng-repeat="List in apiArr">
                 <td ng-bind="$index+1">1</td>
                 <td>
-
+                    <a href="javascript:;" ng-click="code_view(List.id)">CodeView</a>
                 </td>
                 <td>
                     <a href="/api_edit?apiid=@{List.id}@&project=@{List.project_id}@">View</a>|
@@ -144,6 +138,56 @@
     </div>
 </div>
 
+
+
+<div class="dialog ng-hide" ng-show="code_dialog_show">
+    <div class="code-box">
+        <h3>
+            View Code
+        </h3>
+        <div class="code-content">
+            <div class="code-type">
+                <span>Template:</span>
+                <!--<select name="" id="" class="form-control" ng-options="list.name for list in code_type_list" ng-model="code_t_list_selected" style="width: 150px; display: inline-block;">
+                </select>-->
+                <div class="code-type-select">
+                    <input class="code-selected form-control" ng-model="code_selected.name" ng-click="open_code_tips()"/>
+                    <i></i>
+                    <ul class="code-select-tips ng-hide" ng-show="code_select_tips">
+                        <li ng-repeat="list in code_type_list" data-id="list.id" ng-click="chose_code_type(list.id)">
+                            <span ng-if="list.type==3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@{list.name}@</span>
+                            <span ng-if="list.type==2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@{list.name}@</span>
+                            <span ng-if="list.type==1">&nbsp;@{list.name}@</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="code-view" id="code_view">
+                <pre>
+                    <code id="code-content-area" class="language-js line-numbers code-toolbar">
+                $scope.close_code_dialog = function () {
+                    $("#copy_code_success").hide();
+                    $scope.code_dialog_show = false;
+                };
+                $scope.document_click = function(){
+                    var target = event.target;
+                    if ($(target).isChildAndSelfOf(".code-selected")) {
+                        $scope.code_select_tips = true;
+                    }else{
+                        $scope.code_select_tips = false;
+                    }
+                };
+                    </code>
+                </pre>
+            </div>
+        </div>
+        <div id="copy_code_success"></div>
+        <div class="code-action">
+            <a href="javascript:;" class="copy-btn btn btn-primary" data-clipboard-action="copy" data-clipboard-target="code-content-area" id="copy_code_btn" >Copy</a>
+            <a href="javascript:;" class="close-btn  btn" ng-click="close_code_dialog()">Close</a>
+        </div>
+    </div>
+</div>
 
 
 <script type="text/javascript">

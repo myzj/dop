@@ -3,6 +3,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 from django.http import HttpResponse
+from django import template
 from models import Interface, MetaData, ErrorCode, Project, LockInfo, ProjectMember, EditHistory, CodeModel
 from django.contrib.auth.models import User
 from common import except_info
@@ -1572,7 +1573,7 @@ def mock_data(request):
 
 # 查询API接口数据
 @csrf_exempt
-def qry_api_data(request):
+def qry_api_code(request):
     queryset = {'timestamp': int(time.mktime(
         time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'))), \
         'success': True, 'errorcode': 0, 'errormsg': '', 'result': {}}
@@ -1586,16 +1587,41 @@ def qry_api_data(request):
                 queryset['errorcode'] = 100001
                 queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
                 return JSONResponse(queryset)
+
+            if 'template_id' in request.GET and request.GET['template_id'] != '':
+                template_id = request.GET['template_id']
+            else:
+                errmsg += 'template_id,'
+                queryset['errorcode'] = 100001
+                queryset['errormsg'] = errmsg + ' ' + getMessage('100001')
+                return JSONResponse(queryset)
+
             api_id = int(api_id)
+            template_id = int(template_id)
+
             interface_filter = Interface.objects.filter(id=api_id, is_deleted=False)
+
             if not interface_filter:
                 queryset['success'] = False
                 queryset['errorcode'] = 300029
                 queryset['errormsg'] = getMessage('300029')
                 return JSONResponse(queryset)
+
+            template_filter = CodeModel.objects.filter(id=template_id, is_deleted=False)
+            if not template_filter:
+                queryset['success'] = False
+                queryset['errorcode'] = 300058
+                queryset['errormsg'] = getMessage('300058')
+                return JSONResponse(queryset)
             interface = InterFace(api_id)
-            # queryset["result"] = interface.get_metadata
-            return JSONResponse(interface.get_metadata)
+            return_data = interface.get_metadata
+            # print return_data
+            template_obj = template_filter[0]
+            tpl = template_obj.content
+            t = template.Template(tpl)
+            c = template.Context(return_data)
+            return HttpResponse(t.render(c))
+            # return JSONResponse(return_data)
         except BaseException, ex:
             except_info(ex)
             queryset['errorcode'] = 300056

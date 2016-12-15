@@ -1,5 +1,8 @@
 {% extends "shared/base.html" %}
 {% load staticfiles %}
+{% block body_attributes %}
+    ng-click="document_click()"
+{% endblock %}
 {% block head %}
     <link rel="stylesheet" href="{% static "css/main.css" %}?v={{ config.v }}">
 {% endblock %}

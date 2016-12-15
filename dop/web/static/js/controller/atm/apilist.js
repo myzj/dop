@@ -169,7 +169,7 @@ require(['lib/common', 'lib/jquery.twbsPagination.min', 'lib/prism'],
                                     if (list.child != null && list.child.length > 0) {
                                         dataList.push(
                                             {
-                                                "type": 2,  //2有子节点
+                                                "type": 1,  //1有子节点
                                                 "id": list.id,
                                                 "name": list.name
                                             }
@@ -177,7 +177,7 @@ require(['lib/common', 'lib/jquery.twbsPagination.min', 'lib/prism'],
                                         $.each(list.child, function (i, item) {
                                             dataList.push(
                                                 {
-                                                    "type": 3,  //3为子节点
+                                                    "type": 2,  //3为子节点
                                                     "id": item.id,
                                                     "name": item.name
                                                 }

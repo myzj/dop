@@ -1,0 +1,1 @@
+E:\MYZJ_Project\DevOpsPlatform\plugins\dotNet\DopPlugin\TestWeb\obj\Debug\TestWeb.csprojResolveAssemblyReference.cache

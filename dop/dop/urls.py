@@ -52,6 +52,9 @@ urlpatterns = [
 
     url(r'^mockdata/.', itf.mock_data),  # mock 请求处理
     url(r'^test/?$', views.test),
+    url(r'^new/check_code/?$', itf.create_check_code),  # 产一个新的验证码
+    url(r'^register/?$', views.register),  # 打开用户注册页面
+    url(r'^new/user/?$', itf.user_register),  # 提交用户注册数据
     url(r'^login/?$', views.login),
     url(r'^index/?$', views.index),
     url(r'^teamlist/?$', views.teamlist),

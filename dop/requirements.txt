@@ -5,3 +5,4 @@ djangorestframework
 django-filter
 requests
 mysql
+Pillow

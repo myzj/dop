@@ -557,7 +557,7 @@ def req_api_list(request):
             if 'project_id' in request.GET and request.GET['project_id'] != '':
                 project_filter = Project.objects.filter(is_deleted=False, is_active=True, id=int(request.GET['project_id']))
                 if project_filter:
-                    api_match = Interface.objects.filter(is_deleted=False, is_active=True, project=project_filter[0])
+                    api_match = Interface.objects.filter(is_deleted=False, is_active=True, project=project_filter[0]).order_by('-utime')
                 else:
                     queryset['errorcode'] = 300025
                     queryset['errormsg'] = getMessage('300025')

@@ -1571,7 +1571,7 @@ def mock_data(request):
         return JSONResponse(queryset)
 
 
-# 查询API接口数据
+# 获取对应的API代码模板
 @csrf_exempt
 def qry_api_code(request):
     queryset = {'timestamp': int(time.mktime(
@@ -1620,7 +1620,8 @@ def qry_api_code(request):
             tpl = template_obj.content
             t = template.Template(tpl)
             c = template.Context(return_data)
-            return HttpResponse(t.render(c))
+            queryset['result'] = t.render(c)
+            return JSONResponse(queryset)
             # return JSONResponse(return_data)
         except BaseException, ex:
             except_info(ex)

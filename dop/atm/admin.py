@@ -156,7 +156,7 @@ class EditHistoryAdmin(admin.ModelAdmin):
 
 class CodeModelAdmin(admin.ModelAdmin):
     search_fields = ('id', 'code_name')
-    list_display = ('id', 'code_name', 'description', 'parent', 'author', 'modifier', 'is_active', 'is_deleted', 'ctime', 'utime',)
+    list_display = ('id', 'code_name', 'description', 'content', 'parent', 'author', 'modifier', 'is_active', 'is_deleted', 'ctime', 'utime',)
 
 
 admin.site.register(Team, TeamAdmin)

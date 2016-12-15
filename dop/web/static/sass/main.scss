@@ -302,6 +302,7 @@ img {
       border: 1px solid #C7C7C7;
       width: 200px;
       height: 200px;
+      position: relative;
       display: inline-block;
       margin: 10px 12px 10px 12px;
       padding: 8px 10px;
@@ -629,4 +630,13 @@ height:45px;
 }
 .input-search {
   width: 250px !important;
+}
+.footerBox{
+  margin: 30px 0;
+  ul{
+    text-align: center;
+    li{
+    display: inline-block;
+  }
+  }
 }

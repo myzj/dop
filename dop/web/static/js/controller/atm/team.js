@@ -21,7 +21,6 @@ require(['lib/common'],
                     }else{
                         isAutoLoad = false;
                     }
-                    console.log(isLoad)
                     if (isLoad && onloading && isLoadOut) {
                         onloading = false;
                         getTeamDate(curIndex,isAutoLoad);
@@ -58,7 +57,6 @@ require(['lib/common'],
                                 if(isAutoLoad){
                                     loadDate(true);
                                 }
-                                console.log(dataArr)
                             } else if (data.errorcode == 300021) {      //300021 列表页码已超出实际页数
                                 isLoadOut = false;
                                 $scope.isLast = false;

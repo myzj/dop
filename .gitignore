@@ -3,10 +3,7 @@
 bin/
 obj/
 packages/
-dop/web/static/sass/apipage.css
-dop/web/static/sass/apipage.css.map
-dop/web/static/sass/login.css
-dop/web/static/sass/login.css.map
-dop/web/static/sass/main.css
-dop/web/static/sass/main.css.map
+dop/web/static/sass/*.css
+dop/web/static/sass/*.map
 node_modules
+dop/static/*

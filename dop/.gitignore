@@ -5,3 +5,4 @@
 *.sublime-workspace
 *.pyc
 debug_settings.py
+dop/static

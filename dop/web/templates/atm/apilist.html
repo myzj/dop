@@ -155,15 +155,16 @@
                     <i></i>
                     <ul class="code-select-tips ng-hide" ng-show="code_select_tips">
                         <li ng-repeat="list in code_type_list" data-id="list.id" ng-click="chose_code_type(list.id)">
-                            <span ng-if="list.type==3">&nbsp;&nbsp;@{list.name}@</span>
-                            <span ng-if="list.type<3">&nbsp;@{list.name}@</span>
+                            <span ng-if="list.type==3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@{list.name}@</span>
+                            <span ng-if="list.type==2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@{list.name}@</span>
+                            <span ng-if="list.type==1">&nbsp;@{list.name}@</span>
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="code-view" id="code_view">
                 <pre>
-                    <code id="code-content-area" class="language-python line-numbers code-toolbar">
+                    <code id="code-content-area" class="language-js line-numbers code-toolbar">
                 $scope.close_code_dialog = function () {
                     $("#copy_code_success").hide();
                     $scope.code_dialog_show = false;

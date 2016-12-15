@@ -1,0 +1,119 @@
+{
+  "error_code": [
+    {
+      "display_message": "Check after sales success",
+      "error_code": "43301",
+      "description": "查询售后成功"
+    },
+    {
+      "display_message": "Check after sales fail",
+      "error_code": "43302",
+      "description": "查询售后失败"
+    }
+  ],
+  "base": {
+    "state": true,
+    "tags": [
+      "ANY"
+    ],
+    "description": "### ",
+    "mock": "{\"id\":433, \"name\":\"CheckAfterSales\"}",
+    "name": "CheckAfterSales"
+  },
+  "request": {
+    "body": {
+      "data": [
+        {
+          "field_type": "number",
+          "description": "",
+          "default": "",
+          "is_array": false,
+          "is_required": false,
+          "field_name": "Pid",
+          "example": "",
+          "child_item": []
+        },
+        {
+          "field_type": "string",
+          "description": "",
+          "default": "",
+          "is_array": false,
+          "is_required": false,
+          "field_name": "Ordercode",
+          "example": "",
+          "child_item": []
+        },
+        {
+          "field_type": "number",
+          "description": "",
+          "default": "",
+          "is_array": false,
+          "is_required": false,
+          "field_name": "OrderType",
+          "example": "",
+          "child_item": []
+        }
+      ],
+      "mode": "raw"
+    },
+    "url": "/json/reply/CheckAfterSales",
+    "headers": [],
+    "content_type": "application/json",
+    "query_string": [],
+    "method": "POST"
+  },
+  "response": {
+    "body": [
+      {
+        "field_type": "boolean",
+        "description": "",
+        "default": "false",
+        "is_array": false,
+        "is_required": false,
+        "field_name": "Isreturn",
+        "example": "",
+        "child_item": []
+      },
+      {
+        "field_type": "number",
+        "description": "",
+        "default": "",
+        "is_array": false,
+        "is_required": false,
+        "field_name": "Num",
+        "example": "",
+        "child_item": []
+      },
+      {
+        "field_type": "number",
+        "description": "",
+        "default": "",
+        "is_array": false,
+        "is_required": false,
+        "field_name": "Price",
+        "example": "",
+        "child_item": []
+      },
+      {
+        "field_type": "number",
+        "description": "",
+        "default": "",
+        "is_array": false,
+        "is_required": false,
+        "field_name": "Sumprice",
+        "example": "",
+        "child_item": []
+      },
+      {
+        "field_type": "string",
+        "description": "",
+        "default": "",
+        "is_array": false,
+        "is_required": false,
+        "field_name": "AfterSaleTip",
+        "example": "",
+        "child_item": []
+      }
+    ]
+  }
+}

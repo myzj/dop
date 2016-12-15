@@ -3,6 +3,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 from django.http import HttpResponse
+from django import template
 from models import Interface, MetaData, ErrorCode, Project, LockInfo, ProjectMember, EditHistory, CodeModel
 from django.contrib.auth.models import User
 from common import except_info
@@ -1612,13 +1613,15 @@ def qry_api_code(request):
                 queryset['errorcode'] = 300058
                 queryset['errormsg'] = getMessage('300058')
                 return JSONResponse(queryset)
-            template = template_filter[0]
-
             interface = InterFace(api_id)
             return_data = interface.get_metadata
-
-            # queryset["result"] = interface.get_metadata
-            return JSONResponse(return_data)
+            # print return_data
+            template_obj = template_filter[0]
+            tpl = template_obj.content
+            t = template.Template(tpl)
+            c = template.Context(return_data)
+            return HttpResponse(t.render(c))
+            # return JSONResponse(return_data)
         except BaseException, ex:
             except_info(ex)
             queryset['errorcode'] = 300056

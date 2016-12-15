@@ -197,6 +197,7 @@ class EditHistory(models.Model):
 class CodeModel(models.Model):
     code_name = models.CharField(verbose_name=u"模板名称", max_length=200, null=True, blank=True)
     description = models.TextField(verbose_name=u"模板描述", null=True, blank=True)
+    content = models.TextField(verbose_name=u"模板内容", null=True, blank=True)
     parent = models.ForeignKey('self', verbose_name=u"父模板", related_name=u"codemodel_parent", null=True, blank=True)
     author = models.ForeignKey(User, verbose_name=u"创建人", related_name=u"codemodel_author", null=True, blank=True)
     modifier = models.ForeignKey(User, verbose_name=u"修改人", related_name=u"codemodel_modifier", null=True, blank=True)

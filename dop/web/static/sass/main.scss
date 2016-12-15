@@ -302,12 +302,10 @@ img {
       border: 1px solid #C7C7C7;
       width: 200px;
       height: 200px;
-      float: left;
       display: inline-block;
       margin: 10px 12px 10px 12px;
       padding: 8px 10px;
       background: #fff;
-      position: relative;
       .team-pic {
         height: 130px;
         img {
@@ -628,4 +626,7 @@ height:45px;
 }
 .loadTips{
   padding:10px 0;
+}
+.input-search {
+  width: 250px !important;
 }

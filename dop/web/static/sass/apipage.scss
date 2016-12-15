@@ -1,8 +1,7 @@
 @charset "UTF-8";
 .dropdown {
-  display: inline-block;
+  display: inline;
   position: relative;
-  margin: 0 80px 0 10px;
 }
 
 .edit-top {
@@ -96,9 +95,7 @@
   }
 }
 
-.input-search {
-  width: 250px !important;
-}
+
 
 .description-text {
   height: 100px;

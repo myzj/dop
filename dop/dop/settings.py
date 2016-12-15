@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 """
 Django settings for dop project.
 
@@ -12,6 +13,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import config
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -25,7 +27,7 @@ SECRET_KEY = 'q3^vv*dlul&q7enj%h6%!2=gc$+4@!%uao^)5g3@9^p2c)1te%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +39,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'web',
+    'atm',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -55,7 +59,7 @@ ROOT_URLCONF = 'dop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR+"/web/templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -63,6 +67,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'dop.context_process.get_config',
+                'dop.context_process.get_user_info',
             ],
         },
     },
@@ -70,14 +76,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'dop.wsgi.application'
 
+# session过期时间设置
+SESSION_COOKIE_AGE = 60*30*100
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'dop',
+        'USER': 'db_dev',
+        'PASSWORD': 'db_dev',
+        'HOST': '192.168.100.160',
+        'PORT': 3306,
     }
 }
 
@@ -85,18 +97,33 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh_cn'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+try:
+    from debug_settings import *
+except ImportError:
+    pass
+
+if DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
+    STATIC_URL = '/static/'
+else:
+    STATIC_URL = config.STATIC_URL
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "web/static"),
+)

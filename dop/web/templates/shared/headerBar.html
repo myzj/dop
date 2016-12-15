@@ -1,0 +1,61 @@
+<header>
+    <div class="container" ng-controller="navbar">
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                            data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="javascript:;">Dop</a>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li {% if config.path == "/teamlist" %} class="active" {%endif%}><a href="/teamlist">Teams</a></li>
+                        <li {% if config.path == "/projectlist" %} class="active" {%endif%}><a href="/projectlist">Projects</a></li>
+                        <li {% if config.path == "/apilist" %} class="active" {%endif%}><a href="/apilist">APIs</a></li>
+                    </ul>
+
+                    <div style="float: right">
+                        <ul class="nav navbar-nav">
+                            <li class="dropdown changeType">
+                                <a href="javascript:;" class="dropdown-toggle" id="search-type" data-value="1" data-toggle="dropdown">API<span
+                                        class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li data-value="1" data-name="API"><a href="javascript:;" >API</a></li>
+                                    <li class="divider"></li>
+                                    <li data-value="2" data-name="Team"><a href="javascript:;" >Team</a></li>
+                                    <li class="divider"></li>
+                                    <li data-value="3" data-name="Project"><a href="javascript:;" >Project</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <div class="navbar-form navbar-left" role="">
+                        <div class="form-group">
+                            <input type="text" id="keyword" class="form-control input-search" placeholder="Search">
+                        </div>
+                        <a href="javascript:;" id="search-btn" class="btn btn-default">Search</a>
+                    </div>
+                        <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user_info.username }} <span
+                                    class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="javascript:;" ng-click="logOut()">Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    </div>
+                </div>
+                <!-- /.navbar-collapse -->
+            </div>
+            <!-- /.container-fluid -->
+        </nav>
+    </div>
+</header>

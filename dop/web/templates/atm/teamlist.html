@@ -1,0 +1,76 @@
+{% extends "shared/base.html" %}
+{% load staticfiles %}
+{% block head %}
+    <link rel="stylesheet" href="{% static "css/main.css" %}?v={{ config.v }}">
+{% endblock %}
+
+{% block container %}
+    <div class="container-content teamListyle">
+        <div class="container">
+            <div class="api-top">
+                <div class="row text-left">
+                    <div class="col-xs-9">Team</div>
+                </div>
+            </div>
+            <p>{{ msg }}</p>
+
+            {#projectlist?team=123#}
+            <div class="edit-main api-body team-list">
+                <ul>
+
+                    {%if isHideAdd != 1%}
+                    <li ng-click="addTeam()" class="listLi addBtn">
+                        <a href="javascript:;">
+                            <p class="team-pic">
+                                &nbsp;
+                            </p>
+                            <p class="team-name">添加</p>
+                        </a>
+
+                    </li>
+                    {% endif  %}
+                    <li class="listLi" ng-repeat="List in teamArr">
+                        <a href="/projectlist?team=@{List.team_id}@">
+                            <p class="team-pic">
+                                <img ng-src="@{List.team_pic_url}@" onerror="this.src='{% static "images/errorImg.jpg" %}?v={{ config.v }}'"/>
+                            </p>
+                            <p class="team-name">@{List.team_name}@</p>
+                        </a>
+                    </li>
+                </ul>
+                <div class="loadTips">
+                    <p ng-show="isLast">下拉加载下一页....</p>
+
+                    <p ng-hide="isLast">列表已加载完</p>
+                </div>
+                {%if isHideAdd != 1%}
+                <div class="dialog ng-hide" ng-show="isDialogShow">
+                    <div class="dialogBox addTeam">
+                        <h3>Team Edit</h3>
+
+                        <div class="addTeam-main">
+                            <p><span class="dsc">TeamName</span><input class="tName" placeholder="请输入名称" type="text">
+                            </p>
+
+                            <p><span class="dsc">picUrl</span><input class="tPic" placeholder="上传图片" type="text"></p>
+
+                            <p><span class="dsc">Description</span><textarea class="tDec" placeholder="请输入描述"></textarea></p>
+
+                            <div class="addBtn">
+                                <span ng-click="saveDate()" class="active">save</span>
+                                <span ng-click="closeDialog()">close</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif  %}
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        require(['{% static "js/config.js" %}?v={{config.v}}'], function () {
+            require(['controller/atm/team']);
+        });
+    </script>
+{% endblock %}

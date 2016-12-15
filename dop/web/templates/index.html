@@ -1,0 +1,16 @@
+{% extends "shared/base.html" %}
+{% load staticfiles %}
+{% block head %}
+    <link rel="stylesheet" href="{% static "css/main.css" %}?v={{ config.v }}">
+    <link rel="stylesheet" href="{% static "css/global/form-elements.css" %}?v={{ config.v }}">
+{%endblock%}
+{% block container %}
+    <div class="">
+
+    </div>
+<script type="text/javascript">
+    require(['{% static "js/config.js" %}?v={{config.v}}'], function () {
+        require(['controller/test']);
+    });
+</script>
+{%endblock%}

@@ -1,0 +1,4 @@
+require(['lib/common'],
+    function ($) {
+    }
+);

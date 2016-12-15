@@ -1,0 +1,8 @@
+Django==1.8.4
+uwsgi
+redis
+djangorestframework
+django-filter
+requests
+mysql
+Pillow

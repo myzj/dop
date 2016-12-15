@@ -1,0 +1,187 @@
+{% extends "shared/base.html" %}
+{% load staticfiles %}
+{% block body_attributes %}
+    ng-click="document_click()"
+{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{% static "css/main.css" %}?v={{ config.v }}">
+<link rel="stylesheet" href="{% static "css/apipage.css" %}?v={{ config.v }}">
+<link rel="stylesheet" href="{% static "css/default.min.css" %}?v={{ config.v }}">
+<link rel="stylesheet" href="{% static "css/prism.css" %}?v={{ config.v }}">
+<link rel="stylesheet" href="{% static "css/monokai-sublime.css" %}?v={{ config.v }}">
+<script src="{% static 'js/lib/beautify.js' %}?v={{ config.v }}"></script>
+<script src="{% static 'js/lib/ZeroClipboard.js' %}?v={{ config.v }}"></script>
+{%endblock%}
+{% block container %}
+<div class="container-content">
+    <div class="api-top">
+        <div class="row">
+            <div class="col-xs-9 text-left">APIS</div>
+            <div class="col-xs-3" style="text-align: right">
+                <a role="menuitem" class="btn btn-primary" tabindex="-1" href="/api_edit?project={{ projectId }}">+Add</a>
+                <div class="dropdown">
+                    <button type="button" class="btn dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">More<span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                        <li role="presentation">
+                            <a id="import-action" href="javascript:;" ng-click="show_importDialo()">+Import</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="api-body">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>
+                    Code AndroidDTO
+                </th>
+                <th>Operation</th>
+                <th>Name</th>
+                <th>Path</th>
+                <th>Method</th>
+                <th>Tags</th>
+                <th>LastEditTime</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="List in apiArr">
+                <td ng-bind="$index+1">1</td>
+                <td>
+                    <a href="javascript:;" ng-click="code_view(List.id)">CodeView</a>
+                </td>
+                <td>
+                    <a href="/api_edit?apiid=@{List.id}@&project=@{List.project_id}@">View</a>|
+                    <a href="javascript:;"  ng-click="open_copy_dialog(List.project_id, List.url)">Mock</a>|
+                    <a href="javascript:;">Test</a>
+                </td>
+                <td>
+                    @{List.interface_name}@
+                </td>
+                <td>
+                    @{List.url}@
+                </td>
+                <td>
+                    @{List.method}@
+                </td>
+                <td>
+                    <div class="tags">
+                        <span ng-repeat="(key, tag) in List.tags" >
+                           @{tag}@
+                            <br ng-if="key%2==0"/>
+                        </span>
+                    </div>
+                </td>
+                <td>
+                    @{List.update_time}@
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div id="pages"><ul id="pagination" class="pagination-sm"></ul></div>
+    </div>
+</div>
+<div class="dialog ng-hide" ng-show="import_box">
+    <div class="import-box import-dialog">
+        <div class="import-box-header">
+            <span>Import</span>
+        </div>
+        <div class="import-content">
+            <div class="row">
+                <div class="col-xs-2">IsReplace:</div>
+                <div class="col-xs-10 IsReplace"> &nbsp;
+                    <label for="">
+                        <input type="radio" value="false" name="is_replace" checked> no
+                    </label>
+                    <label for="">
+                        <input type="radio" value="true" name="is_replace" >yes
+                    </label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-2">Date:</div>
+                <div class="col-xs-10">
+                    <div class="edit-content">
+                        <textarea class="textarea" ng-model="text" id="code_data" cols="30" rows="10"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                </div>
+                <div class="col-xs-6 text-right">
+                    <a class="btn btn-default"  ng-click="format()">Format</a>&nbsp;
+                    <a class="btn btn-default" id="import-btn" ng-click="import_action()">Import</a>&nbsp;
+                    <a class="btn btn-default" id="cancel-btn" ng-click="hide_importDialog()">Close</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog url-copy ng-hide"  ng-show="copy_dialog">
+    <div class="url-box">
+        <h3>Mock</h3>
+        <div class="input-group">
+            <span class="input-group-addon">URL</span>
+            <input type="text" class="form-control copy_url" ng-value="copy_url" id="copy_url" ng-model="copy_url">
+            <span class="input-group-addon" id="copy_btn" data-clipboard-action="copy" data-clipboard-target="copy_url">Copy</span>
+        </div>
+        <p id="copy_success"></p>
+        <div class="close-btns">
+            <a href="javascript:;" class="close-addon" ng-click="close_dialog()">Close</a>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="dialog ng-hide" ng-show="code_dialog_show">
+    <div class="code-box">
+        <h3>
+            View Code
+        </h3>
+        <div class="code-content">
+            <div class="code-type">
+                <span>Template:</span>
+                <div class="code-type-select">
+                    <input class="code-selected form-control" ng-model="code_selected.name" ng-click="open_code_tips()"/>
+                    <i></i>
+                    <ul class="code-select-tips ng-hide" ng-show="code_select_tips">
+                        <li ng-repeat="list in code_type_list" data-id="list.id" ng-click="chose_code_type(list.id)">
+                            <span ng-if="list.html" ng-bind-html="list.html | to_trusted"></span>
+                            <span>@{list.name}@</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <a href="javascript:;" class=" refresh" ng-click="refresh_code_dialog()">Refresh</a>
+            </div>
+            <div class="code-view ng-hide" id="code_view" ng-show="code_area">
+                <pre>
+                    <code id="code-content-area">
+                        @{code_res}@
+                    </code>
+                </pre>
+            </div>
+        </div>
+        <div id="copy_code_success"></div>
+        <div class="code-action">
+            <a href="javascript:;" class="copy-btn btn btn-primary" data-clipboard-action="copy" data-clipboard-target="code-content-area" id="copy_code_btn" >Copy</a>
+            <a href="javascript:;" class="close-btn  btn" ng-click="close_code_dialog()">Close</a>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    require(['{% static "js/config.js" %}?v={{config.v}}'], function () {
+        require(['controller/atm/apilist']);
+    });
+</script>
+
+
+
+{%endblock%}

@@ -1,0 +1,33 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <!-- 默认的CSS -->
+    <link rel="shortcut icon" href="{% static "images/myzj.ico" %}"/>
+<link rel="stylesheet" href="{% static "css/common.css" %}?v={{ config.v }}">
+    <link rel="stylesheet" href="{% static "css/global/bootstrap.min.css" %}?v={{ config.v }}">
+    {% block head %}
+    {% endblock %}
+    {% include "shared/header.html" %}
+<script src="{% static "js/lib/jquery-1.9.1.min.js" %}?v={{ config.v }}"></script>
+<script src="{% static "js/require.js" %}?v={{ config.v }}"></script>
+<script src="{% static "js/lib/angular.min.js" %}?v={{ config.v }}"></script>
+<script src="{% static "js/lib/bootstrap.min.js" %}?v={{ config.v }}"></script>
+<script>
+    window.webRoot = '{{ config.WEB_ROOT }}';
+</script>
+</head>
+
+<body {% block body_attributes %}{% endblock %} ng-controller="myDoc">
+{% include "shared/headerBar.html" %}
+{% block container %}{% endblock %}
+<!-- 其他页面需要加载的js在此扩展 -->
+{% include "shared/footerBar.html" %}
+{% block js %}
+{% endblock %}
+</body>
+</html>

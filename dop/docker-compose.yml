@@ -1,0 +1,15 @@
+dop:
+  restart: always
+  build: .
+  volumes:
+    - .:/usr/src/dop
+
+nginx:
+  restart: always
+  build: ./dockerizing/nginx/
+  volumes_from:
+    - dop
+  ports:
+    - "38029:80"
+  links:
+    - dop:dop

@@ -1,0 +1,8 @@
+*.scssc
+*.xml
+*.iml
+*.sublime-project
+*.sublime-workspace
+*.pyc
+debug_settings.py
+dop/static

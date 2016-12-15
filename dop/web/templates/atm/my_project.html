@@ -1,0 +1,61 @@
+{% extends "shared/base.html" %}
+{% load staticfiles %}
+{% block head %}
+    <link rel="stylesheet" href="{% static "css/main.css" %}?v={{ config.v }}">
+{% endblock %}
+{% block container %}
+    <div class="content-box teamListyle">
+        <div class="container">
+            <h3>Teams</h3>
+
+            <p>{{ msg }}</p>
+
+            {#projectlist?team=123#}
+            <div class="edit-main team-list">
+                <ul>
+                    <li class="listLi" ng-repeat="List in projectArr">
+                        <a href="/apilist?project=@{List.project_id}@">
+                            <p class="team-pic"><img ng-src="@{List.project_pic_url}@"/></p>
+
+                            <p class="team-name">@{List.project_name}@</p>
+                        </a>
+                    </li>
+                    {%if isHideAdd != 1%}<li ng-click="addTeam()" class="">添加</li>{% endif  %}
+                </ul>
+                <div class="loadTips">
+                    <p ng-show="isLast">下拉加载下一页....</p>
+
+                    <p ng-hide="isLast">列表已加载完....</p>
+                </div>
+                {%if isHideAdd != 1%}
+                <div class="dialog hide" ng-show="isDialogShow">
+                    <div class="dialogBox addTeam">
+                        <h3>Team Edit</h3>
+
+                        <div class="addTeam-main">
+                            <p><span class="dsc">TeamName</span>{{team_name}}
+                            </p>
+
+                            <p><span class="dsc">ProjectName</span><input class="pName" placeholder="项目名称" type="text"></p>
+                            <p><span class="dsc">HOST</span><input class="thost" placeholder="目录/端口" type="text"></p>
+
+                            <p><span class="dsc">Description</span><textarea class="tDec" placeholder="请输入描述"></textarea></p>
+
+                            <div class="addBtn">
+                                <span ng-click="saveProject()" class="active">save</span>
+                                <span ng-click="closeDialog()">close</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif  %}
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        require(['{% static "js/config.js" %}?v={{config.v}}'], function () {
+            require(['controller/atm/projectlist']);
+        });
+    </script>
+{% endblock %}

@@ -31,3 +31,12 @@ node_modules
 
 # Optional REPL history
 .node_repl_history
+.idea/
+.vs/
+bin/
+obj/
+packages/
+dop/web/static/sass/*.css
+dop/web/static/sass/*.map
+node_modules
+dop/static/*

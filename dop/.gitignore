@@ -7,3 +7,4 @@
 debug_settings.py
 node_modules
 static
+.idea

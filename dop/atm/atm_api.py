@@ -396,7 +396,7 @@ def add_project(request):
         try:
             params = json.loads(request.read())
             errmsg = ''
-            for field in ['project_name', 'host', 'description', 'team_id']:
+            for field in ['project_name', 'host', 'team_id']:
                 if field not in params or not params[field]:
                     errmsg += field + ' '
             if errmsg:
@@ -476,7 +476,7 @@ def edit_project(request):
         try:
             params = json.loads(request.read())
             errmsg = ''
-            for field in ['project_name', 'host', 'description', 'team_id', 'project_id']:
+            for field in ['project_name', 'host', 'team_id', 'project_id']:
                 if field not in params or not params[field]:
                     errmsg += field + ' '
             if errmsg:

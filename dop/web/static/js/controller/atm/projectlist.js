@@ -141,16 +141,9 @@ require(['lib/common'],
                         alert("项目名不能为空");
                         return;
                     }
-                    if ($scope.itemData.description == null) {
-                        alert("项目描述不能为空");
-                        return;
-                    }
+
                     if ($scope.itemData.host == null) {
                         alert("项目路劲不能为空");
-                        return;
-                    }
-                    if ($scope.itemData.project_pic_url == null) {
-                        alert("项目封面图不能为空");
                         return;
                     }
                     if ($scope.EditOrAdd == "edit") {

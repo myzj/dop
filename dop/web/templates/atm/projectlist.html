@@ -33,8 +33,10 @@
                     {% endif %}
                     <li class="listLi" ng-repeat="List in projectArr" data-project="@{List.project_id}@">
                         <a href="/apilist?project=@{List.project_id}@">
-                            <p class="team-pic"><img ng-src="@{List.project_pic_url}@"
+                            <p class="team-pic">
+                                <img ng-if="List.project_pic_url.length > 0" ng-src="@{List.project_pic_url}@"
                                                      onerror="this.src='{% static "images/errorImg.jpg" %}?v={{ config.v }}'"/>
+                                <img ng-if="List.project_pic_url.length == 0" ng-src="{% static "images/no_result.jpg" %}" alt="">
                             </p>
 
                             <p class="team-name">@{List.project_name}@</p>

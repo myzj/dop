@@ -23,7 +23,7 @@ define('model/login/loginModel', ['lib/common', 'api/login/loginApi'],
                 }
             });
         };
-        
+
         return {
             login: login,   //
             signUp: signUp

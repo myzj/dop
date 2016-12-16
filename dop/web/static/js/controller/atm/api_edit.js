@@ -7,6 +7,22 @@ require(['lib/common'],
 
                 $scope.apiName = "add...";
 
+
+                var defFieldModel = {
+                    field_name: "",
+                    field_type: "string",
+                    is_required: false,
+                    default: "",
+                    example: "",
+                    description: ""
+                };
+
+                var defErrorModel = {
+                    display_message: "",
+                    description: "",
+                    error_code: ""
+                };
+
                 $scope.ApiData = {
                     base: {
                         state: true,
@@ -37,10 +53,22 @@ require(['lib/common'],
                     //初始化数据
                 }
                 $scope.head_visible = false;
+                $scope.editHeader = false;
+
                 $scope.Response_visible = false;
                 $scope.query_string_visible = false;
                 $scope.body_visible = false;
                 $scope.ErrorCodes_visible = false;
+
+                $scope.bulkSample = '支持以下数据格式 ：\n \
+1.\n \
+{"id":123,"name":"zhangbin","state":true}\n \
+2.\n \
+id:123\n \
+name:zhangbin \n \
+3.\n \
+id=123&name=zhangbin';
+
 
                 $scope.doEdit = function () {
                     ReloadDate(true);
@@ -95,8 +123,155 @@ require(['lib/common'],
                 }
 
                 $scope.toggleBulkEdit = function ($event, EditId) {
-                    if ($event.target.innerHTML == 'BulkEdit') {
+
+                    // 根据传入数据 解析数据类型
+                    function parseDataType(val) {
+
+                        if (typeof(val) === 'number') {
+                            return "number";
+                        } else if (typeof(val) === 'boolean') {
+                            return "boolean";
+                        } else if (val instanceof Object) {
+                            return "object";
+                        }
+
+                        return "string";
+                    }
+
+                    // 解析 bulk 数据
+                    function parseBulkData(data, type) {
+
+                        /*
+                         * var defFieldModel = {
+                         field_name: "",
+                         field_type: "string",
+                         is_required: false,
+                         default: "",
+                         example: "",
+                         description: ""
+                         };
+
+                         var defErrorModel = {
+                         display_message: "",
+                         description: "",
+                         error_code: ""
+                         };
+                         * */
+
+
+                        var result = [];
+                        var items = [];
+
+                        console.log('data', data);
+
+                        data = $.trim(data);
+
+                        var startChar = data.substring(0, 1);
+                        if (startChar == '[') {
+                            // 如果输入的是数组,则直接赋值给 result, 跳过map处理
+                            result = JSON.parse(data);
+                        } else if (startChar == '{') {
+                            // sample :
+                            // {"id":123,"name":"zhangbin","state":true}
+                            var jdata = JSON.parse(data);
+                            $.each(jdata, function (key, value) {
+                                var itemData = {
+                                    key: key,
+                                    value: value
+                                };
+                                items.push(itemData);
+                            });
+                        } else {
+                            var rows = data.split("\n");
+                            $.each(rows, function (i, item) {
+
+
+                                if (item.indexOf('=') >= 0) {
+
+                                    // sample :
+                                    // id=123&name=zhangbin
+
+                                    var kvRows = item.split('&');
+                                    $.each(kvRows, function (kvi, kvit) {
+                                        var itemData = {
+                                            key: kvit.split('=')[0],
+                                            value: kvit.split('=')[1]
+                                        };
+                                        items.push(itemData);
+                                    })
+                                } else if (item.indexOf(':') >= 0) {
+                                    // sample :
+                                    // id:123
+                                    //name:zhangbin
+
+                                    var itemData = {
+                                        key: item.split(':')[0],
+                                        value: item.split(':')[1]
+                                    };
+                                    items.push(itemData);
+                                }
+                            })
+                        }
+
+                        console.log('items', items);
+
+                        // 根据不同的数据类型,填充不同的数据格式
+
+                        if (result.length == 0) {
+
+                            result = $.map(items, function (o) {
+
+                                var res = {};
+
+                                switch (type) {
+                                    case parseBulkData.ParseType.headers:
+                                    case parseBulkData.ParseType.query_string:
+                                        var itemObj = $.extend({}, defFieldModel);
+                                        itemObj.field_name = o.key;
+                                        itemObj.default = itemObj.example = o.value;
+                                        itemObj.field_type = parseDataType(o.value);
+
+                                        res = itemObj;
+                                        break;
+                                    case parseBulkData.ParseType.body:
+                                        var itemObj = $.extend({}, defFieldModel);
+                                        itemObj.field_name = o.key;
+                                        itemObj.default = itemObj.example = o.value;
+                                        itemObj.field_type = parseDataType(o.value);
+
+                                        res = itemObj;
+                                        break;
+                                    case parseBulkData.ParseType.error_code:
+                                        var itemObj = $.extend({}, defErrorModel);
+                                        itemObj.error_code = o.key;
+                                        itemObj.display_message = itemObj.description = o.value;
+
+                                        res = itemObj;
+                                        break;
+                                }
+
+                                return res;
+
+                            });
+
+                        }
+                        console.log('result', result);
+                        return result;
+
+                    };
+                    parseBulkData.ParseType = {
+                        headers: "headers",
+                        query_string: "query_string",
+                        body: "body",
+                        error_code: "error_code"
+                    };
+
+                    var text = $.trim($event.target.innerHTML);
+
+                    if (text == 'BulkEdit') {
+
                         $event.target.innerHTML = 'KeyValue';
+
                         if (EditId == 'Rq_headers') {
                             $scope.head_visible = !$scope.head_visible;
                             JSbeautify()
@@ -119,7 +294,7 @@ require(['lib/common'],
                         }
                         function JSbeautify() {
                             var opts = {
-                                "indent_size": "3",
+                                "indent_size": "4",
                                 "indent_char": " ",
                                 "max_preserve_newlines": "1",
                                 "preserve_newlines": true,
@@ -134,43 +309,58 @@ require(['lib/common'],
                                 "wrap_line_length": "0"
                             };
                             if (EditId == 'Rq_headers') {
+                                if ($scope.ApiData.request.headers.length == 0) {
+                                    $scope.ApiData.request.headers.push(defFieldModel);
+                                }
                                 var source = JSON.stringify($scope.ApiData.request.headers);
                                 $scope.ApiData.request.headersBulk = js_beautify(source, opts)
                             } else if (EditId == 'Rq_query_string') {
+                                if ($scope.ApiData.request.query_string.length == 0) {
+                                    $scope.ApiData.request.query_string.push(defFieldModel);
+                                }
                                 var source = JSON.stringify($scope.ApiData.request.query_string);
                                 $scope.ApiData.request.query_stringBulk = js_beautify(source, opts)
                             } else if (EditId == 'Rq_body') {
+                                if ($scope.ApiData.request.body.data.length == 0) {
+                                    $scope.ApiData.request.body.data.push(defFieldModel);
+                                }
                                 var source = JSON.stringify($scope.ApiData.request.body.data);
                                 $scope.ApiData.request.BodyBulk = js_beautify(source, opts)
                             } else if (EditId == 'Response') {
+                                if ($scope.ApiData.response.body.length == 0) {
+                                    $scope.ApiData.response.body.push(defFieldModel);
+                                }
                                 var source = JSON.stringify($scope.ApiData.response.body);
                                 $scope.ResponseBulk = js_beautify(source, opts)
                             } else if (EditId == 'ErrorCodes') {
-                                var source = JSON.stringify($scope.errorCodes);
+                                if ($scope.ApiData.error_code.length == 0) {
+                                    $scope.ApiData.error_code.push(defFieldModel);
+                                }
+                                var source = JSON.stringify($scope.ApiData.error_code);
                                 $scope.ErrorCodesBulk = js_beautify(source, opts)
                             }
                         }
-                    } else if ($event.target.innerHTML == 'KeyValue') {
+                    } else if (text == 'KeyValue') {
                         $event.target.innerHTML = 'BulkEdit';
                         if (EditId == 'Rq_headers') {
                             $scope.head_visible = !$scope.head_visible;
-                            $scope.ApiData.request.headers = JSON.parse($scope.ApiData.request.headersBulk);
+                            $scope.ApiData.request.headers = parseBulkData($scope.ApiData.request.headersBulk, parseBulkData.ParseType.headers);
                         }
                         if (EditId == 'Rq_query_string') {
                             $scope.query_string_visible = !$scope.query_string_visible;
-                            $scope.ApiData.request.query_string = JSON.parse($scope.ApiData.request.query_stringBulk);
+                            $scope.ApiData.request.query_string = parseBulkData($scope.ApiData.request.query_stringBulk, parseBulkData.ParseType.query_string);
                         }
                         if (EditId == 'Rq_body') {
                             $scope.body_visible = !$scope.body_visible;
-                            $scope.ApiData.request.body.data = JSON.parse($scope.ApiData.request.BodyBulk);
+                            $scope.ApiData.request.body.data = parseBulkData($scope.ApiData.request.BodyBulk, parseBulkData.ParseType.body);
                         }
                         if (EditId == 'Response') {
                             $scope.Response_visible = !$scope.Response_visible;
-                            $scope.ApiData.response.body = JSON.parse($scope.ResponseBulk);
+                            $scope.ApiData.response.body = parseBulkData($scope.ResponseBulk, parseBulkData.ParseType.body);
                         }
                         if (EditId == 'ErrorCodes') {
                             $scope.ErrorCodes_visible = !$scope.ErrorCodes_visible;
-                            $scope.ApiData.error_code = JSON.parse($scope.ErrorCodesBulk);
+                            $scope.ApiData.error_code = parseBulkData($scope.ErrorCodesBulk, parseBulkData.ParseType.error_code);
                         }
                     }
                 };

@@ -217,6 +217,8 @@ def add_team(request):
                     new_team.pic_url = pic_url
                     new_team.author = user
                     new_team.save()
+                    team_id = new_team.id
+                    queryset['result']['team_id'] = team_id
                     queryset['success'] = True
                     return JSONResponse(queryset)
             except Exception, ex:

@@ -9,7 +9,13 @@ require(['lib/common', 'model/login/loginModel'],
             };
             loginModel.login(datainfo, function (data) {
                 if (data.success) {
-                    window.location.href = window.webRoot + 'teamlist'
+                    if(data.errorcode == 0){
+                        window.location.href = window.webRoot + 'teamlist'
+                    }else{
+                        alert(data.errormsg)
+                    }
+                }else{
+                    alert(data.errormsg)
                 }
             });
         });
@@ -22,11 +28,16 @@ require(['lib/common', 'model/login/loginModel'],
                     "checkcode": $('#form-imgCode').val().trim()
                 }
             };
-
-            console.log("datainfo.post=", datainfo.post);
             loginModel.signUp(datainfo, function (data) {
                 if (data.success) {
-                    window.location.href = window.webRoot + 'teamlist'
+                    if(data.errorcode == 0){
+                        alert('您已注册成功，点击确定进行登陆！');
+                        window.location.href = window.webRoot + 'login'
+                    }else{
+                        alert(data.errormsg)
+                    }
+                }else{
+                    alert(data.errormsg)
                 }
             });
         })

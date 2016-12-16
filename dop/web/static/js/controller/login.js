@@ -1,6 +1,26 @@
 require(['lib/common', 'model/login/loginModel'],
     function ($, loginModel) {
+        $(document).keydown(function (e) {
+            if (e.keyCode == 13) {
+                var hostUrl = window.location.href;
+                var isLogin = hostUrl.indexOf('login') > 0 ? true : false;
+                var isRegister = hostUrl.indexOf('register') > 0 ? true : false;
+                if (isLogin) {
+                    login();
+                }
+                ;
+                if (isRegister) {
+                    register();
+                }
+            }
+        })
         $('#loginIn-btn').on('click', function () {
+            login();
+        });
+        $('#signUp-btn').on('click', function () {
+            register();
+        })
+        function login() {
             var datainfo = {
                 post: {
                     "username": $('#form-username').val().trim(),
@@ -9,18 +29,18 @@ require(['lib/common', 'model/login/loginModel'],
             };
             loginModel.login(datainfo, function (data) {
                 if (data.success) {
-                    if(data.errorcode == 0){
+                    if (data.errorcode == 0) {
                         window.location.href = window.webRoot + 'teamlist'
-                    }else{
+                    } else {
                         alert(data.errormsg)
                     }
-                }else{
+                } else {
                     alert(data.errormsg)
                 }
             });
-        });
+        }
 
-        $('#signUp-btn').on('click', function () {
+        function register() {
             var datainfo = {
                 post: {
                     "username": $('#form-username').val().trim(),
@@ -30,15 +50,16 @@ require(['lib/common', 'model/login/loginModel'],
             };
             loginModel.signUp(datainfo, function (data) {
                 if (data.success) {
-                    if(data.errorcode == 0){
+                    if (data.errorcode == 0) {
                         alert('您已注册成功，点击确定进行登陆！');
                         window.location.href = window.webRoot + 'login'
-                    }else{
+                    } else {
                         alert(data.errormsg)
                     }
-                }else{
+                } else {
                     alert(data.errormsg)
                 }
             });
-        })
+        }
+
     });

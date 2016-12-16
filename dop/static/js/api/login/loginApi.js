@@ -7,6 +7,15 @@ define('api/login/loginApi', ['config/url'], function (configUrl) {
                 "username":'?',
                 "password":'?'
             }
+        },
+        signUp:{
+            url: configUrl.signUp,
+            method:"POST",
+            post: {
+                "username":'?',
+                "password":'?',
+                "checkcode":'?'
+            }
         }
     }
 });

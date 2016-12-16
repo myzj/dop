@@ -13,13 +13,13 @@ require(['lib/common', 'model/login/loginModel'],
                     register();
                 }
             }
-        })
+        });
         $('#loginIn-btn').on('click', function () {
             login();
         });
         $('#signUp-btn').on('click', function () {
             register();
-        })
+        });
         function login() {
             var datainfo = {
                 post: {
@@ -38,8 +38,7 @@ require(['lib/common', 'model/login/loginModel'],
                     alert(data.errormsg)
                 }
             });
-        }
-
+        };
         function register() {
             var datainfo = {
                 post: {
@@ -61,5 +60,4 @@ require(['lib/common', 'model/login/loginModel'],
                 }
             });
         }
-
     });

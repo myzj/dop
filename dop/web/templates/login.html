@@ -8,6 +8,7 @@
     <script src="{% static "js/lib/jquery-1.9.1.min.js" %}?v={{ config.v }}"></script>
     <script src="{% static "js/lib/angular.min.js" %}?v={{ config.v }}"></script>
     <script src="{% static "js/require.js" %}?v={{ config.v }}"></script>
+    {% include "shared/header.html" %}
     <script>
         window.webRoot = '{{ config.WEB_ROOT }}';
     </script>

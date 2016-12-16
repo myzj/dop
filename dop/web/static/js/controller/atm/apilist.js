@@ -236,7 +236,6 @@ require(['lib/common', 'lib/jquery.twbsPagination.min', 'lib/prism'],
                     });
                     return obj;
                 };
-
                 $scope.refresh_code_dialog = function(){
                     var selectObj =  $scope.code_selected
                     code_template(selectObj);

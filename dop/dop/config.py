@@ -3,7 +3,7 @@
 import time
 
 #控制资源文件版本号，清除缓存
-#v = 20161205277997
+#v = 20161205007
 v = int(time.time())
 
 WEB_ROOT = "/"

@@ -1,28 +1,86 @@
-{% extends "shared/base.html" %}
 {% load staticfiles %}
 {% block head %}
+    <link rel="shortcut icon" href="{% static "images/myzj.ico" %}"/>
+    <link rel="stylesheet" href="{% static "css/global/form-elements.css" %}?v={{ config.v }}">
+    <link rel="stylesheet" href="{% static "css/global/bootstrap.min.css" %}?v={{ config.v }}">
     <link rel="stylesheet" href="{% static "css/login.css" %}?v={{ config.v }}">
     <link rel="stylesheet" href="{% static "css/global/form-elements.css" %}?v={{ config.v }}">
-{%endblock%}
-{% block container %}
-	<form method='POST' action='/login/'>
-	  <fieldset>
-		    <legend>用户注册</legend>
-		    <p>用户名：<input type="text" name='username' /> </p>
-		    <p>密码：<input type="text" name='pwd'/> </p>
-		    <p>验证码：<input type="text" name='checkcode'/> <img id='imgCode' src='' title='点击更新' /></p>
-        <p><input type="submit" name='rgst'/> </p>
-	  </fieldset>
-	</form>
-	
-	<script type="text/javascript">
-    $(function(){
-      $("#imgCode").click(function(){
-        $("#imgCode").attr("src","/new/check_code?v=" + Math.random())
-      });
-      $("#imgCode").attr("src","/new/check_code?v=" + Math.random())
-    });
-
-
+    <script src="{% static "js/lib/jquery-1.9.1.min.js" %}?v={{ config.v }}"></script>
+    <script src="{% static "js/require.js" %}?v={{ config.v }}"></script>
+    <script src="{% static "js/lib/angular.min.js" %}?v={{ config.v }}"></script>
+    <script src="{% static "js/lib/bootstrap.min.js" %}?v={{ config.v }}"></script>
+    <script>
+        window.webRoot = '{{ config.WEB_ROOT }}';
     </script>
-{%endblock%}
+    <style>
+    .footerBox{
+        margin-top:-20px!important;
+    }
+    </style>
+{% endblock %}
+{% block container %}
+    <div class="top-content">
+        <div class="inner-bg">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6 col-sm-offset-3 form-box">
+                        <div class="form-top">
+                            <div class="form-top-left">
+                                <h3>Sign Up</h3>
+
+                                <p>Setting your username and password to sign up:</p>
+                            </div>
+                            <div class="form-top-right">
+                                <i class="fa fa-key"></i>
+                            </div>
+                        </div>
+                        <div class="form-bottom">
+                            <form role="form" action="" method="post" class="signUp-form">
+                                <div class="form-group">
+                                    <label class="sr-only" for="form-username">Username</label>
+                                    <input required="required" type="text" name="form-username"
+                                           placeholder="Username..." class="form-username form-control"
+                                           id="form-username">
+                                </div>
+                                <div class="form-group">
+                                    <label class="sr-only" for="form-password">Password</label>
+                                    <input required="required" type="text" name="form-password"
+                                           placeholder="Password..." class="form-password form-control"
+                                           id="form-password">
+                                </div>
+                                <div class="form-group">
+                                    <label class="sr-only" for="form-imgCode">Password</label>
+                                    <input style="width:60%;margin-right:20px;display: inline-block" required="required"
+                                           type="text" name="form-password"
+                                           placeholder="verification code..." class="form-imgCode form-control"
+                                           id="form-imgCode"><img id='imgCode' src='' title='点击更新'/>
+                                </div>
+                                <a id="signUp-btn" class="form-btn">Sign up!</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="backstretch"
+         style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px;  height:100%; width: 100%; z-index: -999999; position: fixed; background: #515151;">
+        <img src="{% static "images/1.jpg" %}" style="">
+    </div>
+    {% include "shared/footerBar.html" %}
+    <script type="text/javascript">
+        $(function () {
+            $("#imgCode").click(function () {
+                $("#imgCode").attr("src", "/new/check_code?v=" + Math.random())
+            });
+            $("#imgCode").attr("src", "/new/check_code?v=" + Math.random())
+        });
+    </script>
+    <script type="text/javascript">
+        require(['{% static "js/config.js" %}?v={{config.v}}'], function () {
+            require(['controller/login']);
+        });
+    </script>
+{% endblock %}

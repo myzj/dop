@@ -1,50 +1,65 @@
-{% extends "shared/base.html" %}
 {% load staticfiles %}
 {% block head %}
+    <link rel="shortcut icon" href="{% static "images/myzj.ico" %}"/>
+    <link rel="stylesheet" href="{% static "css/global/form-elements.css" %}?v={{ config.v }}">
+    <link rel="stylesheet" href="{% static "css/global/bootstrap.min.css" %}?v={{ config.v }}">
     <link rel="stylesheet" href="{% static "css/login.css" %}?v={{ config.v }}">
     <link rel="stylesheet" href="{% static "css/global/form-elements.css" %}?v={{ config.v }}">
-{%endblock%}
+    <script src="{% static "js/lib/jquery-1.9.1.min.js" %}?v={{ config.v }}"></script>
+    <script src="{% static "js/lib/angular.min.js" %}?v={{ config.v }}"></script>
+    <script src="{% static "js/require.js" %}?v={{ config.v }}"></script>
+    <script>
+        window.webRoot = '{{ config.WEB_ROOT }}';
+    </script>
+{% endblock %}
 {% block container %}
-<div class="top-content">
-            <div class="inner-bg">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-6 col-sm-offset-3 form-box">
-                        	<div class="form-top">
-                        		<div class="form-top-left">
-                        			<h3>Login to our site</h3>
-                            		<p>Enter your username and password to log on:</p>
-                        		</div>
-                        		<div class="form-top-right">
-                        			<i class="fa fa-key"></i>
-                        		</div>
+    <div class="top-content">
+        <div class="inner-bg">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6 col-sm-offset-3 form-box">
+                        <div class="form-top">
+                            <div class="form-top-left">
+                                <h3>Login to our site</h3>
+
+                                <p>Enter your username and password to log on:</p>
                             </div>
-                            <div class="form-bottom">
-			                    <form role="form" action="" method="post" class="login-form">
-			                    	<div class="form-group">
-			                    		<label class="sr-only" for="form-username">Username</label>
-			                        	<input required="required" type="text" name="form-username" placeholder="Username..." class="form-username form-control" id="form-username">
-			                        </div>
-			                        <div class="form-group">
-			                        	<label class="sr-only" for="form-password">Password</label>
-			                        	<input required="required" type="password" name="form-password" placeholder="Password..." class="form-password form-control" id="form-password">
-			                        </div>
-			                        <a class="form-btn">Sign in!</a>
-			                    </form>
-		                    </div>
+                            <div class="form-top-right">
+                                <i class="fa fa-key"></i>
+                            </div>
+                        </div>
+                        <div class="form-bottom">
+                            <form role="form" action="" method="post" class="login-form">
+                                <div class="form-group">
+                                    <label class="sr-only" for="form-username">Username</label>
+                                    <input required="required" type="text" name="form-username"
+                                           placeholder="Username..." class="form-username form-control"
+                                           id="form-username">
+                                </div>
+                                <div class="form-group">
+                                    <label class="sr-only" for="form-password">Password</label>
+                                    <input required="required" type="password" name="form-password"
+                                           placeholder="Password..." class="form-password form-control"
+                                           id="form-password">
+                                </div>
+                                <a id="loginIn-btn" class="form-btn">Sign in!</a>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
 
-    <div class="backstretch" style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px;  height:100%; width: 100%; z-index: -999999; position: fixed; background: #515151;">
+    </div>
+
+    <div class="backstretch"
+         style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px;  height:100%; width: 100%; z-index: -999999; position: fixed; background: #515151;">
         <img src="{% static "images/1.jpg" %}" style="">
     </div>
-<script type="text/javascript">
-    require(['{% static "js/config.js" %}?v={{config.v}}'], function () {
-        require(['controller/login']);
-    });
-</script>
-{%endblock%}
+    {% include "shared/footerBar.html" %}
+    <script type="text/javascript">
+        require(['{% static "js/config.js" %}?v={{config.v}}'], function () {
+            require(['controller/login']);
+        });
+    </script>
+{% endblock %}

@@ -556,20 +556,52 @@ def req_api_list(request):
             project_filter = None
             api_match = None
             # 传入项目id
+            role_dict = {}
+            user_info = request.session.get("user", default=None)
+            user_id = int(user_info.get("id"))
+            user_filter = User.objects.filter(id=user_id)
+            project_member = ProjectMember.objects.filter(is_deleted=False, is_active=True, user=user_filter[0])
+            if not project_member:  # 返回的数据为空，说明没有加入任何项目，因此无法查询自己参与的项目列表
+                queryset['success'] = False
+                queryset['errorcode'] = 300041
+                queryset['errormsg'] = getMessage('300041')
+                return JSONResponse(queryset)
+            for item in project_member:
+                role_dict[item.project.id] = item.role
+            project_match = map(lambda x: x.project, project_member)  # 获取参与的所有的项目对象列表
+            if not project_match:
+                queryset['success'] = False
+                queryset['errorcode'] = 300041
+                queryset['errormsg'] = getMessage('300041')
+                return JSONResponse(queryset)
+            api_filter = Interface.objects.filter(is_deleted=False, is_active=True, project__in=project_match)
             if 'project_id' in request.GET and request.GET['project_id'] != '':
                 project_filter = Project.objects.filter(is_deleted=False, is_active=True, id=int(request.GET['project_id']))
                 if project_filter:
-                    api_match = Interface.objects.filter(is_deleted=False, is_active=True, project=project_filter[0]).order_by('-utime')
+                    api_match = api_filter.filter(project=project_filter[0])
                 else:
                     queryset['errorcode'] = 300025
                     queryset['errormsg'] = getMessage('300025')
                     return JSONResponse(queryset)
             else:
                 if 'keyword' in request.GET and request.GET['keyword'] != '':
-                    api_match = Interface.objects.filter(is_deleted=False, is_active=True, interface_name__icontains=request.GET['keyword']) \
-                        .order_by('-utime')
+                    keyword = request.GET['keyword']
+                    # match interface name
+                    api_match_name = []
+                    api_match_name = api_filter.filter(interface_name__icontains=keyword)
+                    # match description
+                    api_match_desc = []
+                    api_match_desc = api_filter.filter(description__icontains=keyword)
+                    # match url
+                    api_match_url = []
+                    api_match_url = api_filter.filter(url__icontains=keyword)
+                    # match tags
+                    api_match_tag = []
+                    api_match_tag = api_filter.filter(tags__icontains=keyword)
+                    api_all = api_match_name | api_match_desc | api_match_tag | api_match_url
+                    api_match = api_all.distinct().order_by("-utime")
                 else:
-                    api_match = Interface.objects.filter(is_deleted=False, is_active=True).order_by('-utime')
+                    api_match = api_filter
             # 判断项目是否存在
             queryset['result']['pageIndex'] = 1
             queryset['result']['pageSize'] = 10

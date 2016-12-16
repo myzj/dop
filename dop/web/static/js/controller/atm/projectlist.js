@@ -7,6 +7,9 @@ require(['lib/common'],
             //$.initHeadController(app);
 
             app.controller('myDoc', function ($scope, $http) {
+
+                $scope.roleSelect = "1";
+
                 $scope.isLast = true;
                 $scope.isDialogShow = false;
                 var curIndex = 1,        //当前页数
@@ -261,20 +264,22 @@ require(['lib/common'],
 
                 //删除成员
                 $scope.delect_member = function (member_id) {
-                    var data = {
-                        "member_id": member_id
+                    if (confirm("确定要移除这个用户么?")) {
+                        var data = {
+                            "member_id": member_id
+                        };
+                        $http({
+                            method: 'DELETE',
+                            url: 'api/del/member/',
+                            data: data
+                        }).success(function (res) {
+                            if (res.errorcode == 0) {
+                                $scope.edit_member($scope.member_project_id, $scope.member_team_id, $scope.member_role);
+                            } else {
+                                alert(res.errormsg);
+                            }
+                        });
                     }
-                    $http({
-                        method: 'DELETE',
-                        url: 'api/del/member/',
-                        data: data
-                    }).success(function (res) {
-                        if (res.errorcode == 0) {
-                            $scope.edit_member($scope.member_project_id, $scope.member_team_id, $scope.member_role);
-                        } else {
-                            alert(res.errormsg);
-                        }
-                    });
                 };
 
                 $scope.edit_member = function (project_id, team_id, role) {

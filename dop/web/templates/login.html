@@ -11,6 +11,11 @@
     <script>
         window.webRoot = '{{ config.WEB_ROOT }}';
     </script>
+    <style>
+    .footerBox{
+        margin:-20px 0 0 0;
+    }
+    </style>
 {% endblock %}
 {% block container %}
     <div class="top-content">
@@ -44,6 +49,7 @@
                                 </div>
                                 <a id="loginIn-btn" class="form-btn">Sign in!</a>
                             </form>
+                            <div style="text-align: right"><a href= '/register' >Sign up!</a></div>
                         </div>
                     </div>
                 </div>

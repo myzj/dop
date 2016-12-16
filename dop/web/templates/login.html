@@ -8,9 +8,15 @@
     <script src="{% static "js/lib/jquery-1.9.1.min.js" %}?v={{ config.v }}"></script>
     <script src="{% static "js/lib/angular.min.js" %}?v={{ config.v }}"></script>
     <script src="{% static "js/require.js" %}?v={{ config.v }}"></script>
+    {% include "shared/header.html" %}
     <script>
         window.webRoot = '{{ config.WEB_ROOT }}';
     </script>
+    <style>
+    .footerBox{
+        margin:-20px 0 0 0;
+    }
+    </style>
 {% endblock %}
 {% block container %}
     <div class="top-content">
@@ -44,6 +50,7 @@
                                 </div>
                                 <a id="loginIn-btn" class="form-btn">Sign in!</a>
                             </form>
+                            <div style="text-align: right"><a href= '/register' >Sign up!</a></div>
                         </div>
                     </div>
                 </div>

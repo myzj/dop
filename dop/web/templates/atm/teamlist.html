@@ -32,16 +32,17 @@
                     <li class="listLi" ng-repeat="List in teamArr">
                         <a href="/projectlist?team=@{List.team_id}@">
                             <p class="team-pic">
-                                <img ng-src="@{List.team_pic_url}@" onerror="this.src='{% static "images/errorImg.jpg" %}?v={{ config.v }}'"/>
+                                <img ng-if="List.team_pic_url.length > 0" ng-src="@{List.team_pic_url}@" onerror="this.src='{% static "images/errorImg.jpg" %}?v={{ config.v }}'"/>
+                                <img ng-if="List.team_pic_url.length == 0" ng-src="{% static "images/no_result.jpg" %}" alt="">
                             </p>
                             <p class="team-name">@{List.team_name}@</p>
                         </a>
                     </li>
                 </ul>
                 <div class="loadTips">
-                    <p ng-show="isLast">下拉加载下一页....</p>
+                    <p ng-show="isLast">loading next page....</p>
 
-                    <p ng-hide="isLast">列表已加载完</p>
+                    <p ng-hide="isLast">The list has been loaded</p>
                 </div>
                 {%if isHideAdd != 1%}
                 <div class="dialog ng-hide" ng-show="isDialogShow">
@@ -49,12 +50,12 @@
                         <h3>Team Edit</h3>
 
                         <div class="addTeam-main">
-                            <p><span class="dsc">TeamName</span><input class="tName" placeholder="请输入名称" type="text">
+                            <p><span class="dsc">TeamName</span><input class="tName" placeholder="team name" type="text">
                             </p>
 
-                            <p><span class="dsc">picUrl</span><input class="tPic" placeholder="上传图片" type="text"></p>
+                            <p><span class="dsc">picUrl</span><input class="tPic" placeholder="cover picture" type="text"></p>
 
-                            <p><span class="dsc">Description</span><textarea class="tDec" placeholder="请输入描述"></textarea></p>
+                            <p><span class="dsc">Description</span><textarea class="tDec" placeholder="Description"></textarea></p>
 
                             <div class="addBtn">
                                 <span ng-click="saveDate()" class="active">save</span>

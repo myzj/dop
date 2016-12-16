@@ -33,8 +33,10 @@
                     {% endif %}
                     <li class="listLi" ng-repeat="List in projectArr" data-project="@{List.project_id}@">
                         <a href="/apilist?project=@{List.project_id}@">
-                            <p class="team-pic"><img ng-src="@{List.project_pic_url}@"
+                            <p class="team-pic">
+                                <img ng-if="List.project_pic_url.length > 0" ng-src="@{List.project_pic_url}@"
                                                      onerror="this.src='{% static "images/errorImg.jpg" %}?v={{ config.v }}'"/>
+                                <img ng-if="List.project_pic_url.length == 0" ng-src="{% static "images/no_result.jpg" %}" alt="">
                             </p>
 
                             <p class="team-name">@{List.project_name}@</p>
@@ -49,9 +51,9 @@
                     </li>
                 </ul>
                 <div class="loadTips">
-                    <p ng-show="isLast">下拉加载下一页....</p>
+                    <p ng-show="isLast">loading next page....</p>
 
-                    <p ng-hide="isLast">列表已加载完</p>
+                    <p ng-hide="isLast">The list has been loaded</p>
                 </div>
                 {% if isHideAdd != 1 %}
                     <div class="dialog" ng-show="isDialogShow">
@@ -68,23 +70,23 @@
 
                                 <p>
                                     <span class="dsc">ProjectName</span>
-                                    <input class="pName" placeholder="项目名称" ng-model="itemData.project_name" value=""
+                                    <input class="pName" placeholder="project name" ng-model="itemData.project_name" value=""
                                            type="text">
                                 </p>
 
                                 <p><span class="dsc">HOST</span>
-                                    <input class="thost" ng-model="itemData.host" placeholder="目录/端口" type="text">
+                                    <input class="thost" ng-model="itemData.host" placeholder="host" type="text">
                                 </p>
 
                                 <p><span class="dsc">pic_url</span>
-                                    <input class="pic_url" ng-model="itemData.project_pic_url" placeholder="封面大图"
+                                    <input class="pic_url" ng-model="itemData.project_pic_url" placeholder="cover picture"
                                            type="text">
                                 </p>
 
                                 <p>
                                     <span class="dsc">Description</span>
                                     <textarea class="tDec" ng-model="itemData.description"
-                                              placeholder="请输入描述"></textarea>
+                                              placeholder="Description"></textarea>
                                 </p>
 
                                 <div class="addBtn">
@@ -171,7 +173,7 @@
                                                     </label>
                                                 </div>
                                             </div>
-                                            <div class="member-super" ng-if="member.role == 3">已经是超管了</div>
+                                            <div class="member-super" ng-if="member.role == 3">* SuperAdmin</div>
                                         </div>
                                         <div class="col-xs-3">
                                             <a href="javascript:;" class="btn" ng-click="delect_member(member.id)"

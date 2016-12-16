@@ -11,16 +11,14 @@
 
         var dopWebUrl = "/";
         var login = dopWebUrl + "api/req_login";
+        var signUp = dopWebUrl + "new/user/";
         var req_team_list = dopWebUrl + "api/req_team_list";
 
 
         var re = {
             login:login,
+            signUp:signUp,
             req_team_list: req_team_list,
-
-
-
-
         };
         return re;
     }).call(self);

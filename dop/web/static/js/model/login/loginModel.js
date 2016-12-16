@@ -11,8 +11,22 @@ define('model/login/loginModel', ['lib/common', 'api/login/loginApi'],
                 }
             });
         };
+
+        function signUp(dataInfo, callback) {
+            var dataInfo = dataInfo || {};
+            $.xsr($.makeUrl(loginApi.signUp, dataInfo.post), function (res) {
+                try {
+                    callback && callback(res);
+                } catch (e) {
+                    //TODO handle the exception
+                    throw e;
+                }
+            });
+        };
+
         return {
             login: login,   //
+            signUp: signUp
          }
     }
 );

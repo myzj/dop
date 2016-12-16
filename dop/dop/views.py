@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
 from atm.atm_api import login_check
-from atm.models import Project, Team
+from atm.models import Project
+from django.http import HttpResponseRedirect
+
 
 
 def test(request):
@@ -49,9 +51,7 @@ def apilist(request):
 
 @login_check
 def index(request):
-    params = {}
-    params['title'] = '首页'
-    return render(request, 'index.html', params)
+    return HttpResponseRedirect("/teamlist")
 
 
 @login_check

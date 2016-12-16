@@ -1695,7 +1695,7 @@ def user_register(request):
         'success': True, 'errorcode': 0, 'errormsg': '', 'result': []}
     if request.method == 'POST':
         try:
-            params = json.loads(request.read())
+            params = request.POST.dict()
             required_fields = ['username', 'password', 'checkcode']
             errmsg = ''
             for field in required_fields:

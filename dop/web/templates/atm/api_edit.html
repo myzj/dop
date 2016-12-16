@@ -149,7 +149,7 @@
                                         <button ng-disabled='isEdit' ng-click="toggleBulkEdit($event,'Rq_headers')"
                                                 class="btn btn-xs btn-primary">BulkEdit
                                         </button>
-                                        <button ng-disabled='isEdit' ng-click="Add_headerDate()"
+                                        <button ng-disabled='isEdit || head_visible' ng-click="Add_headerDate()"
                                                 class="btn btn-xs btn-primary">+Add
                                         </button>
                                     </div>
@@ -206,7 +206,7 @@
                                     </tbody>
                                 </table>
                                 <div ng-show="head_visible" class="headers-bulkEdit bulkEdit">
-                                    <textarea ng-disabled='isEdit' ng-model="ApiData.request.headersBulk"></textarea>
+                                    <textarea ng-disabled='isEdit' placeholder="@{bulkSample}@" ng-model="ApiData.request.headersBulk"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -219,7 +219,7 @@
                                         <button ng-disabled='isEdit' ng-click="toggleBulkEdit($event,'Rq_query_string')"
                                                 class="btn btn-xs btn-primary">BulkEdit
                                         </button>
-                                        <button ng-disabled='isEdit' ng-click="Add_QueryStringDate()"
+                                        <button ng-disabled='isEdit || query_string_visible' ng-click="Add_QueryStringDate()"
                                                 class="btn btn-xs btn-primary">+Add
                                         </button>
                                     </div>
@@ -297,7 +297,7 @@
                                         <button ng-disabled='isEdit' ng-click="toggleBulkEdit($event,'Rq_body')"
                                                 class="btn btn-xs btn-primary">BulkEdit
                                         </button>
-                                        <button ng-disabled='isEdit' ng-click="Add_bodyDate()"
+                                        <button ng-disabled='isEdit || body_visible' ng-click="Add_bodyDate()"
                                                 class="btn btn-xs btn-primary">+Add
                                         </button>
                                     </div>
@@ -380,7 +380,7 @@
                                     <button ng-disabled='isEdit' ng-click="toggleBulkEdit($event,'Response')"
                                             class="btn btn-xs btn-primary">BulkEdit
                                     </button>
-                                    <button ng-disabled='isEdit' ng-click="Add_ResponseDate()"
+                                    <button ng-disabled='isEdit || Response_visible' ng-click="Add_ResponseDate()"
                                             class="btn btn-xs btn-primary">+Add
                                     </button>
                                 </div>
@@ -460,7 +460,7 @@
                                     <button ng-disabled='isEdit' ng-click="toggleBulkEdit($event,'ErrorCodes')"
                                             class="btn btn-xs btn-primary">BulkEdit
                                     </button>
-                                    <button ng-disabled='isEdit' ng-click="Add_ErrorCodeDate()"
+                                    <button ng-disabled='isEdit || ErrorCodes_visible' ng-click="Add_ErrorCodeDate()"
                                             class="btn btn-xs btn-primary">+Add
                                     </button>
                                 </div>

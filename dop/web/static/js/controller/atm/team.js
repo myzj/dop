@@ -80,11 +80,11 @@ require(['lib/common'],
                         };
                         $http({
                             method: 'post',
-                            url: '/api/add_team?team_name',
+                            url: '/api/add_team',
                             data: {team_name: datainfo.tname, pic_url: datainfo.tpic, description: datainfo.tdec}
                         }).success(function (data) {
                             if (data.errorcode == 0) {
-                                alert("添加成功")
+                                window.location.href = "/projectlist?team=" + data.result.team_id;
                             }else{
                                 alert(data.errormsg);
                             }
